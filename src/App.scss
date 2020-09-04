@@ -1,20 +1,84 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: $dark-blue;
 }
 
-#nav {
-  padding: 30px;
+.nav {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 2rem;
+  justify-content: space-between;
 
-  a {
-    font-weight: bold;
-    color: $dark-blue;
+  &Left {
+    width: 60%;
+    display: flex;
+    flex-direction: row;
 
-    &.router-link-exact-active {
-      color: $green;
+    .navLogo img {
+      width: 80%;
+      max-width: 100%;
+    }
+
+    .navTab {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-left: 1rem;
+      position: relative;
+
+      a {
+        font-size: 1rem;
+        margin-right: 1rem;
+        padding: 3px 5px;
+      }
     }
   }
+  
+
+  &Right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    a {
+      font-size: 1rem;
+      margin-right: 1rem;
+
+      img {
+        width: 1.5rem;
+      }
+    }
+  }
+  
+  a {
+    font-weight: bold;
+    color: $black;
+    text-decoration: none;
+    cursor: pointer;
+
+    &.router-link-exact-active {
+      color: $black;
+    }
+  }
+}
+
+.border {
+  position: absolute;
+  transition: left 0.5s ease-in-out, width 0.5s 0.10s;
+  height: 30px;
+  border: 1px solid $light-grey;
+  -webkit-box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.16);
+  -moz-box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.16);
+  box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.16);
+  border-radius: 10px;
+  left: 0;
+  width: 69px;
+  pointer-events: none;
 }
