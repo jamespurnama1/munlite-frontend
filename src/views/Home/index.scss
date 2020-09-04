@@ -1,0 +1,102 @@
+.home {
+  display: flex;
+  flex-direction: row;
+  padding: 3%;
+  font-family: 'Montserrat', sans-serif;
+
+  .left {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      width: 75%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    picture {
+      width: 38%;
+    }
+
+    .banner-image {
+      width: 100%
+    }
+  }
+
+  .right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-left: 3.5rem;
+    width: 50%;
+
+    .chair,
+    .rules {
+      &-sub-header {
+        font-size: 3.5rem;
+        font-weight: bold;
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      display: flex;
+      flex-wrap: wrap;
+      max-height: 40vh;
+
+      &-data {
+        margin-right: 2.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .chair {
+      margin-bottom: 2rem;
+
+      &-img {
+        width: 45px;
+        height: 45px;
+        background-color: lightgray;
+        border: none;
+        border-radius: 25px;
+        margin-right: 10px;
+      }
+
+      &-name {
+        font-weight: bold;
+        margin-bottom: 3px;
+        font-size: 18px;
+      }
+
+      &-email {
+        font-size: 12px;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+
+    }
+
+    .rules {
+      flex-direction: column;
+
+      &-val {
+        font-size: 12px;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      &-point {
+        font-weight: bold;
+        font-size: 18px;
+        margin-right: 1rem;
+        width: 8rem;
+      }
+    }
+  }
+}

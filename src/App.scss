@@ -7,7 +7,6 @@
   font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
 }
 
 .nav {
@@ -24,6 +23,7 @@
     .navLogo img {
       width: 80%;
       max-width: 100%;
+      min-width: 65px;
     }
 
     .navTab {
