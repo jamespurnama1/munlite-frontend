@@ -57,6 +57,9 @@ export default {
     borderStyles() {
       return this.borderTemp == null ? this.border : this.borderTemp;
     },
+    showNavBar() {
+      return this.widthWindow > 960 || this.open;
+    },
   },
   mounted() {
     this.onTabClick();
