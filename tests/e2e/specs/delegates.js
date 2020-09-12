@@ -4,7 +4,6 @@ describe('Landing Page Test', () => {
 
     cy.contains('h1', 'Delegates');
     cy.contains('button', 'Role Call');
-    cy.contains('button', '+');
 
     // check modal if button clicked
 

@@ -3,14 +3,16 @@
     <div class="delegates-upper">
       <h1 class="title">Delegates</h1>
       <div class="delegates-button">
-        <button>Role Call</button>
-        <button>&#43;</button>
+        <button @click="showModal">Role Call</button>
+        <button><font-awesome-icon :icon="['fas', 'plus']" /></button>
       </div>
     </div>
     <div class="delegates-table">
       <table class="table">
         <tr class="title">
-          <td class="title-name">Name</td>
+          <td class="title-name">Name
+            <font-awesome-icon class="dropdown-icon" :icon="['fas', 'chevron-down']" />
+          </td>
           <td>Presence</td>
         </tr>
         <tr v-for="(data, index) in delegates" :key="index" class="data">
@@ -22,12 +24,19 @@
         </tr>
       </table>
     </div>
+    <div class="overlay" v-if="showOverlay"></div>
+    <modal></modal>
   </div>
 </template>
 
 <script>
+import Modal from './components/Modal.vue';
+
 export default {
   name: 'Delegates',
+  components: {
+    Modal,
+  },
   data() {
     return {
       delegates: [
@@ -87,7 +96,13 @@ export default {
           presence: 'Not Present',
         },
       ],
+      showOverlay: false,
     };
+  },
+  methods: {
+    showModal() {
+      this.showOverlay = true;
+    },
   },
 };
 </script>

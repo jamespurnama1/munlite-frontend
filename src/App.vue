@@ -34,7 +34,7 @@
       </div>
     </div>
     <router-view/>
-    <div class="overlay" v-if="open"></div>
+    <div class="overlay-nav" v-if="open"></div>
   </div>
 </template>
 
