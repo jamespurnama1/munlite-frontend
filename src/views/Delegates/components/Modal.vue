@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="modal">
     <h1>Role Call</h1>
   </div>
 </template>
@@ -11,5 +11,5 @@ export default {
 </script>
 
 <style>
-
+@import './Modal.scss'
 </style>

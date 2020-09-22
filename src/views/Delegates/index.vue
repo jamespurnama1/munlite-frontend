@@ -25,7 +25,7 @@
       </table>
     </div>
     <div class="overlay" v-if="showOverlay"></div>
-    <modal></modal>
+    <modal v-if="showOverlay"></modal>
   </div>
 </template>
 

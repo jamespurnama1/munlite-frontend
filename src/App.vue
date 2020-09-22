@@ -2,15 +2,18 @@
   <div id="app">
     <div class="nav">
       <div class="navLogo">
-        <img id="logo" src="@/assets/img/logo_main.png" />
+        <img id="logo" src="@/assets/img/logo_main.png" @click="$router.push('/')"/>
       </div>
       <div class="navTab" :class="{toggle: open}">
         <div class="navLeft">
-          <router-link to="/" @click.native="onTabClick">Overview</router-link>
-          <router-link to="/delegates" @click.native="onTabClick">Delegates</router-link>
-          <router-link to="/motions" @click.native="onTabClick">Motions</router-link>
-          <router-link to="/caucus" @click.native="onTabClick">Caucus</router-link>
-          <router-link to="/crisis" @click.native="onTabClick">Crisis</router-link>
+          <router-link id="overview" to="/" @click.native="onTabClick">Overview</router-link>
+          <router-link id="delegates" to="/delegates" @click.native="onTabClick">
+            Delegates
+          </router-link>
+          <router-link id="gsl" to="/gsl" @click.native="onTabClick">GSL</router-link>
+          <router-link id="motions" to="/motions" @click.native="onTabClick">Motions</router-link>
+          <router-link id="caucus" to="/caucus" @click.native="onTabClick">Caucus</router-link>
+          <router-link id="crisis" to="/crisis" @click.native="onTabClick">Crisis</router-link>
           <div
             class="border"
             v-if="widthWindow > 960"
@@ -70,15 +73,16 @@ export default {
   created() {
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
+    this.onTabClick();
   },
   methods: {
     onTabClick() {
-      const tab = document.getElementsByClassName('router-link-exact-active');
-      if (tab[0]) {
+      const tab = this.$route.path.substring(1) === '' ? document.getElementById('overview') : document.getElementById(this.$route.path.substring(1));
+      if (tab) {
         const styles = {
-          left: tab[0].offsetLeft,
-          width: tab[0].clientWidth,
-          height: tab[0].clientHeight,
+          left: tab.offsetLeft,
+          width: tab.clientWidth,
+          height: tab.clientHeight,
         };
         this.border = styles;
       }

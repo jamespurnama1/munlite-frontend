@@ -12,7 +12,7 @@
 .nav {
   display: flex;
   flex-direction: row;
-  padding: 10px 2rem;
+  padding: 15px 2rem;
   justify-content: flex-start;
   position: relative;
 
@@ -24,7 +24,8 @@
     img {
       width: 25%;
       max-width: 100%;
-      min-width: 65px;
+      min-width: 45px;
+      cursor: pointer;
     }
   }
 
@@ -180,7 +181,7 @@
   }
 
   span:nth-child(1) {
-    top: 17px;
+    top: 10px;
     -webkit-transform-origin: left center;
     -moz-transform-origin: left center;
     -o-transform-origin: left center;
@@ -188,7 +189,7 @@
   }
   
   span:nth-child(2) {
-    top: 25px;
+    top: 18px;
     -webkit-transform-origin: left center;
     -moz-transform-origin: left center;
     -o-transform-origin: left center;
@@ -196,7 +197,7 @@
   }
   
   span:nth-child(3) {
-    top: 33px;
+    top: 26px;
     -webkit-transform-origin: left center;
     -moz-transform-origin: left center;
     -o-transform-origin: left center;
@@ -220,7 +221,7 @@
     -moz-transform: rotate(-45deg);
     -o-transform: rotate(-45deg);
     transform: rotate(-45deg);
-    top: 35px;
+    top: 27px;
   }
 }
 
