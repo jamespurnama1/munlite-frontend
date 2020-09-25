@@ -3,17 +3,17 @@
       <a id='close'><font-awesome-icon :icon="['fas', 'times']" size="lg" /></a>
       <h2>Roll Call</h2>
       <h3>Countries</h3>
-    <div id='selection'>
-    <button @click='counter'>
-      <p>Present</p>
-    </button>
-    <button @click='counter'>
-      <p>Present<br>&amp; Voting</p>
-    </button>
-    <button @click='counter' id='notPresent'>
-      <p>Not Present</p>
-    </button>
-    </div>
+      <div id='selection'>
+        <button @click='counter'>
+          <p>Present</p>
+        </button>
+        <button @click='counter'>
+          <p>Present<br>&amp; Voting</p>
+        </button>
+        <button @click='counter' id='notPresent'>
+          <p>Not Present</p>
+        </button>
+      </div>
   </div>
 </template>
 
