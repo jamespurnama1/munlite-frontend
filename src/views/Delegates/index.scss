@@ -93,7 +93,7 @@
 
       .table-data {
         width: 55%;
-        height: 62vh;
+        max-height: 62vh;
         overflow-y: auto;
         
         @include max-media(tablet) {
