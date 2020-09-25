@@ -12,7 +12,7 @@ describe('Landing Page Test', () => {
     cy.contains('p', 'Rounding');
 
     cy.contains('p', 'Chair');
-    cy.get('div[class="chair"]>div[class="chair-data"]').each(() => {
+    cy.get('div[class="chair-list"]>div[class="chair-data"]').each(() => {
       cy.get('div[class="chair-img"]').should('exist');
       cy.get('p[class="chair-name"]').should('exist');
       cy.get('p[class="chair-email"]').should('exist');
