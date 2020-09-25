@@ -1,6 +1,7 @@
 @import "colors";
 @import "breakpoints";
 @import "fonts";
+@import "mixins";
 
 .overlay {
   position: fixed;
@@ -16,4 +17,24 @@
   -moz-transition: .5s ease-in-out;
   -o-transition: .5s ease-in-out;
   transition: .5s ease-in-out;
+}
+
+// SCROLLBAR
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }

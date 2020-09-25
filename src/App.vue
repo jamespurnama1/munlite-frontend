@@ -67,13 +67,9 @@ export default {
   mounted() {
     this.onTabClick();
   },
-  beforeUpdate() {
-    this.onTabClick();
-  },
   created() {
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
-    this.onTabClick();
   },
   methods: {
     onTabClick() {
@@ -86,12 +82,14 @@ export default {
         };
         this.border = styles;
       }
+      this.open = false;
     },
     toggleMenu() {
       this.open = !this.open;
     },
     checkMobileView() {
       this.widthWindow = window.innerWidth;
+      this.onTabClick();
     },
   },
   beforeDestroy() {

@@ -18,11 +18,13 @@
     <div class="right">
       <div class="chair">
         <p class="chair-sub-header">Chair</p>
-        <div v-for="(data, index) in chairData" :key="index" class="chair-data">
-          <div class="chair-img"></div>
-          <div class="info">
-            <p class="chair-name">{{data.name}}</p>
-            <p class="chair-email">{{data.email}}</p>
+        <div class="chair-list">
+          <div v-for="(data, index) in chairData" :key="index" class="chair-data">
+            <div class="chair-img"></div>
+            <div class="info">
+              <p class="chair-name">{{data.name}}</p>
+              <p class="chair-email">{{data.email}}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -44,6 +46,30 @@ export default {
   data() {
     return {
       chairData: [
+        {
+          name: 'Hans Marvin T.',
+          email: 'hans.tanuardi@gmail.com',
+        },
+        {
+          name: 'Joshua A.',
+          email: 'joshmahawira@gmail.com',
+        },
+        {
+          name: 'Nicole Charlene',
+          email: 'niccharlene@gmail.com',
+        },
+        {
+          name: 'Hans Marvin T.',
+          email: 'hans.tanuardi@gmail.com',
+        },
+        {
+          name: 'Joshua A.',
+          email: 'joshmahawira@gmail.com',
+        },
+        {
+          name: 'Nicole Charlene',
+          email: 'niccharlene@gmail.com',
+        },
         {
           name: 'Hans Marvin T.',
           email: 'hans.tanuardi@gmail.com',

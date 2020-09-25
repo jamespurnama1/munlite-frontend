@@ -20,6 +20,10 @@
     justify-content: space-between;
   }
 
+  @include max-media(mobile) {
+    padding: 15px 5%;
+  }
+
   &Logo {
     img {
       width: 25%;
@@ -40,6 +44,7 @@
 
       &.toggle {
         opacity: 1;
+        z-index: 5;
       }
 
       margin-right: 0;
@@ -56,7 +61,7 @@
       -moz-transition: .3s ease-in-out;
       -o-transition: .3s ease-in-out;
       transition: .3s ease-in-out;
-      z-index: 5;
+      z-index: -1;
     }
   }
 
