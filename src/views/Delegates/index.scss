@@ -15,7 +15,11 @@
       font-family: 'Montserrat', sans-serif;
     }
 
-    button {
+    .delegates-button {
+      display: flex;
+      flex-direction: row;
+    }
+    .button {
       font-family: 'Montserrat', sans-serif;
       border: 1px solid $light-grey;
       -webkit-box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.16);
@@ -28,40 +32,155 @@
       font-size: 20px;
       margin-left: 1rem;
       cursor: pointer;
+      height: auto;
+
+      input {
+        margin-right: 0;
+        border: none;
+        width: 0;
+        font-size: 18px;
+        color: $dark-grey;
+        -webkit-transition: all 0.3s linear;
+        -moz-transition: all 0.3s linear;
+        -ms-transition: all 0.3s linear;
+        -o-transition: all 0.3s linear;
+        transition: all 0.3s linear;
+
+        &.show {
+          width: 200px;
+          margin-right: 1rem;
+          padding-left: 5px;
+        }
+
+        &:focus {
+          outline: none;
+        }
+      }
     }
   }
 
   &-table {
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .content {
+      display: flex;
+      flex-direction: row;
 
-      td {
-        padding: 5px 0;
+      .table-data {
+        width: 55%;
+        height: 500px;
+        overflow-y: auto;
+  
+        .data {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-bottom: 10px;
+    
+          .name {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+      
+            img {
+              margin-right: 1rem;
+            }
+          }
+
+          span {
+            visibility: hidden;
+            margin-left: 1rem;
+            color: $red;
+            cursor: pointer;
+            -webkit-transition: all 0.05s ease-out;
+            -moz-transition: all 0.05s ease-out;
+            -ms-transition: all 0.05s ease-out;
+            -o-transition: all 0.05s ease-out;
+            transition: all 0.05s ease-out;
+
+            &.show {
+              visibility: visible;
+            }
+          }
+        }
       }
+
+      .info {
+        display: flex;
+        flex-wrap: wrap;
+        margin: auto;
+
+        &-data {
+          width: 35%;
+          margin: auto;
+
+          .emphasize {
+            font-size: 18px;
+          }
+
+          .title {
+            border-bottom: none;
+            margin-bottom: 0;
+          }
+
+          .data {
+            margin-bottom: 1.5rem;
+          }
+        }
+      }
+    }
+
+    .table {
+      width: 100%;
     }
 
     .title {
       font-family: 'Montserrat';
       font-weight: bold;
+      border-bottom: 1px solid $light-grey;
+      display: flex;
+      flex-direction: row;    
+      margin-bottom: 10px;
+      padding-bottom: 5px;  
 
       &-name {
-        margin-left: 2rem;
+        width: 38%
       }
 
-      td {
-        border-bottom: 1px solid $light-grey;
+      &-presence{
+        width: 17%;
       }
     }
 
     .name {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
+      width: 70%;
+    }
 
-      img {
-        margin-right: 1rem;
-      }
+    .presence {
+      width: 30%;
     }
   }
+}
+
+// SCROLLBAR
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+// PLACEHOLDER
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: $light-grey;
 }

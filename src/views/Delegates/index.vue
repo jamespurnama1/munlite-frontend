@@ -3,26 +3,45 @@
     <div class="delegates-upper">
       <h1 class="title">Delegates</h1>
       <div class="delegates-button">
-        <button @click="showModal">Role Call</button>
-        <button><font-awesome-icon :icon="['fas', 'plus']" /></button>
+        <button class="button" @click="showModal">Role Call</button>
+        <div class="button">
+          <input
+            v-model="newCountry"
+            type="text"
+            placeholder="add country..."
+            :class="{show: showInput == true}"
+          />
+          <font-awesome-icon :icon="['fas', 'plus']" @click="toggleInput"/>
+        </div>
       </div>
     </div>
     <div class="delegates-table">
-      <table class="table">
-        <tr class="title">
-          <td class="title-name">Name
-            <font-awesome-icon class="dropdown-icon" :icon="['fas', 'chevron-down']" />
-          </td>
-          <td>Presence</td>
-        </tr>
-        <tr v-for="(data, index) in delegates" :key="index" class="data">
-          <td class="name">
-            <img :src="require('@/assets/img/' + data.flag)" :alt="data.name" class="img"/>
-            {{data.name}}
-          </td>
-          <td style="width:60%" class="presence">{{data.presence}}</td>
-        </tr>
-      </table>
+      <div class="table">
+        <div class="title">
+          <p class="title-name">Name</p>
+          <p class="title-presence">Presence</p>
+        </div>
+        <div class="content">
+          <div class="table-data">
+            <div v-for="(data, index) in delegates" :key="index" class="data">
+              <p class="name" @mouseover="hoverable = index" @mouseleave="hoverable = null">
+                <img :src="require('@/assets/img/' + data.flag)" :alt="data.name" class="img"/>
+                {{data.name}}
+                <span :class="{show: hoverable == index}">
+                  <font-awesome-icon :icon="['fas', 'trash-alt']" />
+                </span>
+              </p>
+              <p class="presence">{{data.presence}}</p>
+            </div>
+          </div>
+          <div class="info">
+            <div class="info-data" v-for="(value, key) in info" :key="key">
+              <p class="title emphasize">{{ key }}</p>
+              <p class="data"><b class="emphasize">{{ value }}</b> Delegates</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="overlay" v-if="showOverlay"></div>
     <modal v-if="showOverlay"></modal>
@@ -96,12 +115,25 @@ export default {
           presence: 'Not Present',
         },
       ],
+      info: {
+        Present: 6,
+        'Present & Voting': 2,
+        'Total Present': 8,
+        'DR Sponsors': 3,
+      },
       showOverlay: false,
+      hoverable: null,
+      showInput: false,
+      newCountry: '',
     };
   },
   methods: {
     showModal() {
       this.showOverlay = true;
+    },
+    toggleInput() {
+      this.showInput = !this.showInput;
+      this.newCountry = '';
     },
   },
 };
