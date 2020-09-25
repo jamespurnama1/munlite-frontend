@@ -1,25 +1,31 @@
-const getStore = () => cy.window().its('app.$store');
+import store from '../../../src/store/index';
 
-it('has delegates list', () => {
-  getStore()
-    .its('state')
-    .should('have.keys', ['delegates']);
+describe('Read Vuex Store', () => {
+  it('has delegates list', () => {
+    expect(store.state.delegates[0].name).to.equal('Australia');
+  });
 });
 
 describe('Roll Call Modal Test', () => {
   it('Render Modal', () => {
     cy.visit('/rollcall');
     cy.contains('Roll Call').should('be.visible');
-    cy.scrollTo(0, 500);
-    cy.isInViewport('#rollcall');
   });
   it('Proceed to Vote', () => {
-    getStore.delegates.state.forEach(() => {
-      cy.contains('Present').click();
+    store.state.delegates.forEach(() => {
+      cy.get('button').contains('Present').click();
     });
+    cy.contains('Yes').should('be.visible');
+    cy.contains('No').should('be.visible');
+    cy.get('button').should('be.disabled');
   });
   it('Proceed to last modal', () => {
-    cy.get('#yesVote').type(getStore.delegates.state.length);
-    cy.contains('pass').click();
+    cy.get('#select .selection:first-child .input').type('7');
+    cy.get('.input.red').type('4');
+    cy.get('button').contains('Pass').click();
+  });
+  it('Redirects to GSL', () => {
+    cy.wait(1000);
+    cy.url().should('include', '/gsl');
   });
 });

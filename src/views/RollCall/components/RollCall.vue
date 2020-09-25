@@ -3,6 +3,19 @@
       <a id='close'><font-awesome-icon :icon="['fas', 'times']" size="lg" /></a>
       <h2>Roll Call</h2>
       <h3>Countries</h3>
+      <div id='call'>
+      <vue-card-stack
+      :cards="cards"
+      :card-height="250"
+      :card-width="360">
+      <template v-slot:card="{ card }" >
+        <div
+        style="width: 100%; height: 100%; border-radius: 20px"
+        :style="{ background: card.background }">
+        <!-- {{ $store.state.delegates.name }} -->
+        </div>
+      </template>
+    </vue-card-stack>
       <div id='selection'>
         <button @click='counter'>
           <p>Present</p>
@@ -14,14 +27,27 @@
           <p>Not Present</p>
         </button>
       </div>
+    </div>
   </div>
 </template>
 
 <script>
+import VueCardStack from 'vue-card-stack';
+
 export default {
+  components: {
+    VueCardStack,
+  },
   data() {
     return {
       voteCount: 0,
+      cards: [
+        { background: '#00659d' },
+        { background: '#00abbc' },
+        { background: '#e2c58a' },
+        { background: '#fc8890' },
+        { background: '#b35d7f' },
+      ],
     };
   },
   methods: {
