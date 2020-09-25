@@ -1,6 +1,6 @@
 <template>
   <div id='rollcall'>
-      <a id='close'><font-awesome-icon :icon="['fas', 'times']" /></a>
+      <a id='close'><font-awesome-icon :icon="['fas', 'times']" size="lg" /></a>
       <h2>Roll Call</h2>
       <h3>Countries</h3>
     <div id='selection'>

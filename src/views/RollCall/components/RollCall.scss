@@ -1,7 +1,7 @@
 #rollcall {
     display: flex;
     flex-direction: column;
-    width: 55%;
+    width: 40%;
     height: 75%;
     min-width: 200px;
     padding: 3%;
@@ -27,7 +27,13 @@
 
       #notPresent {
         color: white;
-        background-color: #FF5F5F;
+        background-color: $red;
+        border: 1px solid $red;
+        @include transition(ease, 0.3s);
+
+        &:hover {
+          box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
+        }
       }
 
       button {

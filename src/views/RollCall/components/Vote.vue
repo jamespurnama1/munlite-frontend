@@ -1,20 +1,80 @@
 <template>
-  <div id='rollcall'>
-      <a id='close'><font-awesome-icon :icon="['fas', 'times']" /></a>
+  <div id="rollcall">
+      <a id="close"><font-awesome-icon :icon="['fas', 'times']" size="lg" /></a>
       <h2>Roll Call</h2>
       <h3>Voting</h3>
-      <div>
-        <input type="number" v-model='yes'>
-        <h3>Yes</h3>
-        <input type="number" v-model='no'>
-        <h3>No</h3>
+      <div id='info'>
+        <div id="flex">
+          <h3>Present</h3>
+          <div class="delegates">
+            <h2>4</h2><p>&nbsp;delegates</p>
+          </div>
+          <h3>Present &amp; Voting</h3>
+          <div class="delegates">
+            <h2>4</h2><p>&nbsp;delegates</p>
+          </div>
+          <h3>Total Present</h3>
+          <div class="delegates">
+            <h2>4</h2><p>&nbsp;delegates</p>
+          </div>
+        </div>
+        <div class="line" />
+        <div id="grid">
+          <div>
+            <h3>Majority</h3>
+            <div class="delegates">
+              <h2>4</h2><p>&nbsp;delegates</p>
+            </div>
+          </div>
+          <div>
+            <h3>Quorum</h3>
+            <div class="delegates">
+              <h2>4</h2><p>&nbsp;delegates</p>
+            </div>
+          </div>
+          <div>
+            <h3>DR Sponsors</h3>
+            <div class="delegates">
+              <h2>4</h2><p>&nbsp;delegates</p>
+            </div>
+          </div>
+          <div class="center">
+            <h3>Rounding</h3>
+            <font-awesome-icon :icon="['fas', 'arrow-up']" size="lg" />
+          </div>
+        </div>
       </div>
-    <button v-if="vote">
-      <p>Re-run</p>
+      <p>Votes to open the debate</p>
+      <div id="select">
+        <div class="selection">
+          <input class="input blue" type="number" min="0"
+          :max="this.$store.state.delegates.length - this.no"
+          v-model.number="yes">
+          <h2 class="blue">Yes</h2>
+        </div>
+        <div class="selection">
+          <input class="input red" type="number" min="0"
+          :max="this.$store.state.delegates.length - this.yes"
+          v-model.number="no">
+          <h2 class="red">No</h2>
+        </div>
+        <div id="indicator" ref="indicator" />
+      </div>
+      <div id="verdict">
+      <p v-if="left">{{ left }} countries left</p>
+      <p v-else-if="!left">no countries left</p>
+    <button id="rerun"
+    :disabled="this.left !== 0"
+    v-if="vote"
+    @click="$parent.$emit('stage', 1);">
+      Re-run
     </button>
-    <button v-else>
-      <p>Pass</p>
+    <button :disabled="this.left !== 0"
+    v-else
+    @click="$parent.$emit('stage', 3);">
+      Pass
     </button>
+      </div>
   </div>
 </template>
 
@@ -33,11 +93,25 @@ export default {
       }
       return false;
     },
+    left() {
+      return this.$store.state.delegates.length - (this.yes + this.no);
+    },
+  },
+  watch: {
+    vote() {
+      if (this.vote) {
+        this.$refs.indicator.style.cssText = 'opacity: 1; transform: translate(53%); background-color: rgba(255,95,95,0.2);';
+      } else if (!this.vote) {
+        this.$refs.indicator.style.cssText = 'opacity: 1; transform: translate(-53%); background-color: rgba(95,120,255,0.2);';
+      } else if (this.no === 0 && this.yes === 0) {
+        this.$refs.indicator.style.cssText = 'opacity: 0; transform: translate(0); background-color: rgba(255,255,255,0.2);';
+      }
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 @import '@/styles/index.scss';
-@import './RollCall.scss'
+@import './Vote.scss'
 </style>

@@ -1,8 +1,10 @@
 <template>
   <div id='modal'>
-    <RollCall v-if="stage === 1" />
-    <Vote v-else-if="stage === 2" />
-    <Pass v-else-if='stage === 3' />
+    <transition-group tag="tbody" name='fade'>
+      <RollCall :key="1" v-if="stage === 1" />
+      <Vote :key="2" v-else-if="stage === 2" />
+      <Pass :key="3" v-else-if='stage === 3' />
+    </transition-group>
   </div>
 </template>
 
