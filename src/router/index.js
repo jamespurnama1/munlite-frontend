@@ -14,6 +14,11 @@ const routes = [
     name: 'About',
     component: () => import('@/views/About'),
   },
+  {
+    path: '/rollcall',
+    name: 'Roll Call',
+    component: () => import('@/views/RollCall'),
+  },
 ];
 
 const router = new VueRouter({
