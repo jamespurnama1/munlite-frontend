@@ -64,12 +64,18 @@ export default {
       return this.widthWindow > 960 || this.open;
     },
   },
-  mounted() {
-    this.onTabClick();
+  // mounted() {
+  //   this.onTabClick();
+  // },
+  beforeUpdate() {
+    if (!this.open) {
+      this.onTabClick();
+    }
   },
   created() {
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
+    this.onTabClick();
   },
   methods: {
     onTabClick() {

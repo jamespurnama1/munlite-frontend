@@ -55,7 +55,6 @@
         margin-right: 0;
         border: none;
         width: 0;
-        font-size: 18px;
         color: $dark-grey;
         @include transition(linear, 0.3s);
 
@@ -63,6 +62,7 @@
           width: 200px;
           margin-right: 1rem;
           padding-left: 5px;
+          font-size: 18px;
 
           @include max-media(mobile) {
             width: 100px;
