@@ -1,6 +1,8 @@
 <template>
   <div id='rollcall'>
-      <a id='close'><font-awesome-icon :icon="['fas', 'times']" size="lg" /></a>
+      <a @click="$emit('no-modal')" id='close'>
+        <font-awesome-icon :icon="['fas', 'times']" size="lg" />
+      </a>
       <h2>Roll Call</h2>
       <h3>Countries</h3>
       <div id='call'>
@@ -17,13 +19,13 @@
       </template>
     </vue-card-stack>
       <div id='selection'>
-        <button @click='counter'>
+        <button @click="counter(); $store.commit('present')">
           <p>Present</p>
         </button>
-        <button @click='counter'>
+        <button @click="counter(); $store.commit('presentVoting')">
           <p>Present<br>&amp; Voting</p>
         </button>
-        <button @click='counter' id='notPresent'>
+        <button @click="counter" id="notPresent">
           <p>Not Present</p>
         </button>
       </div>

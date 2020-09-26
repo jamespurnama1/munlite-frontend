@@ -1,21 +1,23 @@
 <template>
   <div id="rollcall">
-      <a id="close"><font-awesome-icon :icon="['fas', 'times']" size="lg" /></a>
+      <a @click="$emit('no-modal')" id="close">
+        <font-awesome-icon :icon="['fas', 'times']" size="lg" />
+      </a>
       <h2>Roll Call</h2>
       <h3>Voting</h3>
       <div id='info'>
         <div id="flex">
           <h3>Present</h3>
           <div class="delegates">
-            <h2>4</h2><p>&nbsp;delegates</p>
+            <h2>{{ $store.state.info.Present }}</h2><p>&nbsp;delegates</p>
           </div>
           <h3>Present &amp; Voting</h3>
           <div class="delegates">
-            <h2>4</h2><p>&nbsp;delegates</p>
+            <h2>{{ $store.state.info['Present & Voting'] }}</h2><p>&nbsp;delegates</p>
           </div>
           <h3>Total Present</h3>
           <div class="delegates">
-            <h2>4</h2><p>&nbsp;delegates</p>
+            <h2>{{ $store.state.info['Total Present'] }}</h2><p>&nbsp;delegates</p>
           </div>
         </div>
         <div class="line" />
@@ -35,7 +37,7 @@
           <div>
             <h3>DR Sponsors</h3>
             <div class="delegates">
-              <h2>4</h2><p>&nbsp;delegates</p>
+              <h2>{{ $store.state.info['DR Sponsors'] }}</h2><p>&nbsp;delegates</p>
             </div>
           </div>
           <div class="center">
@@ -98,7 +100,7 @@ export default {
     },
   },
   watch: {
-    vote() {
+    left() {
       if (this.vote) {
         this.$refs.indicator.style.cssText = 'opacity: 1; transform: translate(53%); background-color: rgba(255,95,95,0.2);';
       } else if (!this.vote) {

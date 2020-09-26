@@ -62,11 +62,23 @@ export default new Vuex.Store({
         presence: 'Not Present',
       },
     ],
+    info: {
+      Present: 0,
+      'Present & Voting': 0,
+      'Total Present': 0,
+      'DR Sponsors': 3,
+    },
   },
   mutations: {
+    present(state) {
+      state.info.Present += 1;
+      state.info['Total Present'] += 1;
+    },
+    presentVoting(state) {
+      state.info['Present & Voting'] += 1;
+      state.info['Total Present'] += 1;
+    },
   },
-  actions: {
-  },
-  modules: {
-  },
+  actions: {},
+  modules: {},
 });

@@ -1,11 +1,15 @@
 <template>
   <div id='rollcall'>
-      <a id='close'><font-awesome-icon :icon="['fas', 'times']" size="lg" /></a>
-      <h1>The Motion Passes!</h1>
-      <h3>The debate is now open.</h3>
-    <button>
-      Speakers List ({{ countdown }})
-    </button>
+    <a @click="$emit('no-modal')" id='close'>
+      <font-awesome-icon :icon="['fas', 'times']" size="lg" />
+    </a>
+    <h1>The Motion Passes!</h1>
+    <h3>The debate is now open.</h3>
+    <router-link to="/gsl">
+      <button>
+        Speakers List ({{ countdown }})
+      </button>
+    </router-link>
   </div>
 </template>
 
@@ -19,15 +23,21 @@ export default {
   methods: {
     countdownTimer() {
       if (this.countdown > 0) {
-        setTimeout(() => {
+        const cd = setTimeout(() => {
           this.countdown -= 1;
           this.countdownTimer();
         }, 1000);
+        this.$on('clear', () => {
+          clearTimeout(cd);
+        });
       }
     },
   },
   created() {
     this.countdownTimer();
+  },
+  beforeDestroyed() {
+    this.$emit('clear');
   },
   watch: {
     countdown() {

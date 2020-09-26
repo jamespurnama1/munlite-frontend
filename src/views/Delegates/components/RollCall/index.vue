@@ -1,8 +1,8 @@
 <template>
   <div id='modal'>
-      <RollCall :key="1" v-if="stage === 1" />
-      <Vote :key="2" v-else-if="stage === 2" />
-      <Pass :key="3" v-else-if='stage === 3' />
+      <RollCall v-on="$listeners" :key="1" v-if="stage === 1" />
+      <Vote v-on="$listeners" :key="2" v-else-if="stage === 2" />
+      <Pass v-on="$listeners" :key="3" v-else-if='stage === 3' />
   </div>
 </template>
 
