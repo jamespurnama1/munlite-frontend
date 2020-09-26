@@ -12,7 +12,7 @@
 .nav {
   display: flex;
   flex-direction: row;
-  padding: 10px 2rem;
+  padding: 15px 2rem;
   justify-content: flex-start;
   position: relative;
 
@@ -20,11 +20,16 @@
     justify-content: space-between;
   }
 
+  @include max-media(mobile) {
+    padding: 15px 5%;
+  }
+
   &Logo {
     img {
       width: 25%;
       max-width: 100%;
-      min-width: 65px;
+      min-width: 45px;
+      cursor: pointer;
     }
   }
 
@@ -39,6 +44,7 @@
 
       &.toggle {
         opacity: 1;
+        z-index: 5;
       }
 
       margin-right: 0;
@@ -55,7 +61,7 @@
       -moz-transition: .3s ease-in-out;
       -o-transition: .3s ease-in-out;
       transition: .3s ease-in-out;
-      z-index: 5;
+      z-index: -1;
     }
   }
 
@@ -64,7 +70,7 @@
     flex-direction: row;
     position: relative;
     align-items: center;
-    margin-left: 1rem;
+    margin-left: .5rem;
 
     a {
       font-size: 1rem;
@@ -180,7 +186,7 @@
   }
 
   span:nth-child(1) {
-    top: 17px;
+    top: 10px;
     -webkit-transform-origin: left center;
     -moz-transform-origin: left center;
     -o-transform-origin: left center;
@@ -188,7 +194,7 @@
   }
   
   span:nth-child(2) {
-    top: 25px;
+    top: 18px;
     -webkit-transform-origin: left center;
     -moz-transform-origin: left center;
     -o-transform-origin: left center;
@@ -196,7 +202,7 @@
   }
   
   span:nth-child(3) {
-    top: 33px;
+    top: 26px;
     -webkit-transform-origin: left center;
     -moz-transform-origin: left center;
     -o-transform-origin: left center;
@@ -220,11 +226,11 @@
     -moz-transform: rotate(-45deg);
     -o-transform: rotate(-45deg);
     transform: rotate(-45deg);
-    top: 35px;
+    top: 27px;
   }
 }
 
-.overlay {
+.overlay-nav {
   position: fixed;
   width: 100%;
   height: 100%;
