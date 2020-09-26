@@ -3,7 +3,7 @@
     <div class="delegates-upper">
       <h1 class="title">Delegates</h1>
       <div class="delegates-button">
-        <button class="button" @click="showModal">Role Call</button>
+        <button class="button" @click="showModal">Roll Call</button>
         <div class="button">
           <input
             v-model="newCountry"

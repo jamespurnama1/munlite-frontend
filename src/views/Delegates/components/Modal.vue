@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <h1>Role Call</h1>
+    <h1>Roll Call</h1>
   </div>
 </template>
 

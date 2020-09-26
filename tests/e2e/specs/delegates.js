@@ -3,7 +3,7 @@ describe('Landing Page Test', () => {
     cy.visit('/delegates');
 
     cy.contains('h1', 'Delegates');
-    cy.contains('button', 'Role Call');
+    cy.contains('button', 'Roll Call');
     cy.get('div[class="button"]').click();
     cy.get('input').should('exist');
 

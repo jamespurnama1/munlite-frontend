@@ -64,9 +64,6 @@ export default {
       return this.widthWindow > 960 || this.open;
     },
   },
-  // mounted() {
-  //   this.onTabClick();
-  // },
   beforeUpdate() {
     if (!this.open) {
       this.onTabClick();
