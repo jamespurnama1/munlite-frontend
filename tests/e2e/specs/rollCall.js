@@ -8,8 +8,11 @@ describe('Read Vuex Store', () => {
 
 describe('Roll Call Modal Test', () => {
   it('Render Modal', () => {
-    cy.visit('/rollcall');
-    cy.contains('Roll Call').should('be.visible');
+    cy.visit('/delegates');
+    cy.get('button')
+      .contains('Roll Call')
+      .click();
+    cy.contains('h2', 'Roll Call').should('be.visible');
   });
   it('Proceed to Vote', () => {
     store.state.delegates.forEach(() => {
