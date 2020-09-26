@@ -3,7 +3,6 @@
   flex-direction: row;
   padding: 3%;
   font-family: 'Montserrat', sans-serif;
-  margin-bottom: 2rem;
 
   @include max-media(mobile){
     flex-direction: column;
@@ -70,7 +69,9 @@
     }
 
     @include max-media(mobile){
-      width: 90%;
+      padding-left: 0;
+      width: 85%;
+      margin: auto;
     }
 
     .chair,
@@ -94,19 +95,36 @@
       flex-wrap: wrap;
 
       &-data {
-        margin-right: 2.5rem;
+        margin-right: 1rem;
         margin-bottom: 1rem;
         display: flex;
         flex-direction: row;
         align-items: center;
+        width: 100%;
+
+        @include min-media(tablet){
+          width: 45%;
+        }
       }
     }
 
     .chair {
       margin-bottom: 2rem;
 
+      &-list {
+        max-height: 35vh;
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+
+        @include max-media(tablet){
+          max-height: 340px;
+        }
+      }
+
       &-img {
         width: 45px;
+        min-width: 45px;
         height: 45px;
         background-color: lightgray;
         border: none;
@@ -137,7 +155,11 @@
     }
 
     .rules {
-      flex-direction: column;
+      flex-direction: row;
+
+      @include max-media(tablet){
+        flex-direction: column;
+      }
 
       &-val {
         font-size: 12px;
@@ -152,7 +174,7 @@
         font-weight: bold;
         font-size: 18px;
         margin-right: 1rem;
-        width: 8rem;
+        width: 5.5rem;
 
         @include max-media(tablet){
           width: 6rem;
