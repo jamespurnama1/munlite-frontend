@@ -5,46 +5,14 @@
       </a>
       <h2>Roll Call</h2>
       <h3>Voting</h3>
-      <div id='info'>
-        <div id="flex">
-          <h3>Present</h3>
-          <div class="delegates">
-            <h2>{{ $store.state.info.Present }}</h2><p>&nbsp;delegates</p>
-          </div>
-          <h3>Present &amp; Voting</h3>
-          <div class="delegates">
-            <h2>{{ $store.state.info['Present & Voting'] }}</h2><p>&nbsp;delegates</p>
-          </div>
-          <h3>Total Present</h3>
-          <div class="delegates">
-            <h2>{{ $store.state.info['Total Present'] }}</h2><p>&nbsp;delegates</p>
-          </div>
-        </div>
+      <p v-if="$store.state.widthWindow < 600">Swipe to view more</p>
+      <div class='info' v-if="$store.state.widthWindow > 600">
+        <PresenceInfo />
         <div class="line" />
-        <div id="grid">
-          <div>
-            <h3>Majority</h3>
-            <div class="delegates">
-              <h2>4</h2><p>&nbsp;delegates</p>
-            </div>
-          </div>
-          <div>
-            <h3>Quorum</h3>
-            <div class="delegates">
-              <h2>4</h2><p>&nbsp;delegates</p>
-            </div>
-          </div>
-          <div>
-            <h3>DR Sponsors</h3>
-            <div class="delegates">
-              <h2>{{ $store.state.info['DR Sponsors'] }}</h2><p>&nbsp;delegates</p>
-            </div>
-          </div>
-          <div class="center">
-            <h3>Rounding</h3>
-            <font-awesome-icon :icon="['fas', 'arrow-up']" size="lg" />
-          </div>
-        </div>
+        <OtherInfo />
+      </div>
+      <div class='info' v-else>
+        <carousel :data="infoSlide" :controls="false" indicators="hover" />
       </div>
       <p>Votes to open the debate</p>
       <div id="select">
@@ -81,11 +49,22 @@
 </template>
 
 <script>
+import PresenceInfo from './PresenceInfo.vue';
+import OtherInfo from './OtherInfo.vue';
+
 export default {
+  components: {
+    PresenceInfo,
+    OtherInfo,
+  },
   data() {
     return {
       yes: 0,
       no: 0,
+      infoSlide: [
+        PresenceInfo,
+        OtherInfo,
+      ],
     };
   },
   computed: {
@@ -101,12 +80,12 @@ export default {
   },
   watch: {
     left() {
-      if (this.vote) {
-        this.$refs.indicator.style.cssText = 'opacity: 1; transform: translate(53%); background-color: rgba(255,95,95,0.2);';
-      } else if (!this.vote) {
-        this.$refs.indicator.style.cssText = 'opacity: 1; transform: translate(-53%); background-color: rgba(95,120,255,0.2);';
-      } else if (this.no === 0 && this.yes === 0) {
-        this.$refs.indicator.style.cssText = 'opacity: 0; transform: translate(0); background-color: rgba(255,255,255,0.2);';
+      if (this.vote && this.no !== this.yes) {
+        this.$refs.indicator.style.cssText = 'opacity: 1; left: 55%; background-color: rgba(255,95,95,0.2);';
+      } else if (!this.vote && this.no !== this.yes) {
+        this.$refs.indicator.style.cssText = 'opacity: 1; left: 5%; background-color: rgba(95,120,255,0.2);';
+      } else if (this.no === this.yes) {
+        this.$refs.indicator.style.cssText = 'opacity: 0; left: 30%; background-color: rgba(255,255,255,0.2);';
       }
     },
   },

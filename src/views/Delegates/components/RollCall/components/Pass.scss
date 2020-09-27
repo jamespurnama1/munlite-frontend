@@ -3,13 +3,17 @@
     flex-direction: column;
     width: 40%;
     height: 15%;
-    min-width: 200px;
+    min-width: 300px;
     padding: 3%;
     background-color: white;
     border-radius: 20px;
     -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
     -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
     box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+
+    @include max-media (tablet) {
+      height: 20%;
+    }
 
     #close {
       position: absolute;
@@ -20,16 +24,25 @@
     h1 {
       margin: 0 auto;
       color: $blue;
+      text-align: center;
+
+      @include max-media (tablet) {
+      margin-top: 5%;
+      }
+
+      @include max-media (small-tablet) {
+      margin-top: 0%;
+      }
     }
 
     h3 {
       margin: 0 auto;
       font-weight: normal;
+      text-align: center;
     }
 
     a:not(#close) {
       margin: auto auto 0 auto;
-      width: 30%;
 
       button {
         border-radius: 10px;

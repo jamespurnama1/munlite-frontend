@@ -68,6 +68,7 @@ export default new Vuex.Store({
       'Total Present': 0,
       'DR Sponsors': 3,
     },
+    widthWindow: 0,
   },
   mutations: {
     present(state) {
@@ -77,6 +78,9 @@ export default new Vuex.Store({
     presentVoting(state) {
       state.info['Present & Voting'] += 1;
       state.info['Total Present'] += 1;
+    },
+    getWidth(state, i) {
+      state.widthWindow = i;
     },
   },
   actions: {},

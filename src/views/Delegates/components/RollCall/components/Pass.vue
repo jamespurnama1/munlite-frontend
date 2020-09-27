@@ -42,7 +42,7 @@ export default {
   watch: {
     countdown() {
       if (this.countdown === 0) {
-        this.$router.push('/gsl');
+        // this.$router.push('/gsl');
       }
     },
   },
