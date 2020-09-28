@@ -1,0 +1,99 @@
+.card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 1%;
+  width: 22vw;
+  height: 13vw;
+  background-color: white;
+  border: 1px solid $light-grey;
+  border-radius: 20px;
+  -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+  -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+
+  &:first-child {
+    margin-top: 50%;
+  }
+
+  &:last-child {
+    margin-bottom: 50%;
+  }
+
+  &.min {
+
+    .desc {
+      position: relative;
+      align-self: flex-start;
+      z-index: 2;
+      color: white;
+    }
+
+    .country {
+      top: -10%;
+      transform: translate(-50%, 0) scale(0.3);
+
+      // img {
+      //   height: 2rem;
+      // }
+
+      // h1 {
+      //   font-size: 1.5rem;
+      // }
+    }
+  }
+  .progress {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: $blue;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    @include transition(1s, ease);
+  }
+
+  .country {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    height: 5rem;
+    z-index: 2;
+    @include transition(.5s, ease);
+
+    img {
+      width: auto;
+      height: 5rem;
+      margin-right: 5px;
+      // @include transition(.5s, ease);
+    }
+    
+    h1 {
+      color: white;
+      font-size: 4rem;
+      margin-left: 5px;
+      // @include transition(.5s, ease);
+    }
+  }
+  .desc {
+    position: relative;
+    left: 3%;
+    align-self: flex-start;
+    z-index: 2;
+    color: white;
+  }
+
+  .time {
+    position: relative;
+    right: 3%;
+    align-self: flex-start;
+    color: white;
+    z-index: 2;
+  }
+
+}

@@ -19,7 +19,10 @@
 
     #call {
       display: flex;
-      margin: auto;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
 
       #selection {
         display: flex;
@@ -87,6 +90,27 @@
           &:focus {
             outline: none;
           }
+        }
+      }
+    }
+
+    .cardList {
+      // display: flex;
+      // flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr 250px;
+      grid-template-rows: 1fr;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      height: 100%;
+
+      .cardWrapper {
+        position: sticky;
+        top: 0.75em;
+        transform-origin: center top;
+
+        &~.cardWrapper {
+          transform: translateY(-50%);
         }
       }
     }

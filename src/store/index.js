@@ -8,56 +8,67 @@ export default new Vuex.Store({
     delegates: [
       {
         id: 'au',
+        short: 'AUS',
         name: 'Australia',
         presence: 'Not Present',
       },
       {
         id: 'be',
+        short: 'BEL',
         name: 'Belgium',
         presence: 'Not Present',
       },
       {
         id: 'cn',
+        short: 'CHN',
         name: 'China',
         presence: 'Not Present',
       },
       {
         id: 'eg',
+        short: 'EGY',
         name: 'Egypt',
         presence: 'Not Present',
       },
       {
         id: 'hk',
+        short: 'HKG',
         name: 'Hong Kong',
         presence: 'Not Present',
       },
       {
         id: 'in',
+        short: 'IND',
         name: 'India',
         presence: 'Not Present',
       },
       {
         id: 'jp',
+        short: 'JPN',
         name: 'Japan',
         presence: 'Not Present',
       },
       {
         id: 'lr',
+        short: 'LBR',
         name: 'Liberia',
         presence: 'Not Present',
       },
       {
         id: 'nz',
+        short: 'NZL',
         name: 'New Zealand',
         presence: 'Not Present',
       },
       {
         id: 'th',
+        short: 'THA',
         name: 'Thailand',
         presence: 'Not Present',
       },
       {
         id: 'us',
+        short: 'USA',
         name: 'United States of America',
         presence: 'Not Present',
       },

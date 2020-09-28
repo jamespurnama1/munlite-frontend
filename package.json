@@ -16,6 +16,7 @@
     "@sentry/browser": "^5.24.2",
     "@sentry/integrations": "^5.24.2",
     "@sentry/tracing": "^5.24.2",
+    "codyhouse-framework": "^2.8.0",
     "core-js": "^3.6.5",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.12",

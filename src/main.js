@@ -8,12 +8,14 @@ import VueCarousel from '@chenfengyuan/vue-carousel';
 import * as Sentry from '@sentry/browser';
 import { Vue as VueIntegration } from '@sentry/integrations';
 import { Integrations } from '@sentry/tracing';
+// import codyHouse from 'codyhouse-framework/main/assets/js/util';
 
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
 import store from './store';
 
+// Vue.use(codyHouse);
 Vue.use(VueCarousel);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 library.add(fas);

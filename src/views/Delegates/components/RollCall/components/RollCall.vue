@@ -1,23 +1,22 @@
 <template>
   <div id='rollcall'>
-      <a @click="$emit('no-modal')" id='close'>
-        <font-awesome-icon :icon="['fas', 'times']" size="lg" />
-      </a>
-      <h2>Roll Call</h2>
-      <h3>Countries</h3>
-      <div id='call'>
-      <vue-card-stack
-      :cards="cards"
-      :card-height="250"
-      :card-width="360">
-      <template v-slot:card="{ card }" >
-        <div
-        style="width: 100%; height: 100%; border-radius: 20px"
-        :style="{ background: card.background }">
-        <!-- {{ $store.state.delegates.name }} -->
+    <a @click="$emit('no-modal')" id='close'>
+      <font-awesome-icon :icon="['fas', 'times']" size="lg" />
+    </a>
+    <h2>Roll Call</h2>
+    <h3>Countries</h3>
+    <div id='call'>
+      <!-- <div class="cardList">
+        <div v-for="(del, i) in $store.state.delegates" :key="i" class="cardWrapper">
+          <Card
+          :country="del.id"
+          :desc="del.presence"
+          :minimized="true"
+          :progress="100"
+          :time='60' />
         </div>
-      </template>
-    </vue-card-stack>
+      </div> -->
+      <CardStack :voteCount="voteCount" />
       <div id='selection'>
         <button @click="counter(); $store.commit('present')">
           <p>Present</p>
@@ -34,12 +33,15 @@
 </template>
 
 <script>
-import VueCardStack from 'vue-card-stack';
+import CardStack from '@/components/CardStack/index.vue';
 
 export default {
   components: {
-    VueCardStack,
+    CardStack,
   },
+  mixins: [
+    // CardAnim,
+  ],
   data() {
     return {
       voteCount: 0,
