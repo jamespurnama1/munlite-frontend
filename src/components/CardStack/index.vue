@@ -15,6 +15,8 @@
 </template>
 
 <script>
+// import { gsap } from 'gsap';
+// import { ScrollScene } from 'scrollscene';
 import Card from '@/components/Card/index.vue';
 
 export default {
@@ -32,11 +34,11 @@ export default {
     };
   },
   mounted() {
-    const frontEnd = document.createElement('script');
-    frontEnd.setAttribute('src', './stacking-cards.js');
-    frontEnd.setAttribute('id', 'stack-cards-js');
+    // const frontEnd = document.createElement('script');
+    // frontEnd.setAttribute('src', './stacking-cards.js');
+    // frontEnd.setAttribute('id', 'stack-cards-js');
 
-    document.body.appendChild(frontEnd);
+    // document.body.appendChild(frontEnd);
 
     this.card = document.getElementsByClassName('stack-cards__item');
     this.card[this.voteCount].classList.add('active');
@@ -54,7 +56,7 @@ export default {
     },
   },
   destroyed() {
-    document.getElementById('stack-cards-js').remove();
+    // document.getElementById('stack-cards-js').remove();
   },
   created() {
   },

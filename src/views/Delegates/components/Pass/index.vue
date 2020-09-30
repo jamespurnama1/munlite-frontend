@@ -1,6 +1,6 @@
 <template>
   <div id='rollcall'>
-    <a @click="$emit('no-modal')" id='close'>
+    <a @click="$parent.$emit('stage', 0)" id='close'>
       <font-awesome-icon :icon="['fas', 'times']" size="lg" />
     </a>
     <h1>The Motion Passes!</h1>
@@ -42,7 +42,7 @@ export default {
   watch: {
     countdown() {
       if (this.countdown === 0) {
-        // this.$router.push('/gsl');
+        this.$router.push('/gsl');
       }
     },
   },
@@ -51,5 +51,5 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/index.scss';
-@import './Pass.scss'
+@import './index.scss'
 </style>

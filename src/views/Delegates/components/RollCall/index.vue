@@ -1,41 +1,75 @@
 <template>
-  <div id='modal'>
-      <RollCall v-on="$listeners" :key="1" v-if="stage === 1" />
-      <Vote v-on="$listeners" :key="2" v-else-if="stage === 2" />
-      <Pass v-on="$listeners" :key="3" v-else-if='stage === 3' />
+  <div id='rollcall'>
+    <a @click="$parent.$emit('no-modal-warn')" id='close'>
+      <font-awesome-icon :icon="['fas', 'times']" size="lg" />
+    </a>
+    <h2>Roll Call</h2>
+    <h3>Countries</h3>
+    <div id='call'>
+      <!-- <div class="cardList">
+        <div v-for="(del, i) in $store.state.delegates" :key="i" class="cardWrapper">
+          <Card
+          :country="del.id"
+          :desc="del.presence"
+          :minimized="true"
+          :progress="100"
+          :time='60' />
+        </div>
+      </div> -->
+      <CardStack :voteCount="voteCount" />
+      <div id='selection'>
+        <button @click="counter(); $store.commit('present')">
+          <p>Present</p>
+        </button>
+        <button @click="counter(); $store.commit('presentVoting')">
+          <p>Present<br>&amp; Voting</p>
+        </button>
+        <button @click="counter" id="notPresent">
+          <p>Not Present</p>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import RollCall from './components/RollCall.vue';
-import Vote from './components/Vote.vue';
-import Pass from './components/Pass.vue';
+import CardStack from '@/components/CardStack/index.vue';
 
 export default {
-  name: 'RollCallModal',
   components: {
-    RollCall,
-    Vote,
-    Pass,
+    CardStack,
   },
+  mixins: [
+    // CardAnim,
+  ],
   data() {
     return {
-      stage: 1,
+      voteCount: 0,
+      cards: [
+        { background: '#00659d' },
+        { background: '#00abbc' },
+        { background: '#e2c58a' },
+        { background: '#fc8890' },
+        { background: '#b35d7f' },
+      ],
     };
   },
-  mounted() {
-    this.$on('stage', (i) => {
-      this.stage = i;
-    });
-    document.querySelector('body').style.cssText = 'height: 100vh; width: 100vw; overflow: hidden;';
+  methods: {
+    counter() {
+      this.voteCount += 1;
+    },
   },
-  destroyed() {
-    document.querySelector('body').removeAttributes('height', 'width', 'overflow');
+  watch: {
+    voteCount() {
+      if (this.voteCount === this.$store.state.delegates.length) {
+        this.$parent.$emit('stage', 2);
+      }
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 @import '@/styles/index.scss';
-@import './index.scss';
+@import './index.scss'
 </style>

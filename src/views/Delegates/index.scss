@@ -257,15 +257,21 @@
     }
   }
 
-  .overlay {
+  .rollcall {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 2;
-    background-color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
     @include transition(ease, 0.5s);
+  }
+
+  .overlay {
+    z-index: 2;
   }
 }
 

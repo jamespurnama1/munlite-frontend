@@ -1,10 +1,8 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import Vue from 'vue';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import VueCarousel from '@chenfengyuan/vue-carousel';
 import * as Sentry from '@sentry/browser';
 import { Vue as VueIntegration } from '@sentry/integrations';
 import { Integrations } from '@sentry/tracing';
@@ -15,8 +13,7 @@ import './registerServiceWorker';
 import router from './router';
 import store from './store';
 
-Vue.use(VueCarousel)
-  .use(Vue2TouchEvents)
+Vue.use(Vue2TouchEvents)
   .component('font-awesome-icon', FontAwesomeIcon);
 
 library.add(fas);

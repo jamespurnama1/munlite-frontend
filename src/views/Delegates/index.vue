@@ -44,19 +44,35 @@
       </div>
     </div>
     <transition name="scale">
-      <RollCall @no-modal="hideModal" v-if="showOverlay"></RollCall>
+      <div class="rollcall" v-if="showOverlay">
+        <transition name="scale">
+          <Warning :key="0" v-if='warning'
+          title="Are You Sure?"
+          desc="This will discard all current roll call &amp; voting progress." />
+        </transition>
+        <div class="overlay" v-if="warning" />
+        <RollCall :key="1" v-if="stage === 1" />
+        <Vote :key="2" v-else-if="stage === 2" />
+        <Pass :key="3" v-else-if='stage === 3' />
+      </div>
     </transition>
     <div class="overlay" v-if="showOverlay" />
   </div>
 </template>
 
 <script>
+import Warning from '@/components/Warning/index.vue';
 import RollCall from './components/RollCall/index.vue';
+import Vote from './components/Vote/index.vue';
+import Pass from './components/Pass/index.vue';
 
 export default {
   name: 'Delegates',
   components: {
     RollCall,
+    Warning,
+    Vote,
+    Pass,
   },
   data() {
     return {
@@ -64,19 +80,51 @@ export default {
       hoverable: null,
       showInput: false,
       newCountry: '',
+      warning: false,
+      stage: 0,
     };
   },
   methods: {
     showModal() {
+      this.$store.commit('reset');
       this.showOverlay = true;
-    },
-    hideModal() {
-      this.showOverlay = false;
+      this.stage = 1;
     },
     toggleInput() {
       this.showInput = !this.showInput;
       this.newCountry = '';
     },
+  },
+  watch: {
+    stage() {
+      if (this.stage > 0) {
+        document.querySelector('body').style.cssText = 'height: 100vh; width: 100vw; overflow: hidden;';
+      } else if (this.stage === 0) {
+        document.querySelector('body').removeAttributes('height', 'width', 'overflow');
+      }
+    },
+    warning() {
+      if (this.warning === 'discard') {
+        this.stage = 0;
+        this.showOverlay = false;
+        this.warning = false;
+        this.$store.commit('reset');
+      }
+    },
+  },
+  mounted() {
+    this.$on('stage', (i) => {
+      if (i === 0) {
+        this.showOverlay = false;
+      }
+      this.stage = i;
+    });
+    this.$on('no-modal-warn', () => {
+      this.warning = true;
+    });
+    this.$on('confirm', (i) => {
+      this.warning = i;
+    });
   },
 };
 </script>

@@ -93,6 +93,11 @@ export default new Vuex.Store({
     getWidth(state, i) {
       state.widthWindow = i;
     },
+    reset(state) {
+      state.info.Present = 0;
+      state.info['Present & Voting'] = 0;
+      state.info['Total Present'] = 0;
+    },
   },
   actions: {},
   modules: {},

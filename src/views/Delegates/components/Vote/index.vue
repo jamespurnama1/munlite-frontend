@@ -1,6 +1,6 @@
 <template>
   <div id="rollcall">
-      <a @click="$emit('no-modal')" id="close">
+      <a @click="$emit('no-modal-warn')" id="close">
         <font-awesome-icon :icon="['fas', 'times']" size="lg" />
       </a>
       <h2>Roll Call</h2>
@@ -12,7 +12,6 @@
         <OtherInfo />
       </div>
       <div class="info" v-else>
-        <!-- <carousel :data="infoSlide" :controls="false" indicators="hover" /> -->
         <PresenceInfo class="swipe active" v-touch:swipe="swipeHandler" />
         <OtherInfo class="swipe" v-touch:swipe="swipeHandler" />
       </div>
@@ -52,8 +51,8 @@
 
 <script>
 import { gsap } from 'gsap';
-import PresenceInfo from './PresenceInfo.vue';
-import OtherInfo from './OtherInfo.vue';
+import PresenceInfo from './components/PresenceInfo.vue';
+import OtherInfo from './components/OtherInfo.vue';
 
 export default {
   components: {
@@ -64,10 +63,6 @@ export default {
     return {
       yes: 0,
       no: 0,
-      // infoSlide: [
-      //   PresenceInfo,
-      //   OtherInfo,
-      // ],
     };
   },
   computed: {
@@ -132,5 +127,5 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/index.scss';
-@import './Vote.scss'
+@import './index.scss'
 </style>
