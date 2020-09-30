@@ -10,8 +10,6 @@
       :minimized="true"
       :progress="100" />
     </li>
-    <!-- <li class="stackedcards--animatable stackedcards-overlay right">Swipe RIGHT</li>
-    <li class="stackedcards--animatable stackedcards-overlay left">Swipe LEFT</li> -->
   </ul>
 </div>
 </template>
@@ -44,47 +42,8 @@ export default {
     this.card[this.voteCount].classList.add('active');
     this.active = document.querySelector('.active');
     this.topPos = this.active.offsetTop;
-
-    // this.obj = document.querySelector('.stack-cards');
-    // this.stackedCardsObj = this.obj.querySelector('.stack-cards__item');
-    // this.listElNodesObj = this.stackedCardsObj.children;
-    // this.rightObj = this.obj.querySelector('.stackedcards-overlay.right');
-    // this.leftObj = this.obj.querySelector('.stackedcards-overlay.left');
-    // this.listElNodesWidth = this.stackedCardsObj.offsetWidth;
-    // eslint-disable-next-line prefer-destructuring
-    // this.currentElementObj = this.listElNodesObj[0];
-    // setInterval(() => {
-    //   document.querySelector('.stackOverflow').scrollTop = this.topPos;
-    // }, 1000);
   },
   methods: {
-    // gestureStart(evt) {
-    //   this.startTime = new Date().getTime();
-
-    //   this.startX = evt.changedTouches[0].clientX;
-    //   this.startY = evt.changedTouches[0].clientY;
-
-    //   this.currentX = this.startX;
-    //   this.currentY = this.startY;
-
-    //   this.touchingElement = true;
-    // },
-    // gestureMove(evt) {
-    //   this.currentX = evt.changedTouches[0].pageX;
-    //   this.currentY = evt.changedTouches[0].pageY;
-
-    //   this.translateX = this.currentX - this.startX;
-    //   this.translateY = this.currentY - this.startY;
-    // },
-    // gestureEnd() {
-    //   if (!this.touchingElement) {
-    //     return;
-    //   }
-    //   this.translateX = this.currentX - this.startX;
-    //   this.translateY = this.currentY - this.startY;
-    //   this.timeTaken = new Date().getTime() - this.startTime;
-    //   this.touchingElement = false;
-    // },
   },
   watch: {
     voteCount() {
@@ -98,9 +57,6 @@ export default {
     document.getElementById('stack-cards-js').remove();
   },
   created() {
-    // this.obj.addEventListener('touchstart', this.gestureStart, false);
-    // this.obj.addEventListener('touchmove', this.gestureMove, false);
-    // this.obj.addEventListener('touchend', this.gestureEnd, false);
   },
 };
 </script>

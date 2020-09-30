@@ -8,16 +8,17 @@ import VueCarousel from '@chenfengyuan/vue-carousel';
 import * as Sentry from '@sentry/browser';
 import { Vue as VueIntegration } from '@sentry/integrations';
 import { Integrations } from '@sentry/tracing';
-// import codyHouse from 'codyhouse-framework/main/assets/js/util';
+import Vue2TouchEvents from 'vue2-touch-events';
 
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
 import store from './store';
 
-// Vue.use(codyHouse);
-Vue.use(VueCarousel);
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.use(VueCarousel)
+  .use(Vue2TouchEvents)
+  .component('font-awesome-icon', FontAwesomeIcon);
+
 library.add(fas);
 
 Sentry.init({

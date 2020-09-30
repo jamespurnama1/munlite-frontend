@@ -39,12 +39,17 @@
       margin: 10% 0;
 
       @include max-media (mobile) {
+          position: relative;
           margin: 3%;
           height: 30%;
+          width: 100%;
+          justify-content: flex-start;
+          overflow: hidden;
         }
 
-      .carousel {
-        width: 100%;
+      .swipe {
+        // position: absolute;
+        min-width: 100%;
       }
 
       .line {

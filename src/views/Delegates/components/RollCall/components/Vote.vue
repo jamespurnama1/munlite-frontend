@@ -6,13 +6,15 @@
       <h2>Roll Call</h2>
       <h3>Voting</h3>
       <p v-if="$store.state.widthWindow < 600">Swipe to view more</p>
-      <div class='info' v-if="$store.state.widthWindow > 600">
+      <div class="info" v-if="$store.state.widthWindow > 600">
         <PresenceInfo />
         <div class="line" />
         <OtherInfo />
       </div>
-      <div class='info' v-else>
-        <carousel :data="infoSlide" :controls="false" indicators="hover" />
+      <div class="info" v-else>
+        <!-- <carousel :data="infoSlide" :controls="false" indicators="hover" /> -->
+        <PresenceInfo class="swipe active" v-touch:swipe="swipeHandler" />
+        <OtherInfo class="swipe" v-touch:swipe="swipeHandler" />
       </div>
       <p>Votes to open the debate</p>
       <div id="select">
@@ -49,6 +51,7 @@
 </template>
 
 <script>
+import { gsap } from 'gsap';
 import PresenceInfo from './PresenceInfo.vue';
 import OtherInfo from './OtherInfo.vue';
 
@@ -61,10 +64,10 @@ export default {
     return {
       yes: 0,
       no: 0,
-      infoSlide: [
-        PresenceInfo,
-        OtherInfo,
-      ],
+      // infoSlide: [
+      //   PresenceInfo,
+      //   OtherInfo,
+      // ],
     };
   },
   computed: {
@@ -76,6 +79,41 @@ export default {
     },
     left() {
       return this.$store.state.delegates.length - (this.yes + this.no);
+    },
+  },
+  methods: {
+    swipeHandler(direction) {
+      const swipe = document.querySelector('.swipe:first-child');
+      const swipe2 = document.querySelector('.swipe:last-child');
+      if (direction === 'left') {
+        if (swipe2.classList.contains('active')) {
+          gsap.set(swipe, {
+            x: '100%',
+          });
+        } else {
+          gsap.set(swipe2, {
+            x: '0',
+          });
+        }
+        gsap.to('.swipe', {
+          x: '-=100%',
+        });
+      } else if (direction === 'right') {
+        if (swipe2.classList.contains('active')) {
+          gsap.set(swipe, {
+            x: '-100%',
+          });
+        } else {
+          gsap.set(swipe2, {
+            x: '-200%',
+          });
+        }
+        gsap.to('.swipe', {
+          x: '+=100%',
+        });
+      }
+      swipe.classList.toggle('active');
+      swipe2.classList.toggle('active');
     },
   },
   watch: {
