@@ -8,21 +8,21 @@
       :country="del.id"
       :desc="del.presence"
       :minimized="true"
-      :progress="100" />
+      :progress="100"
+      :progressColor="color" />
     </li>
   </ul>
 </div>
 </template>
 
 <script>
-// import { gsap } from 'gsap';
-// import { ScrollScene } from 'scrollscene';
 import Card from '@/components/Card/index.vue';
 
 export default {
   name: 'CardStack',
   props: {
     voteCount: Number,
+    color: String,
   },
   components: {
     Card,
@@ -34,31 +34,20 @@ export default {
     };
   },
   mounted() {
-    // const frontEnd = document.createElement('script');
-    // frontEnd.setAttribute('src', './stacking-cards.js');
-    // frontEnd.setAttribute('id', 'stack-cards-js');
-
-    // document.body.appendChild(frontEnd);
-
     this.card = document.getElementsByClassName('stack-cards__item');
     this.card[this.voteCount].classList.add('active');
     this.active = document.querySelector('.active');
-    this.topPos = this.active.offsetTop;
-  },
-  methods: {
+    this.topPos = 0;
   },
   watch: {
     voteCount() {
       this.card[this.voteCount - 1].classList.remove('active');
       this.card[this.voteCount].classList.add('active');
-      this.topPos = this.active.offsetTop;
+      this.topPos += this.active.offsetHeight;
+    },
+    topPos() {
       document.querySelector('.stackOverflow').scrollTop = this.topPos;
     },
-  },
-  destroyed() {
-    // document.getElementById('stack-cards-js').remove();
-  },
-  created() {
   },
 };
 </script>

@@ -19,8 +19,6 @@
     "core-js": "^3.6.5",
     "gsap": "^3.5.1",
     "register-service-worker": "^1.7.1",
-    "scrollmagic": "^2.0.7",
-    "scrollscene": "0.0.24",
     "vue": "^2.6.12",
     "vue-card-stack": "^1.2.2",
     "vue-router": "^3.4.3",

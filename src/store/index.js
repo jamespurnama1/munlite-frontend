@@ -90,6 +90,9 @@ export default new Vuex.Store({
       state.info['Present & Voting'] += 1;
       state.info['Total Present'] += 1;
     },
+    presence(state, { i, j }) {
+      state.delegates[i - 1].presence = j;
+    },
     getWidth(state, i) {
       state.widthWindow = i;
     },
