@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     presence(j) {
-      this.console.log('click');
+      console.log('click');
       const i = this.voteCount;
       this.$store.commit('presence', { i, j });
       this.voteCount += 1;
