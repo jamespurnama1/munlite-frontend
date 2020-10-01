@@ -22,44 +22,38 @@
     margin-bottom: 50%;
   }
 
-  &.min {
-
-    .desc {
-      position: relative;
-      align-self: flex-start;
-      z-index: 2;
-      color: white;
-    }
-
-    .country {
-      top: -10%;
-      transform: translate(-50%, 0) scale(0.3);
-
-      // img {
-      //   height: 2rem;
-      // }
-
-      // h1 {
-      //   font-size: 1.5rem;
-      // }
-    }
-  }
   .progress {
     position: absolute;
     height: 100%;
     width: 100%;
-    background-color: $blue;
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: 5;
     @include transition(1s, ease);
+
+    // div {
+    //   position: absolute;
+
+      h1, .desc, .time {
+        color: white;
+      }
+    // }
+  }
+
+  svg {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
   }
 
   .country {
     position: absolute;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    top: -10%;
+    transform: translate(-50%, 0) scale(0.3);
     display: flex;
     align-items: center;
     height: 5rem;
@@ -70,14 +64,11 @@
       width: auto;
       height: 5rem;
       margin-right: 5px;
-      // @include transition(.5s, ease);
     }
     
     h1 {
-      color: white;
       font-size: 4rem;
       margin-left: 5px;
-      // @include transition(.5s, ease);
     }
   }
   .desc {
@@ -85,15 +76,19 @@
     left: 3%;
     align-self: flex-start;
     z-index: 2;
-    color: white;
   }
 
   .time {
     position: relative;
     right: 3%;
     align-self: flex-start;
-    color: white;
     z-index: 2;
   }
+}
 
+.active .card {
+  .country {
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }

@@ -109,6 +109,7 @@ export default {
         this.showOverlay = false;
         this.warning = false;
         this.$store.commit('reset');
+        console.log(this.$store.state.delegates);
       }
     },
   },

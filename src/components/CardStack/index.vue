@@ -6,9 +6,9 @@
       <Card
       :ref="`card-${i}`"
       :country="del.id"
-      :desc="del.presence"
-      :minimized="true"
-      :progress="100"
+      desc="presence"
+      :minimized="false"
+      :progress="prgrs"
       :progressColor="color" />
     </li>
   </ul>
@@ -23,6 +23,9 @@ export default {
   props: {
     voteCount: Number,
     color: String,
+    prgrs: {
+      type: [String, Number],
+    },
   },
   components: {
     Card,
@@ -38,14 +41,16 @@ export default {
     this.card[this.voteCount].classList.add('active');
     this.active = document.querySelector('.active');
     this.topPos = 0;
+    setInterval(() => {
+      // eslint-disable-next-line dot-notation
+      // document.querySelector('.stackOverflow').scrollTop = this['topPos'];
+    }, 1000);
   },
   watch: {
     voteCount() {
       this.card[this.voteCount - 1].classList.remove('active');
       this.card[this.voteCount].classList.add('active');
       this.topPos += this.active.offsetHeight;
-    },
-    topPos() {
       document.querySelector('.stackOverflow').scrollTop = this.topPos;
     },
   },

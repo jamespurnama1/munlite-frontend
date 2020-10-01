@@ -10,67 +10,67 @@ export default new Vuex.Store({
         id: 'au',
         short: 'AUS',
         name: 'Australia',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'be',
         short: 'BEL',
         name: 'Belgium',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'cn',
         short: 'CHN',
         name: 'China',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'eg',
         short: 'EGY',
         name: 'Egypt',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'hk',
         short: 'HKG',
         name: 'Hong Kong',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'in',
         short: 'IND',
         name: 'India',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'jp',
         short: 'JPN',
         name: 'Japan',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'lr',
         short: 'LBR',
         name: 'Liberia',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'nz',
         short: 'NZL',
         name: 'New Zealand',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'th',
         short: 'THA',
         name: 'Thailand',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
       {
         id: 'us',
         short: 'USA',
         name: 'United States of America',
-        presence: 'Not Present',
+        presence: 'N/A',
       },
     ],
     info: {
@@ -91,7 +91,7 @@ export default new Vuex.Store({
       state.info['Total Present'] += 1;
     },
     presence(state, { i, j }) {
-      state.delegates[i - 1].presence = j;
+      state.delegates[i].presence = j;
     },
     getWidth(state, i) {
       state.widthWindow = i;
@@ -100,8 +100,9 @@ export default new Vuex.Store({
       state.info.Present = 0;
       state.info['Present & Voting'] = 0;
       state.info['Total Present'] = 0;
+      state.delegates.map((e) => ({ ...e, presence: 'N/A' }));
     },
   },
-  actions: {},
+  getters: {},
   modules: {},
 });

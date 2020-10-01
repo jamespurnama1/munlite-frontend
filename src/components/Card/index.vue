@@ -1,8 +1,12 @@
 <template>
-  <div class="card" :class="{min: min}">
-    <p class='desc' v-if="dsc">{{ dsc }}</p>
+  <div class="card" :class="{ min: min }">
+    <p class="desc" v-if="dsc">{{ dsc }}</p>
     <div class="country">
-      <img :src="`https://www.countryflags.io/${country}/flat/64.png`" :alt="this.cntry.name" class="img" />
+      <img
+        :src="`https://www.countryflags.io/${country}/flat/64.png`"
+        :alt="this.cntry.name"
+        class="img"
+      />
       <h1>{{ this.cntry.short }}</h1>
     </div>
     <span v-if="sec" class="time">
@@ -12,7 +16,26 @@
         <p>{{ yieldTo }}</p>
       </span>
     </span>
-    <div class="progress" :style="{ width: prgrs + '%' }" />
+    <div
+      class="progress"
+      :style="'clip-path: inset(0 ' + (-prgrs + 100) + '% 0 0); background-color:' + color">
+      <p class="desc" v-if="dsc">{{ dsc }}</p>
+      <div class="country">
+        <img
+          :src="`https://www.countryflags.io/${country}/flat/64.png`"
+          :alt="this.cntry.name"
+          class="img"
+        />
+        <h1>{{ this.cntry.short }}</h1>
+      </div>
+      <span v-if="sec" class="time">
+        <p>{{ sec }}sec</p>
+        <span v-if="yieldTo">
+          <font-awesome-icon :icon="['fas', 'arrow-right']" size="s" />
+          <p>{{ yieldTo }}</p>
+        </span>
+      </span>
+    </div>
   </div>
 </template>
 
@@ -25,23 +48,50 @@ export default {
     time: Number,
     yieldTo: String,
     desc: String,
-    progress: Number,
+    progress: {
+      type: [String, Number],
+    },
   },
   data() {
     return {
       min: this.minimized,
       sec: this.time,
       prgrs: this.progress,
-      dsc: this.desc,
+      dsc: null,
+      color: '#5F78FF',
     };
   },
   methods: {
     pos() {
       if (!this.sec) {
-        const country = document.querySelectorAll('.min.card .country');
+        const country = document.querySelectorAll('.max.card .country');
         for (let i = 0; i < country.length; i += 1) {
           country[i].style.cssText = 'right: -35%; transform: translate(0, 0) scale(0.3)';
         }
+      }
+    },
+    defaults() {
+      if (!this.minimized) {
+        this.min = false;
+      }
+
+      if (this.desc === 'presence') {
+        this.dsc = this.cntry.presence;
+      } else {
+        this.dsc = this.desc;
+      }
+
+      if (this.progress === 'presence' && this.cntry.presence === 'N/A') {
+        this.prgrs = 0;
+      } else if (this.progress === 'presence' && this.cntry.presence !== 'N/A') {
+        this.prgrs = 100;
+        if (this.cntry.presence === 'Not Present') {
+          this.color = '#FF5F5F';
+        } else {
+          this.color = '#5F78FF';
+        }
+      } else if (!this.progress) {
+        this.prgrs = 0;
       }
     },
   },
@@ -49,21 +99,17 @@ export default {
     sec() {
       this.pos();
     },
+    cntry: {
+      handler: 'defaults',
+      deep: true,
+    },
   },
   mounted() {
     this.pos();
   },
   created() {
     this.$nextTick(() => {
-      if (!this.minimized) {
-        this.min = false;
-      }
-      if (!this.progress) {
-        this.prgrs = 0;
-      }
-      if (this.desc === 'presence') {
-        this.dsc = this.cntry.presence;
-      }
+      this.defaults();
     });
   },
   computed: {
@@ -75,6 +121,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/index.scss';
-@import './index.scss'
+@import "@/styles/index.scss";
+@import "./index.scss";
 </style>

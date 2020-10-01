@@ -6,7 +6,7 @@
     <h2>Roll Call</h2>
     <h3>Countries</h3>
     <div id='call'>
-      <CardStack :voteCount="voteCount" />
+      <CardStack :voteCount="voteCount" prgrs="presence" />
       <div id='selection'>
         <button @click="presence('Present')">
           <p>Present</p>
@@ -36,13 +36,12 @@ export default {
   },
   methods: {
     presence(j) {
-      console.log('click');
       const i = this.voteCount;
       this.$store.commit('presence', { i, j });
       this.voteCount += 1;
-      if (i === 'Present') {
+      if (j === 'Present') {
         this.$store.commit('present');
-      } else if (i === 'Present & Voting') {
+      } else if (j === 'Present & Voting') {
         this.$store.commit('presentVoting');
       }
     },
@@ -50,7 +49,9 @@ export default {
   watch: {
     voteCount() {
       if (this.voteCount === this.$store.state.delegates.length) {
-        this.$parent.$emit('stage', 2);
+        setTimeout(() => {
+          this.$parent.$emit('stage', 2);
+        }, 1000);
       }
     },
   },
