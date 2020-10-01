@@ -18,11 +18,11 @@
     .stack-cards__item {
       position: relative; // fallback for browsers not supporting sticky position
       position: sticky;
-      top: 0; // cards top position when they get fixed
+      top: -25%; // cards top position when they get fixed
       height: 0;
       padding-bottom: 50%; // 18:9 aspect ratio
       transform-origin: center top;
-      width: 90%;
+      width: 85%;
       margin: 0 auto;
 
       > * {
