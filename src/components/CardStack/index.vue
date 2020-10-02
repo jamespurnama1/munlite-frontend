@@ -4,12 +4,12 @@
     <li v-for="(del, i) in $store.state.delegates" :key="i"
     class="stack-cards__item js-stack-cards__item">
       <Card
-      :ref="`card-${i}`"
       :country="del.id"
-      desc="presence"
-      :minimized="false"
-      :progress="prgrs"
-      :progressColor="color" />
+      :desc="desc"
+      :color="color"
+      :yieldTo='yieldTo'
+      :time="time"
+      :progress="prgrs" />
     </li>
   </ul>
 </div>
@@ -23,11 +23,17 @@ import Card from '@/components/Card/index.vue';
 export default {
   name: 'CardStack',
   props: {
-    voteCount: Number,
+    active: {
+      type: Number,
+      required: true,
+    },
     color: String,
     prgrs: {
       type: [String, Number],
     },
+    desc: String,
+    yieldTo: String,
+    time: Number,
   },
   components: {
     Card,
@@ -37,13 +43,14 @@ export default {
       card: null,
       topPos: null,
       topCards: null,
+      activ: 0,
       tl: gsap.timeline({ paused: true }),
     };
   },
   mounted() {
     this.card = document.getElementsByClassName('stack-cards__item');
-    this.card[this.voteCount].classList.add('active');
-    this.active = document.querySelector('.active');
+    this.card[this.active].classList.add('active');
+    this.activ = document.querySelector('.active');
     this.topPos = 0;
 
     this.card.forEach((i, j) => {
@@ -71,10 +78,12 @@ export default {
     });
   },
   watch: {
-    voteCount() {
-      this.card[this.voteCount - 1].classList.remove('active');
-      this.card[this.voteCount].classList.add('active');
-      this.topPos += this.active.offsetHeight;
+    active() {
+      if (this.active !== this.card.length) {
+        this.card[this.active - 1].classList.remove('active');
+      }
+      this.card[this.active].classList.add('active');
+      this.topPos += this.activ.offsetHeight;
       document.querySelector('.stackOverflow').scrollTop = this.topPos;
     },
   },

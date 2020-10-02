@@ -13,7 +13,10 @@
 export default {
   name: 'warning',
   props: {
-    title: String,
+    title: {
+      type: String,
+      required: true,
+    },
     desc: String,
   },
 };

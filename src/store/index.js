@@ -100,7 +100,7 @@ export default new Vuex.Store({
       state.info.Present = 0;
       state.info['Present & Voting'] = 0;
       state.info['Total Present'] = 0;
-      state.delegates.map((e) => ({ ...e, presence: 'N/A' }));
+      state.delegates.map((e) => ({ ...e, presence: 'N/A' })); // not working
     },
   },
   getters: {},

@@ -6,7 +6,7 @@
     <h2>Roll Call</h2>
     <h3>Countries</h3>
     <div id='call'>
-      <CardStack :voteCount="voteCount" prgrs="presence" />
+      <CardStack :active="voteCount" prgrs="presence" desc="presence" />
       <div id='selection'>
         <button @click="presence('Present')">
           <p>Present</p>

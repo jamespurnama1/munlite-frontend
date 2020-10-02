@@ -1,5 +1,5 @@
 <template>
-  <div class="card" :class="{ min: min }">
+  <div class="card">
     <p class="desc" v-if="dsc">{{ dsc }}</p>
     <div class="country">
       <img
@@ -18,7 +18,7 @@
     </span>
     <div
       class="progress"
-      :style="'clip-path: inset(0 ' + (-prgrs + 100) + '% 0 0); background-color:' + color">
+      :style="'clip-path: inset(0 ' + (-prgrs + 100) + '% 0 0); background-color:' + clr">
       <p class="desc" v-if="dsc">{{ dsc }}</p>
       <div class="country">
         <img
@@ -44,26 +44,26 @@ export default {
   name: 'card',
   props: {
     country: String,
-    minimized: Boolean,
     time: Number,
     yieldTo: String,
     desc: String,
     progress: {
       type: [String, Number],
     },
+    color: String,
   },
   data() {
     return {
-      min: this.minimized,
       sec: this.time,
       prgrs: this.progress,
       dsc: null,
-      color: '#5F78FF',
+      clr: null,
+      isActive: null,
     };
   },
   methods: {
     pos() {
-      if (!this.sec) {
+      if (!this.time) {
         const country = document.querySelectorAll('.max.card .country');
         for (let i = 0; i < country.length; i += 1) {
           country[i].style.cssText = 'right: -35%; transform: translate(0, 0) scale(0.3)';
@@ -81,31 +81,54 @@ export default {
         this.dsc = this.desc;
       }
 
+      if (!this.color) {
+        this.clr = '#5F78FF';
+      } else {
+        this.clr = this.color;
+      }
+
       if (this.progress === 'presence' && this.cntry.presence === 'N/A') {
         this.prgrs = 0;
-      } else if (this.progress === 'presence' && this.cntry.presence !== 'N/A') {
+      } else if (this.progress === 'presence' && this.cntry.presence !== 'N/A' && !this.color) {
         this.prgrs = 100;
         if (this.cntry.presence === 'Not Present') {
-          this.color = '#FF5F5F';
+          this.clr = '#FF5F5F';
         } else {
-          this.color = '#5F78FF';
+          this.clr = '#5F78FF';
         }
-      } else if (!this.progress) {
+      } else if (!this.progress && !this.time) {
         this.prgrs = 0;
       }
     },
   },
   watch: {
-    sec() {
+    time() {
       this.pos();
+    },
+    sec() {
+      this.prgrs = (this.sec / this.time) * 100;
     },
     cntry: {
       handler: 'defaults',
       deep: true,
     },
+    isActive() {
+      let int;
+      if (this.time && this.isActive) {
+        int = setInterval(() => {
+          this.sec -= 1;
+        }, 1000);
+      } else {
+        clearInterval(int);
+      }
+    },
   },
   mounted() {
     this.pos();
+    this.sec = this.time;
+    this.$nextTick(() => {
+      this.isActive = this.$el.parentElement.classList.contains('active');
+    });
   },
   created() {
     this.$nextTick(() => {
