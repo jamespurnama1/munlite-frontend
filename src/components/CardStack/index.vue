@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { ScrollScene } from 'scrollscene';
+import { gsap } from 'gsap';
 import Card from '@/components/Card/index.vue';
 
 export default {
@@ -34,6 +36,8 @@ export default {
     return {
       card: null,
       topPos: null,
+      topCards: null,
+      tl: gsap.timeline({ paused: true }),
     };
   },
   mounted() {
@@ -41,10 +45,30 @@ export default {
     this.card[this.voteCount].classList.add('active');
     this.active = document.querySelector('.active');
     this.topPos = 0;
-    setInterval(() => {
-      // eslint-disable-next-line dot-notation
-      // document.querySelector('.stackOverflow').scrollTop = this['topPos'];
-    }, 1000);
+
+    this.card.forEach((i, j) => {
+      this.card[j].style.cssText = `top: ${-25 + (5 * j)}%`;
+    });
+
+    const wrap = document.querySelector('.stackOverflow');
+    // eslint-disable-next-line no-unused-vars
+    const scrollScene = new ScrollScene({
+      triggerElement: this.card[0],
+      gsap: {
+        timeline: this.tl,
+      },
+      triggerHook: 0,
+      duration: 500,
+      useGlobalController: false,
+      controller: {
+        container: wrap,
+      },
+    });
+
+    this.topCards = Array.from(this.card).slice(3, this.card.length);
+    this.tl.to(this.topCards, {
+      top: '-=25%',
+    });
   },
   watch: {
     voteCount() {

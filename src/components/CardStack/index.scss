@@ -1,11 +1,16 @@
 .stackOverflow {
   height: 96.9%;
   width: 75%;
-  overflow-y: scroll;
+  overflow-y: hidden;
   overflow-x: hidden;
   scroll-behavior: smooth;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;  // IE and Edge
+  scrollbar-width: none;  // Firefox
+
+  @include max-media (mobile) {
+    height: 75%;
+    width: 100%;
+  }
 
   &::-webkit-scrollbar {
     display: none;
@@ -14,11 +19,12 @@
   .stack-cards {
     --stack-cards-gap: 2.75em; // cards gap on scrolling
     list-style-type: none;
+    filter: drop-shadow(0 0 15px rgba(0,0,0,0.3));
 
     .stack-cards__item {
       position: relative; // fallback for browsers not supporting sticky position
       position: sticky;
-      top: -25%; // cards top position when they get fixed
+      top: -25; // cards top position when they get fixed
       height: 0;
       padding-bottom: 50%; // 18:9 aspect ratio
       transform-origin: center top;
