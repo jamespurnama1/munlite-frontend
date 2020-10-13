@@ -43,9 +43,9 @@
         </div>
       </div>
     </div>
-    <transition name="scale">
+    <transition name="fade">
       <div class="rollcall" v-if="showOverlay">
-        <transition name="scale">
+        <transition name="fade">
           <Warning :key="0" v-if='warning'
           title="Are You Sure?"
           desc="This will discard all current roll call &amp; voting progress." />
