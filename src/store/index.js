@@ -73,6 +73,7 @@ export default new Vuex.Store({
         presence: 'N/A',
       },
     ],
+    prevInfo: [],
     info: {
       Present: 0,
       'Present & Voting': 0,
@@ -83,12 +84,19 @@ export default new Vuex.Store({
   },
   mutations: {
     present(state) {
+      state.prevInfo.push(state.info);
       state.info.Present += 1;
       state.info['Total Present'] += 1;
     },
     presentVoting(state) {
+      state.prevInfo.push(state.info);
       state.info['Present & Voting'] += 1;
       state.info['Total Present'] += 1;
+    },
+    undo(state) {
+      const [lastItem] = state.prevInfo.slice(-1);
+      state.info = lastItem;
+      state.prevInfo.pop();
     },
     presence(state, { i, j }) {
       state.delegates[i].presence = j;

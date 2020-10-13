@@ -1,6 +1,6 @@
 <template>
   <div id='rollcall'>
-    <a @click="$parent.$emit('no-modal-warn')" id='close'>
+    <a @click="$parent.$emit('no-modal-warn')" id='close' title="Close">
       <font-awesome-icon :icon="['fas', 'times']" size="lg" />
     </a>
     <h2>Roll Call</h2>
@@ -8,16 +8,27 @@
     <div id='call'>
       <CardStack :active="voteCount" prgrs="presence" desc="presence" />
       <div id='selection'>
+        <button @click="un()"
+        :disabled="voteCount === 0"
+        title="Undo"
+        class="red" id="undo">
+          <font-awesome-icon :icon="['fas', 'undo']" size="lg" />
+        </button>
         <button @click="presence('Present')">
           <p>Present</p>
         </button>
         <button @click="presence('Present & Voting')">
           <p>Present<br>&amp; Voting</p>
         </button>
-        <button @click="presence('Not Present')" id="notPresent">
+        <button @click="presence('Not Present')" class="red">
           <p>Not Present</p>
         </button>
       </div>
+        <button @click="$parent.$emit('stage', 2)"
+        :disabled="voteCount !== $store.state.delegates.length"
+        id="continue">
+          <p>Continue</p>
+        </button>
     </div>
   </div>
 </template>
@@ -45,16 +56,20 @@ export default {
         this.$store.commit('presentVoting');
       }
     },
-  },
-  watch: {
-    voteCount() {
-      if (this.voteCount === this.$store.state.delegates.length) {
-        setTimeout(() => {
-          this.$parent.$emit('stage', 2);
-        }, 1000);
-      }
+    un() {
+      this.voteCount -= 1;
+      this.$store.commit('undo');
     },
   },
+  // watch: {
+  //   voteCount() {
+  //     if (this.voteCount === this.$store.state.delegates.length) {
+  //       setTimeout(() => {
+  //         this.$parent.$emit('stage', 2);
+  //       }, 1000);
+  //     }
+  //   },
+  // },
 };
 </script>
 

@@ -43,7 +43,8 @@ export default {
       card: null,
       topPos: null,
       topCards: null,
-      activ: 0,
+      activ: null,
+      prevActive: 0,
       tl: gsap.timeline({ paused: true }),
     };
   },
@@ -79,11 +80,19 @@ export default {
   },
   watch: {
     active() {
+      this.activ = document.querySelector('.active');
       if (this.active !== this.card.length) {
-        this.card[this.active - 1].classList.remove('active');
+        this.activ.classList.remove('active');
+        // this.card[this.active - 1].classList.remove('active');
+        // this.card[this.active + 1].classList.remove('active');
       }
+      if (this.active > this.prevActive) {
+        this.topPos += this.activ.offsetHeight;
+      } else if (this.active < this.prevActive) {
+        this.topPos -= this.activ.offsetHeight;
+      }
+      this.prevActive = this.active;
       this.card[this.active].classList.add('active');
-      this.topPos += this.activ.offsetHeight;
       document.querySelector('.stackOverflow').scrollTop = this.topPos;
     },
   },

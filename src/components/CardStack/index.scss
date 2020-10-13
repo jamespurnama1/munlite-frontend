@@ -1,8 +1,12 @@
 .stackOverflow {
   height: 100%;
-  width: 75%;
+  width: 60%;
   overflow-y: hidden;
   overflow-x: hidden;
+  padding: 50px;
+  margin: -50px;
+  margin-bottom: 0;
+  padding-bottom: 0;
   scroll-behavior: smooth;
   -ms-overflow-style: none;  // IE and Edge
   scrollbar-width: none;  // Firefox
@@ -28,7 +32,7 @@
       height: 0;
       padding-bottom: 50%; // 18:9 aspect ratio
       transform-origin: center top;
-      width: 85%;
+      width: 100%;
       margin: 0 auto;
 
       > * {
