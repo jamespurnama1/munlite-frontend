@@ -4,10 +4,10 @@
   flex-direction: row;
   padding: 3%;
   width: 94%;
-  top: 50%;
+  top: 50vw;
   left: 50%;
   margin-left: -50%;
-  margin-top: -20%;
+  margin-top: calc(50px + -48vw);
   font-family: 'Montserrat', sans-serif;
 
   @include max-media(mobile){
