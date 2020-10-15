@@ -3,6 +3,8 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
+// Make sure routes is in order to nav bar list
+// for correct left/right transition.
 const routes = [
   {
     path: '/',
