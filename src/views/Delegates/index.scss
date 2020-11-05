@@ -1,9 +1,6 @@
 .delegates {
-  position: absolute;
-  top: 50vw;
-  left: 50%;
-  margin-left: -45%;
-  margin-top: calc(50px + -48vw);
+  margin: auto;
+  margin-bottom: 2rem;
   width: 90%;
 
   &-upper {
