@@ -36,7 +36,7 @@
         <span></span>
       </div>
     </div>
-    <transition :name="transitionName">
+    <transition name="fade" mode="out-in">
       <router-view :key="$route.fullPath" />
     </transition>
     <div class="overlay-nav" v-if="open"></div>
@@ -56,8 +56,6 @@ export default {
       borderTemp: null,
       open: false,
       widthWindow: 0,
-      transitionName: null,
-      routes: null,
     };
   },
   computed: {
@@ -77,12 +75,6 @@ export default {
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
     this.onTabClick();
-    this.routes = this.$router.options.routes.map((a) => a.path);
-    this.$router.beforeEach((to, from, next) => {
-      const transitionName = this.routes.indexOf(from.path) > this.routes.indexOf(to.path) ? 'slide-right' : 'slide-left';
-      this.transitionName = transitionName;
-      next();
-    });
   },
   methods: {
     onTabClick() {
