@@ -2,7 +2,7 @@ describe('Landing Page Test', () => {
   it('Render all components', () => {
     cy.visit('/');
 
-    cy.contains('h1', 'Indonesia MUN 2020');
+    cy.get('h1').should('exist');
     cy.get('div[class="left"]').find('img').should('be.visible');
 
     cy.contains('p', 'Rules');

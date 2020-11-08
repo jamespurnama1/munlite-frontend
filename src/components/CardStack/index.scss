@@ -1,0 +1,48 @@
+.stackOverflow {
+  height: 100%;
+  width: 60%;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  padding: 50px;
+  margin: -50px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;  // IE and Edge
+  scrollbar-width: none;  // Firefox
+
+  @include max-media (mobile) {
+    height: 75%;
+    width: 100%;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stack-cards {
+    --stack-cards-gap: 2.75em; // cards gap on scrolling
+    list-style-type: none;
+    filter: drop-shadow(0 0 15px rgba(0,0,0,0.3));
+
+    .stack-cards__item {
+      position: relative; // fallback for browsers not supporting sticky position
+      position: sticky;
+      top: -25; // cards top position when they get fixed
+      height: 0;
+      padding-bottom: 50%; // 18:9 aspect ratio
+      transform-origin: center top;
+      width: 100%;
+      margin: 0 auto;
+
+      > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        will-change: transform, opacity;
+      }
+    }
+  }
+}

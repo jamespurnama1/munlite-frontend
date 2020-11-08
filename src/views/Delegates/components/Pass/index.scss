@@ -1,0 +1,108 @@
+#rollcall {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    min-width: 300px;
+    padding: 3%;
+    background-color: white;
+    border-radius: 20px;
+    -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+
+    @include max-media (mobile) {
+      width: 350px;
+    }
+
+    @include max-media (small-mobile) {
+      width: 260px;
+    }
+
+    @media only screen and (max-width: 300px) {
+      min-width: 220px;
+    }
+
+    #close {
+      position: absolute;
+      align-self: flex-end;
+      cursor: pointer;
+    }
+
+    h2 {
+      margin: 0 auto;
+      color: $blue;
+      text-align: center;
+
+      @include max-media (tablet) {
+      margin-top: 5%;
+      }
+
+      @include max-media (small-tablet) {
+      margin-top: 0%;
+      }
+    }
+
+    p {
+      margin: 1rem auto;
+      font-weight: normal;
+      text-align: center;
+    }
+
+    a:not(#close) {
+      margin: auto auto 0 auto;
+
+      button {
+        border-radius: 10px;
+        padding: 5px 10px;
+        font-family: 'Montserrat', sans-serif;
+        white-space: nowrap;
+        font-size: 1rem;
+        color: white;
+        background-color: $blue;
+        border: 1px solid $blue;
+        -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+        -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+        box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+        cursor: pointer;
+
+        &:hover {
+          box-shadow: 0 0 20px 0 rgba(95,120,255,0.7);
+        }
+        
+        @include max-media(tablet) {
+          margin: .5rem;
+        }
+
+        @include max-media(mobile) {
+          font-size: 14px;
+        }
+        
+        input {
+          border: none;
+          width: 0;
+          color: $dark-grey;
+          @include transition(linear, 0.3s);
+        
+          &.show {
+            width: 200px;
+            margin-right: 1rem;
+            padding-left: 5px;
+            font-size: 18px;
+
+            @include max-media(mobile) {
+              width: 100px;
+              font-size: 14px;
+            }
+
+            @include max-media(small-mobile) {
+              width: 60px;
+            }
+          }
+
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+    }
+  }
