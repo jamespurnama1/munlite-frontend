@@ -1,7 +1,7 @@
 <template>
   <div class="regist-login">
     <img src="@/assets/img/logo_alt@2x.png" />
-    <form class="form-data">
+    <div class="form-data">
       <input
         type="text"
         v-if="$route.path != '/login' && $route.path !='signup'"
@@ -17,14 +17,7 @@
         required
       />
       <input
-        type="text"
-        v-model="formData.username"
-        :placeholder="placeholder"
-        required
-      />
-      <input
         type="email"
-        v-if="$route.path != '/login' && $route.path !='signup'"
         v-model="formData.email"
         placeholder="E-mail"
         required
@@ -41,11 +34,12 @@
         <input type="checkbox" v-model="checked" class="checked">
         <label for="checkbox">Remember Me</label>
       </div>
+      <p class="errmsg">{{ errorMessage }}</p>
       <div class="buttons">
-        <button type="submit" v-if="$route.path =='/signup'" @click="signup()">Sign Up</button>
-        <button type="submit" v-if="$route.path =='/login'" @click="login()">Log in</button>
+        <button v-if="$route.path =='/signup'" @click="signup()">Sign Up</button>
+        <button v-if="$route.path =='/login'" @click="login()">Log in</button>
       </div>
-    </form>
+    </div>
     <div class="footer">
       <p v-if="$route.path == '/login'">
         Don't have an account? <a @click="$router.push('/signup')">Sign Up</a>
@@ -59,42 +53,41 @@
 
 <script>
 export default {
-  Name: 'RegisterLogin',
+  name: 'RegisterLogin',
   data() {
     return {
       formData: {
         first: '',
         last: '',
-        username: '',
         email: '',
         password: '',
         confirm: '',
       },
       checked: false,
+      errorMessage: '',
     };
   },
   methods: {
     signup() {
-      let filled = true;
-      this.formData.forEach((item) => {
-        if (item === '') {
-          filled = false;
-        }
-      });
+      if (this.formData.password !== this.formData.confirm) {
+        this.errorMessage = 'Confirmed password does not match';
 
-      console.log(filled);
-    },
-    login() {
-      let filled = true;
-      if (this.formData.username.length > 0) {
-        filled = true;
-        console.log(filled);
+        Object.values(this.formData).forEach((item) => {
+          if (item.length < 1) {
+            this.errorMessage = 'Fill all required fields';
+            console.log(item);
+          }
+        });
+      } else {
+        this.$router.push('/'); // change to api request later
       }
     },
-  },
-  computed: {
-    placeholder() {
-      return this.$route.path === 'login' ? 'Username or E-mail' : 'Username';
+    login() {
+      if (this.formData.email.length > 0 && this.formData.password.length > 0) {
+        this.$router.push('/'); // change to api request later
+      } else {
+        // this.errorMessage = 'User not found';
+      }
     },
   },
 };
