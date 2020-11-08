@@ -14,6 +14,16 @@ const routes = [
     name: 'Delegates',
     component: () => import('@/views/Delegates'),
   },
+  {
+    path: '/signup',
+    name: 'Sign Up',
+    component: () => import('@/views/RegisterLogin'),
+  },
+  {
+    path: '/login',
+    name: 'Log In',
+    component: () => import('@/views/RegisterLogin'),
+  },
 ];
 
 const router = new VueRouter({

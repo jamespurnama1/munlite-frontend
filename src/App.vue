@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="nav">
+    <div class="nav" v-if="$route.path != '/login' && $route.path !='/signup'">
       <div class="navLogo">
         <img id="logo" src="@/assets/img/logo_main.png" @click="$router.push('/')"/>
       </div>
