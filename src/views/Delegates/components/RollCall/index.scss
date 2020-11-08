@@ -1,0 +1,178 @@
+#rollcall {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  min-width: 500px;
+  padding: 3%;
+  background-color: white;
+  border-radius: 20px;
+  -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+  -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+
+  @include max-media (mobile) {
+      min-width: 350px;
+      padding: 5%;
+  }
+
+  @include max-media (small-mobile) {
+    min-width: 260px;
+  }
+
+  @media only screen and (max-width: 300px) {
+    min-width: 220px;
+  }
+
+  #close {
+    position: absolute;
+    align-self: flex-end;
+    cursor: pointer;
+  }
+
+  #call {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    flex-direction: column;
+
+    @include max-media(mobile) {
+      height: 90%;
+      padding: 0.5rem;
+      justify-content: space-between;
+    }
+
+    #selection {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      min-width: 150px;
+      justify-content: space-around;
+      margin-bottom: 2rem;
+
+      @include max-media(mobile) {
+        flex-direction: column;
+        justify-content: space-between;
+        width: 50%;
+        margin: 0 auto;
+        margin-bottom: 2.5rem;
+      }
+
+      @include max-media(small-mobile) {
+        margin-bottom: .5rem;
+      }
+    }
+  }
+
+  button {
+    border-radius: 10px;
+    padding: 10px 1rem;
+    font-family: 'Montserrat', sans-serif;
+    white-space: nowrap;
+    font-size: 1rem;
+    background-color: white;
+    border: 1px solid $light-grey;
+    -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+    cursor: pointer;
+
+    @include max-media(mobile) {
+      font-size: 14px;
+      margin-bottom: 1rem;
+    }
+
+    @include max-media(mobile) {
+      font-size: 12px;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.red {
+      color: white;
+      background-color: $red;
+      border: 1px solid $red;
+      @include transition(ease, 0.3s);
+
+      &:hover {
+        box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
+      }
+    }
+
+    &#undo {
+      margin-bottom: 30px;
+      width: 30%;
+      margin: 10px;
+
+      @include max-media(mobile) {
+        position: absolute;
+        bottom: 0;
+        width: initial;
+      }
+    }
+
+    &#continue {
+      width: 35%;
+      color: white;
+      padding: 5px;
+      background-color: $blue;
+
+      @include max-media(mobile) {
+        margin-top: 10px;
+        width: 100%;
+        margin-bottom: 0;
+      }
+    }
+
+    input {
+      border: none;
+      width: 0;
+      color: $dark-grey;
+      @include transition(linear, 0.3s);
+    
+      &.show {
+        width: 200px;
+        margin-right: 1rem;
+        padding-left: 5px;
+        font-size: 18px;
+
+        @include max-media(mobile) {
+          width: 100px;
+          font-size: 14px;
+        }
+
+        @include max-media(small-mobile) {
+          width: 60px;
+        }
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .cardList {
+    display: grid;
+    grid-template-columns: 1fr 250px;
+    grid-template-rows: 1fr;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 100%;
+
+    .cardWrapper {
+      position: sticky;
+      top: 0.75em;
+      transform-origin: center top;
+
+      &~.cardWrapper {
+        transform: translateY(-50%);
+      }
+    }
+  }
+  }

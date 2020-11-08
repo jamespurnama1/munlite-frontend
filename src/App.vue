@@ -16,7 +16,7 @@
           <router-link id="crisis" to="/crisis" @click.native="onTabClick">Crisis</router-link>
           <div
             class="border"
-            v-if="widthWindow > 960"
+            v-if="$store.state.widthWindow > 960"
             :style="{
               left: `${borderStyles.left-1}px`,
               width: `${borderStyles.width}px`,
@@ -30,7 +30,10 @@
           <a><img src="@/assets/img/icon/Share.png" /></a>
         </div>
       </div>
-      <div class="burger" @click="toggleMenu" :class="{open: open}" v-if="widthWindow <= 960">
+      <div class="burger"
+      @click="toggleMenu"
+      :class="{open: open}"
+      v-if="$store.state.widthWindow <= 960">
         <span></span>
         <span></span>
         <span></span>
@@ -53,7 +56,6 @@ export default {
       },
       borderTemp: null,
       open: false,
-      widthWindow: 0,
     };
   },
   computed: {
@@ -61,7 +63,7 @@ export default {
       return this.borderTemp == null ? this.border : this.borderTemp;
     },
     showNavBar() {
-      return this.widthWindow > 960 || this.open;
+      return this.$store.state.widthWindow > 960 || this.open;
     },
   },
   beforeUpdate() {
@@ -91,7 +93,7 @@ export default {
       this.open = !this.open;
     },
     checkMobileView() {
-      this.widthWindow = window.innerWidth;
+      this.$store.commit('getWidth', window.innerWidth);
       this.onTabClick();
     },
   },

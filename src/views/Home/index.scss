@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: row;
   padding: 3%;
+  min-height: 75vh;
   font-family: 'Montserrat', sans-serif;
 
   @include max-media(mobile){
@@ -151,7 +152,9 @@
         }
       }
 
-
+      .empty-data {
+        color: gray
+      }
     }
 
     .rules {

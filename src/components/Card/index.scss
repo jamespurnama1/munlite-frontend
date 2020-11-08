@@ -1,0 +1,112 @@
+.card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 1%;
+  width: 22vw;
+  height: 13vw;
+  background-color: white;
+  border: 1px solid $light-grey;
+  border-radius: 20px;
+
+  &:first-child {
+    margin-top: 50%;
+  }
+
+  &:last-child {
+    margin-bottom: 50%;
+  }
+
+  .progress {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 1%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    z-index: 5;
+    @include transition(1s, ease);
+
+      h1, .desc, .time {
+        color: white;
+      }
+  }
+
+  svg {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+
+  .country {
+    position: absolute;
+    left: 50%;
+    top: -10%;
+    transform: translate(-50%, 0) scale(0.3);
+    display: flex;
+    align-items: center;
+    height: 5rem;
+    z-index: 2;
+    @include transition(.5s, ease);
+
+    @include max-media (mobile) {
+      top: -15%;
+    }
+
+    img {
+      width: auto;
+      height: 5rem;
+      margin-right: 5px;
+    }
+    
+    h1 {
+      font-size: 4rem;
+      margin-left: 5px;
+
+      @include max-media (mobile) {
+        font-size: 3rem;
+      }
+    }
+  }
+
+  p {
+    @include max-media (mobile) {
+      font-size: 10px;
+    }
+
+    &.desc {
+      position: relative;
+      left: 3%;
+      top: 1%;
+      align-self: flex-start;
+      z-index: 2;
+
+      @include max-media (mobile) {
+        top: 6%;
+      }
+    }
+  }
+
+  .time {
+    position: relative;
+    top: 1%;
+    right: 3%;
+    align-self: flex-start;
+    z-index: 2;
+  }
+}
+
+.active .card {
+  .country {
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
