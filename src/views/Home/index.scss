@@ -9,11 +9,32 @@
     justify-content: space-between;
     margin-bottom: 3rem;
 
+    @include max-media(mobile) {
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
     .profile {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
+
+      @include max-media(tablet) {
+        font-size: 14px;
+      }
+      
+
+      @include max-media(mobile) {
+        margin-bottom: 1.5rem;
+        font-size: 13px;
+        flex-direction: column;
+
+        .detail {
+          text-align: center;
+        }
+      }
 
       .img {
         width: 8rem;
@@ -21,10 +42,29 @@
         border-radius: 4rem;
         background-color: lightgrey;
         margin-right: 1rem;
+
+        @include max-media(tablet) {
+          width: 6rem;
+          height: 6rem;
+        }
+
+        @include max-media(mobile) {
+          width: 8rem;
+          height: 8rem;
+          margin-right: 0;
+        }
       }
 
       h1 {
         font-size: 4rem;
+
+        @include max-media(tablet) {
+          font-size: 2.5rem;
+        }
+
+        @include max-media(mobile) {
+          font-size: 3rem;
+        }
       }
 
       a {
@@ -44,25 +84,51 @@
       box-shadow: 0px 0px 20px 0px rgba(98,123,247,0.7);
       cursor: pointer;
 
-      h3 {
+      @include max-media(mobile) {
+        display: none;
+      }
+
+      &-title {
         margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: bold;
+
+        @include max-media(tablet) {
+          font-size: 1rem;
+        }
+
       }
 
       img.conference-img {
         width: 3.5rem;
         height: 3.5rem;
         margin-right: 1rem;
+
+        @include max-media(tablet) {
+          width: 2rem;
+          height: 2rem;
+          margin-right: 8px;
+        }
       }
 
       &-conference {
         display: flex;
         flex-direction: row;
+        align-items: center;
       }
 
       .name {
         font-weight: bold;
         margin-bottom: 0;
         font-size: 18px;
+
+        @include max-media(tablet) {
+          font-size: 14px;
+        }
+
+        @include max-media(mobile) {
+          margin-right: 10px;
+        }
       }
 
       .conference-detail {
@@ -70,6 +136,11 @@
         flex-direction: column;
         align-items: flex-start;
         justify-content: center;
+
+        // @include max-media(mobile) {
+        //   flex-direction: row;
+        //   align-items: center;
+        // }
       }
 
       .started-time {
@@ -78,6 +149,10 @@
         justify-content: center;
         align-content: center;
         font-size: 14px;
+
+        @include max-media(tablet) {
+          font-size: 12px;
+        }
 
         img {
           width: 1rem;
@@ -90,6 +165,10 @@
   .bottom {
     h2 {
       font-size: 2.5rem;
+
+      @include max-media(tablet) {
+        font-size: 1.5rem;
+      }
     }
 
     .conferences {
@@ -106,12 +185,16 @@
         margin-bottom: 1rem;
 
         button {
-          margin-left: 2.5rem;
+          margin-left: 1rem;
           height: fit-content;
           font-size: 20px;
           height: fit-content;
           align-self: center;
           padding: 5px 10px;
+
+          @include max-media(mobile) {
+            font-size: 14px;
+          }
         }
       }
 
@@ -124,6 +207,10 @@
         flex-direction: row;
         font-size: 14px;
         margin-bottom: 1rem;
+
+        @include max-media(tablet) {
+          font-size: 12px;
+        }
 
         .img {
           width: 3rem;
@@ -140,6 +227,10 @@
           .name {
             font-size: 20px;
             font-weight: bold;
+
+            @include max-media(tablet) {
+              font-size: 1rem;
+            }
           }
 
           .info {
@@ -168,6 +259,10 @@
             border-radius: 10px;
             font-size: 12px;
             margin-left: 8px;
+
+            @include max-media(tablet) {
+              font-size: 10px;
+            }
           }
         }
       }

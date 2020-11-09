@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="ongoing" @click="$router.push('/overview')">
-        <h3>Ongoing</h3>
+        <p class="ongoing-title">Ongoing</p>
         <div class="ongoing-conference">
           <img class="conference-img" src="@/assets/img/home.png" />
           <div class="conference-detail">
