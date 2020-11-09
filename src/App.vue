@@ -2,11 +2,13 @@
   <div id="app">
     <div class="nav" v-if="$route.path != '/login' && $route.path !='/signup'">
       <div class="navLogo">
-        <img id="logo" src="@/assets/img/logo_main.png" @click="$router.push('/')"/>
+        <img id="logo" src="@/assets/img/logo_main.png" @click="$router.push('/home')"/>
       </div>
       <div class="navTab" :class="{toggle: open}">
         <div class="navLeft">
-          <router-link id="overview" to="/" @click.native="onTabClick">Overview</router-link>
+          <router-link id="overview" to="/overview" @click.native="onTabClick">
+            Overview
+          </router-link>
           <router-link id="delegates" to="/delegates" @click.native="onTabClick">
             Delegates
           </router-link>

@@ -42,10 +42,10 @@
     </div>
     <div class="footer">
       <p v-if="$route.path == '/login'">
-        Don't have an account? <a @click="$router.push('/signup')">Sign Up</a>
+        Don't have an account? <a @click="changeRoute()">Sign Up</a>
       </p>
       <p v-if="$route.path == '/signup'">
-        Already have an account? <a @click="$router.push('/login')">Log In</a>
+        Already have an account? <a @click="changeRoute()">Log In</a>
       </p>
     </div>
   </div>
@@ -79,14 +79,26 @@ export default {
           }
         });
       } else {
-        this.$router.push('/'); // change to api request later
+        this.$router.push('/home'); // change to api request later
       }
     },
     login() {
       if (this.formData.email.length > 0 && this.formData.password.length > 0) {
-        this.$router.push('/'); // change to api request later
+        this.$router.push('/home'); // change to api request later
       } else {
-        // this.errorMessage = 'User not found';
+        this.errorMessage = 'Fill all required fields';
+      }
+    },
+    changeRoute() {
+      this.errorMessage = '';
+      Object.keys(this.formData).forEach((item) => {
+        this.formData[item] = '';
+      });
+
+      if (this.$route.path === '/login') {
+        this.$router.push('/signup');
+      } else {
+        this.$router.push('/login');
       }
     },
   },
