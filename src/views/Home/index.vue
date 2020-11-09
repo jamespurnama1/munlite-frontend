@@ -13,12 +13,12 @@
           src="@/assets/img/home@2x.png"
           alt="Indonesia MUN 2020">
       </picture>
-      <h1>Indonesia MUN 2020</h1>
+      <h1>{{ title }}</h1>
     </div>
     <div class="right">
       <div class="chair">
         <p class="chair-sub-header">Chair</p>
-        <div class="chair-list">
+        <div class="chair-list" v-if="chairData.length > 0">
           <div v-for="(data, index) in chairData" :key="index" class="chair-data">
             <div class="chair-img"></div>
             <div class="info">
@@ -27,12 +27,13 @@
             </div>
           </div>
         </div>
+        <p v-else class="empty-data">No chair in the list</p>
       </div>
       <div class="rules">
         <p class="rules-sub-header">Rules</p>
         <div v-for="(data, index) in rules" :key="index" class="rules-data">
-          <p class="rules-point">{{data.title}}</p>
-          <p class="rules-val">{{data.val}}</p>
+          <p class="rules-point">{{data}}</p>
+          <p class="rules-val">{{rulesData[index]}}</p>
         </div>
       </div>
     </div>
@@ -40,68 +41,29 @@
 </template>
 
 <script>
+import { getConference } from '@/api/conference';
 
 export default {
   name: 'Home',
   data() {
     return {
-      chairData: [
-        {
-          name: 'Hans Marvin T.',
-          email: 'hans.tanuardi@gmail.com',
-        },
-        {
-          name: 'Joshua A.',
-          email: 'joshmahawira@gmail.com',
-        },
-        {
-          name: 'Nicole Charlene',
-          email: 'niccharlene@gmail.com',
-        },
-        {
-          name: 'Hans Marvin T.',
-          email: 'hans.tanuardi@gmail.com',
-        },
-        {
-          name: 'Joshua A.',
-          email: 'joshmahawira@gmail.com',
-        },
-        {
-          name: 'Nicole Charlene',
-          email: 'niccharlene@gmail.com',
-        },
-        {
-          name: 'Hans Marvin T.',
-          email: 'hans.tanuardi@gmail.com',
-        },
-        {
-          name: 'Joshua A.',
-          email: 'joshmahawira@gmail.com',
-        },
-        {
-          name: 'Nicole Charlene',
-          email: 'niccharlene@gmail.com',
-        },
-      ],
-      rules: [
-        {
-          title: 'Majority',
-          val: '1/2 Delegates + 1',
-        },
-        {
-          title: 'DR Votes',
-          val: '2/3 Delegates',
-        },
-        {
-          title: 'Quorum',
-          val: '2/3 Delegates',
-        },
-        {
-          title: 'Rounding',
-          val: 'Round Up',
-        },
-      ],
+      title: '',
+      chairData: [],
+      rules: ['Majority', 'DR Votes', 'Quorum', 'Rounding'],
+      rulesData: [],
     };
+  },
+  async created() {
+    try {
+      const conference = await getConference('5f96e22bdb7ee38458e581e9');
+      this.rulesData = Object.values(conference.data.data.rules);
+      this.title = conference.data.data.title;
+      if (conference.data.data.chairman) {
+        this.chairData = conference.data.data.chairman;
+      }
+    } catch (err) {
+      console.error(err);
+    }
   },
 };
 </script>

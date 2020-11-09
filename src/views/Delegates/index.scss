@@ -42,6 +42,23 @@
       margin-left: 1rem;
       cursor: pointer;
       height: auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      &.warning {
+        background-color: $red;
+        color: white;
+        border-color: transparent;
+
+        &:disabled {
+          opacity: 0.6;
+        }
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+      }
 
       @include max-media(tablet) {
         margin: 1rem 1rem 1rem 0;
@@ -51,26 +68,28 @@
         font-size: 14px;
       }
 
-      input {
-        margin-right: 0;
-        border: none;
-        width: 0;
-        color: $dark-grey;
-        @include transition(linear, 0.3s);
-
+      .input {
+        input {
+          margin-right: 0;
+          width: 0;
+          @include transition(linear, 0.3s);
+        }
+        
         &.show {
-          width: 200px;
-          margin-right: 1rem;
-          padding-left: 5px;
-          font-size: 18px;
+          input {
+            width: 200px;
+            margin-right: 1rem;
+            padding-left: 5px;
+            font-size: 18px;
 
-          @include max-media(mobile) {
-            width: 100px;
-            font-size: 14px;
-          }
+            @include max-media(mobile) {
+              width: 100px;
+              font-size: 14px;
+            }
 
-          @include max-media(small-mobile) {
-            width: 60px;
+            @include max-media(small-mobile) {
+              width: 60px;
+            }
           }
         }
 
@@ -98,6 +117,10 @@
         
         @include max-media(tablet) {
           width: 100%;
+        }
+
+        &.empty-data {
+          color: gray;
         }
   
         .data {
@@ -176,7 +199,7 @@
 
           @include max-media(mobile) {
             width: 90%;
-            justify-content: center;
+            justify-content: space-evenly;
           }
 
           .emphasize {
@@ -199,6 +222,7 @@
             @include max-media(mobile) {
               flex-direction: row;
               width: 8rem;
+              margin-right: 0;
             }
           }
 
@@ -255,6 +279,23 @@
     .presence {
       width: 30%;
     }
+  }
+
+  .rollcall {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 6;
+    @include transition(ease, 0.5s);
+  }
+
+  .overlay {
+    z-index: 5;
   }
 }
 

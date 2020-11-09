@@ -3,17 +3,19 @@ import Vue from 'vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-
 import * as Sentry from '@sentry/browser';
 import { Vue as VueIntegration } from '@sentry/integrations';
 import { Integrations } from '@sentry/tracing';
+import Vue2TouchEvents from 'vue2-touch-events';
 
-import App from './App.vue';
 import './registerServiceWorker';
-import router from './router';
 import store from './store';
+import router from './router';
+import App from './App.vue';
 
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.use(Vue2TouchEvents)
+  .component('font-awesome-icon', FontAwesomeIcon);
+
 library.add(fas);
 
 Sentry.init({

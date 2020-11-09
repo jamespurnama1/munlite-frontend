@@ -1,0 +1,43 @@
+#flex {
+  display: flex;
+  flex-direction: column;
+
+  .delegates-row {
+    white-space: pre-wrap;
+    display: flex;
+    align-items: center;
+  }
+
+  .row {
+    margin-top: 10px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    @include max-media (mobile) {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: .5rem;
+      margin-top: 0;
+    }
+  }
+
+  h3 {
+    font-size: 1.2rem;
+
+    @include max-media (mobile) {
+      font-size: 1rem;
+      width: 60%;
+    }
+  }
+
+  p {
+    font-size: 1rem;
+
+    @include max-media (mobile) {
+          font-size: 0.7rem;
+    }
+  }
+}
