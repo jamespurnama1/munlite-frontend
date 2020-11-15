@@ -36,10 +36,6 @@
               <div class="info">
                 <span class="started-time">
                   {{ data.timestamp }}
-                  <img v-if="data.status !== 'chair'" :src="`https://www.countryflags.io/${data.flag}/flat/64.png`"/>
-                </span>
-                <span v-if="data.status !== 'delegate'" class="status">
-                  {{ data.status.toUpperCase() }}
                 </span>
               </div>
             </div>

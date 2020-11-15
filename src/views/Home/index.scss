@@ -61,10 +61,6 @@
         @include max-media(tablet) {
           font-size: 2.5rem;
         }
-
-        @include max-media(mobile) {
-          font-size: 3rem;
-        }
       }
 
       a {
@@ -85,7 +81,8 @@
       cursor: pointer;
 
       @include max-media(mobile) {
-        display: none;
+        width: 60%;
+        min-width: 180px;
       }
 
       &-title {
@@ -95,6 +92,10 @@
 
         @include max-media(tablet) {
           font-size: 1rem;
+        }
+
+        @include max-media(mobile) {
+          display: none;
         }
 
       }
@@ -115,6 +116,10 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        @include max-media(mobile) {
+          justify-content: center;
+        }
       }
 
       .name {
