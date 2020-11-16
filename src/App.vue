@@ -2,7 +2,7 @@
   <div id="app">
     <div class="nav">
       <div class="navLogo">
-        <img id="logo" src="@/assets/img/logo_main.png" @click="$router.push('/')"/>
+        <img id="logo" src="@/assets/img/logo_small.svg" @click="$router.push('/')"/>
       </div>
       <div class="navTab" :class="{toggle: open}">
         <div class="navLeft">
@@ -18,15 +18,15 @@
             class="border"
             v-if="$store.state.widthWindow > 960"
             :style="{
-              left: `${borderStyles.left-1}px`,
-              width: `${borderStyles.width}px`,
-              height: `${borderStyles.height}px`
+              left: `${borderStyles.left - 6}px`,
+              width: `${borderStyles.width + 10}px`,
+              height: `${borderStyles.height + 5}px`
             }"
           ></div>
         </div>
         <div class="navRight">
           <a>Settings</a>
-          <a>SignIn/Up</a>
+          <a>Sign In/Up</a>
           <a><img src="@/assets/img/icon/Share.png" /></a>
         </div>
       </div>
@@ -39,7 +39,9 @@
         <span></span>
       </div>
     </div>
-    <router-view/>
+    <transition name="fade" mode="out-in">
+      <router-view :key="$route.fullPath" />
+    </transition>
     <div class="overlay-nav" v-if="open"></div>
   </div>
 </template>
@@ -56,6 +58,7 @@ export default {
       },
       borderTemp: null,
       open: false,
+      widthWindow: 0,
     };
   },
   computed: {

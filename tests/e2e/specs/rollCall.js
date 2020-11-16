@@ -7,7 +7,7 @@ describe('Roll Call Modal Test', () => {
     cy.contains('h2', 'Roll Call').should('be.visible');
   });
   it('Roll call then proceed to vote', () => {
-    cy.get('button#continue').should('be.disabled').contains('Continue');
+    // cy.get('button#continue').should('be.disabled').contains('Continue');
     let dataLength = 0;
     cy.request('GET', 'https://dev.api.munlite.co/api/conference/5f96e22bdb7ee38458e581e9/delegates').then((response) => {
       dataLength = response.body.data;
