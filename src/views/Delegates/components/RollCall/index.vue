@@ -59,7 +59,7 @@ export default {
       } else if (j === 'Present & Voting') {
         this.$store.commit('presentVoting');
       } else if (j === 'Not Present') {
-        this.$store.commit('NotPresent');
+        this.$store.commit('notPresent');
       }
     },
     un() {

@@ -42,6 +42,11 @@
       position: absolute;
       bottom: 13%;
       right: 5%;
+
+      @include max-media(mobile) {
+        bottom: 21%;
+        right: initial;
+      }
     }
 
     #selection {
