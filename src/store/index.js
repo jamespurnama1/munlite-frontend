@@ -81,17 +81,28 @@ export default new Vuex.Store({
       'DR Sponsors': 3,
     },
     widthWindow: 0,
+    active: 0,
+    done: 0,
   },
   mutations: {
+    active(state, i) {
+      const j = state.active + i;
+      state.active = Math.min(Math.max(parseInt(j, 10), 0), state.delegates.length);
+    },
     present(state) {
       state.prevInfo.push(state.info);
       state.info.Present += 1;
       state.info['Total Present'] += 1;
+      state.done += 1;
     },
     presentVoting(state) {
       state.prevInfo.push(state.info);
       state.info['Present & Voting'] += 1;
       state.info['Total Present'] += 1;
+      state.done += 1;
+    },
+    notPresent(state) {
+      state.done += 1;
     },
     undo(state) {
       const [lastItem] = state.prevInfo.slice(-1);
@@ -108,6 +119,8 @@ export default new Vuex.Store({
       state.info.Present = 0;
       state.info['Present & Voting'] = 0;
       state.info['Total Present'] = 0;
+      state.done = 0;
+      state.active = 0;
       state.delegates.map((e) => ({ ...e, presence: 'N/A' })); // not working
     },
   },

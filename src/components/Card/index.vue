@@ -18,7 +18,8 @@
     </span>
     <div
       class="progress"
-      :style="'clip-path: inset(0 ' + (-prgrs + 100) + '% 0 0); background-color:' + clr">
+      :style="'clip-path: inset(0 ' + (-prgrs + 100) + '% 0 0); border: 1px solid' + clr +
+      '; background-color:' + clr">
       <p class="desc" v-if="dsc">{{ dsc }}</p>
       <div class="country">
         <img

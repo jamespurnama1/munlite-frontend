@@ -6,26 +6,35 @@
     <h2>Roll Call</h2>
     <h3>Countries</h3>
     <div id='call'>
-      <CardStack :active="voteCount" prgrs="presence" desc="presence" />
+      <CardStack prgrs="presence" desc="presence" />
       <div id='selection'>
         <button @click="un()"
-        :disabled="voteCount === 0"
+        :disabled="$store.state.active === 0"
         title="Undo"
         class="red" id="undo">
           <font-awesome-icon :icon="['fas', 'undo']" size="lg" />
         </button>
-        <button @click="presence('Present')">
+        <button @click="presence('Present')"
+        :disabled="$store.state.done === $store.state.delegates.length">
           <p>Present</p>
         </button>
-        <button @click="presence('Present & Voting')">
+        <button @click="presence('Present & Voting')"
+        :disabled="$store.state.done === $store.state.delegates.length">
           <p>Present<br>&amp; Voting</p>
         </button>
-        <button @click="presence('Not Present')" class="red">
+        <button @click="presence('Not Present')" class="red"
+        :disabled="$store.state.done === $store.state.delegates.length">
           <p>Not Present</p>
         </button>
       </div>
+      <p class='left' v-if="$store.state.done !== $store.state.delegates.length">
+        {{ $store.state.delegates.length - $store.state.done }} countries left
+      </p>
+      <p class='left' v-else-if="$store.state.done === $store.state.delegates.length">
+        no countries left
+      </p>
         <button @click="$parent.$emit('stage', 2)"
-        :disabled="voteCount !== $store.state.delegates.length"
+        :disabled="$store.state.done !== $store.state.delegates.length"
         id="continue">
           <p>Continue</p>
         </button>
@@ -40,36 +49,24 @@ export default {
   components: {
     CardStack,
   },
-  data() {
-    return {
-      voteCount: 0,
-    };
-  },
   methods: {
     presence(j) {
-      const i = this.voteCount;
+      const i = this.$store.state.active;
       this.$store.commit('presence', { i, j });
-      this.voteCount += 1;
+      this.$store.commit('active', 1);
       if (j === 'Present') {
         this.$store.commit('present');
       } else if (j === 'Present & Voting') {
         this.$store.commit('presentVoting');
+      } else if (j === 'Not Present') {
+        this.$store.commit('NotPresent');
       }
     },
     un() {
-      this.voteCount -= 1;
+      this.$store.commit('active', -1);
       this.$store.commit('undo');
     },
   },
-  // watch: {
-  //   voteCount() {
-  //     if (this.voteCount === this.$store.state.delegates.length) {
-  //       setTimeout(() => {
-  //         this.$parent.$emit('stage', 2);
-  //       }, 1000);
-  //     }
-  //   },
-  // },
 };
 </script>
 

@@ -38,6 +38,12 @@
       justify-content: space-between;
     }
 
+    .left {
+      position: absolute;
+      bottom: 13%;
+      right: 5%;
+    }
+
     #selection {
       display: flex;
       flex-direction: column;
@@ -63,13 +69,16 @@
     font-size: 20px;
     background-color: white;
     border: 1px solid $light-grey;
-    -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-    -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
     cursor: pointer;
+    transition: all .3s ease;
 
     @include max-media(mobile) {
       font-size: 14px;
+    }
+
+    &:hover {
+      box-shadow: 0 0 20px 0 rgba(0,0,0,0.3);
+      border: 1px solid rgba(0,0,0,0);
     }
 
     &:disabled {
@@ -104,6 +113,7 @@
       position: absolute;
       background-color: $blue;
       color: white;
+      border: 1px solid $blue;
       bottom: 5%;
       right: 5%;
 
