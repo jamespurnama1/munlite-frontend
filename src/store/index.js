@@ -108,6 +108,7 @@ export default new Vuex.Store({
       const [lastItem] = state.prevInfo.slice(-1);
       state.info = lastItem;
       state.prevInfo.pop();
+      state.done -= 1;
     },
     presence(state, { i, j }) {
       state.delegates[i].presence = j;

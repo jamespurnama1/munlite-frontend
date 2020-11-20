@@ -4,7 +4,7 @@
       <font-awesome-icon :icon="['fas', 'times']" size="lg" />
     </a>
     <h2>Roll Call</h2>
-    <h3>Countries</h3>
+    <p>Scroll to move up &amp; down</p>
     <div id='call'>
       <CardStack prgrs="presence" desc="presence" />
       <div id='selection'>
