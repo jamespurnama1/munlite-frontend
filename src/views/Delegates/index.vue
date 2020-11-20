@@ -97,10 +97,10 @@ export default {
   },
   watch: {
     stage() {
-      if (this.stage > 0) {
+      if (this.stage === 0) {
+        document.querySelector('body').style.cssText = null;
+      } else {
         document.querySelector('body').style.cssText = 'height: 100vh; width: 100vw; overflow: hidden;';
-      } else if (this.stage === 0) {
-        document.querySelector('body').removeAttributes('height', 'width', 'overflow');
       }
     },
     warning() {

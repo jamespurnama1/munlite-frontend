@@ -1,5 +1,5 @@
 <template>
-  <div class="stackOverflow">
+  <div class="stackOverflow" v-touch:swipe="swipe">
     <ul class="stack-cards js-stack-cards">
       <li v-for="(del, i) in $store.state.delegates" :key="i"
       class="stack-cards__item js-stack-cards__item">
@@ -93,6 +93,13 @@ export default {
       if (e.deltaY > 0) {
         this.$store.commit('active', 1);
       } else if (e.deltaY < 0) {
+        this.$store.commit('active', -1);
+      }
+    },
+    swipe(direction) {
+      if (direction === 'top') {
+        this.$store.commit('active', 1);
+      } else if (direction === 'bottom') {
         this.$store.commit('active', -1);
       }
     },
