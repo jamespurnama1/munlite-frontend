@@ -67,24 +67,63 @@ export default {
       errorMessage: '',
     };
   },
+  computed: {
+    loggedIn() {
+      return this.$store.state.loggedIn;
+    },
+  },
+  created() {
+    if (this.loggedIn) {
+      this.$router.push('/');
+    }
+  },
   methods: {
-    signup() {
+    async signup() {
       if (this.formData.password !== this.formData.confirm) {
         this.errorMessage = 'Confirmed password does not match';
 
         Object.values(this.formData).forEach((item) => {
           if (item.length < 1) {
             this.errorMessage = 'Fill all required fields';
-            console.log(item);
           }
         });
+        const checkEmail = this.validateEmail(this.formData.email);
+        if (checkEmail !== true) {
+          this.errorMessage = 'E-mail is not valid';
+        }
       } else {
-        this.$router.push('/home'); // change to api request later
+        const user = {
+          first_name: this.formData.first,
+          last_name: this.formData.last,
+          email: this.formData.email,
+          password: this.formData.password,
+        };
+        this.$store.dispatch('register', user).then(
+          () => {
+            this.$router.push('/login');
+          },
+          (error) => {
+            console.log(error);
+            this.errorMessage = 'Failed to Register';
+          },
+        );
       }
     },
-    login() {
+    async login() {
       if (this.formData.email.length > 0 && this.formData.password.length > 0) {
-        this.$router.push('/home'); // change to api request later
+        const user = {
+          email: this.formData.email,
+          password: this.formData.password,
+        };
+        this.$store.dispatch('login', user).then(
+          () => {
+            this.$router.push('/');
+          },
+          (error) => {
+            console.log(error);
+            this.errorMessage = 'Failed to login';
+          },
+        );
       } else {
         this.errorMessage = 'Fill all required fields';
       }
@@ -100,6 +139,13 @@ export default {
       } else {
         this.$router.push('/login');
       }
+    },
+    validateEmail(email) {
+      const mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z]+)*$/;
+      if (mailformat.test(email)) {
+        return true;
+      }
+      return false;
     },
   },
 };

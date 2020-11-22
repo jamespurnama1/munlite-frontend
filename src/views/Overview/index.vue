@@ -55,14 +55,14 @@ export default {
   },
   async created() {
     try {
-      const conference = await getConference('5f96e22bdb7ee38458e581e9');
+      const conference = await getConference('5fb23ebf26d2fc33c926eaba');
       this.rulesData = Object.values(conference.data.data.rules);
       this.title = conference.data.data.title;
       if (conference.data.data.chairman) {
         this.chairData = conference.data.data.chairman;
       }
     } catch (err) {
-      console.error(err);
+      console.error(err.response);
     }
   },
 };

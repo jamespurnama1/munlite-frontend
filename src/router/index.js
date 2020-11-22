@@ -1,11 +1,12 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from '../store';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/home',
+    path: '/',
     name: 'Home',
     component: () => import('@/views/Home'),
   },
@@ -35,6 +36,18 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const publicPages = ['/login', '/signup'];
+  const authRequired = !publicPages.includes(to.path);
+  const { loggedIn } = store.getters;
+
+  if (authRequired && !loggedIn) {
+    next('/login');
+  } else {
+    next();
+  }
 });
 
 export default router;
