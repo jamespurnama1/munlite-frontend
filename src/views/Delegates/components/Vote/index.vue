@@ -31,7 +31,7 @@
         </div>
         <div id="indicator" ref="indicator" />
       </div>
-      <div id="verdict">
+      <div class="verdict">
       <p v-if="left">{{ left }} countries left</p>
       <p v-else-if="!left">no countries left</p>
     <button id="rerun"

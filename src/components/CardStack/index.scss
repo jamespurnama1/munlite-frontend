@@ -16,14 +16,16 @@
     .stack-cards__item {
       position: absolute;
       height: 30%;
+      min-height: 100px;
       width: 100%;
       top: 50%;
       transform: translateY(-50%);
       transform-origin: center bottom;
       margin: 0 auto;
+      @include transition(.5s, ease);
 
       &.active {
-        z-index: 10;
+        transform: translateY(-50%) scale(1) !important;
       }
 
       > * {

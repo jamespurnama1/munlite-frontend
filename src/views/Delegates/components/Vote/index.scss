@@ -145,7 +145,7 @@
       }
     }
 
-    #verdict {
+    .verdict {
       display: flex;
       flex-direction: column;
       width: 25%;
@@ -193,7 +193,7 @@
         }
 
         @include max-media(tablet) {
-          margin: 1rem 1rem 1rem 0;
+          // margin: 1rem 1rem 1rem 0;
         }
 
         @include max-media(mobile) {

@@ -14,30 +14,34 @@
         class="red" id="undo">
           <font-awesome-icon :icon="['fas', 'undo']" size="lg" />
         </button>
-        <button @click="presence('Present')"
-        :disabled="$store.state.done === $store.state.delegates.length">
-          <p>Present</p>
-        </button>
-        <button @click="presence('Present & Voting')"
-        :disabled="$store.state.done === $store.state.delegates.length">
-          <p>Present<br>&amp; Voting</p>
-        </button>
-        <button @click="presence('Not Present')" class="red"
-        :disabled="$store.state.done === $store.state.delegates.length">
-          <p>Not Present</p>
-        </button>
+        <div id='select'>
+          <button @click="presence('Present')"
+          :disabled="$store.state.done === $store.state.delegates.length">
+            <p>Present</p>
+          </button>
+          <button @click="presence('Present & Voting')"
+          :disabled="$store.state.done === $store.state.delegates.length">
+            <p>Present<br>&amp; Voting</p>
+          </button>
+          <button @click="presence('Not Present')" class="red"
+          :disabled="$store.state.done === $store.state.delegates.length">
+            <p>Not Present</p>
+          </button>
+        </div>
+        <div class="verdict">
+          <p v-if="$store.state.done !== $store.state.delegates.length">
+            {{ $store.state.delegates.length - $store.state.done }} countries left
+          </p>
+          <p v-else-if="$store.state.done === $store.state.delegates.length">
+            no countries left
+          </p>
+          <button @click="$parent.$emit('stage', 2)"
+          :disabled="$store.state.done !== $store.state.delegates.length"
+          id="continue">
+            <p>Continue</p>
+          </button>
+        </div>
       </div>
-      <p class='left' v-if="$store.state.done !== $store.state.delegates.length">
-        {{ $store.state.delegates.length - $store.state.done }} countries left
-      </p>
-      <p class='left' v-else-if="$store.state.done === $store.state.delegates.length">
-        no countries left
-      </p>
-        <button @click="$parent.$emit('stage', 2)"
-        :disabled="$store.state.done !== $store.state.delegates.length"
-        id="continue">
-          <p>Continue</p>
-        </button>
     </div>
   </div>
 </template>

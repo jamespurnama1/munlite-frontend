@@ -43,19 +43,19 @@
         </div>
       </div>
     </div>
-    <transition name="fade">
       <div class="rollcall" v-if="showOverlay">
         <transition name="fade">
           <Warning :key="0" v-if='warning'
           title="Are You Sure?"
           desc="This will discard all current roll call &amp; voting progress." />
         </transition>
+    <transition-group name="fade">
         <div class="overlay" v-if="warning" />
-        <RollCall :key="1" v-if="stage === 1" />
-        <Vote :key="2" v-else-if="stage === 2" />
-        <Pass :key="3" v-else-if='stage === 3' />
-      </div>
-    </transition>
+          <RollCall :key="1" v-if="stage === 1" />
+          <Vote :key="2" v-else-if="stage === 2" />
+          <Pass :key="3" v-else-if='stage === 3' />
+    </transition-group>
+        </div>
     <div class="overlay" v-if="showOverlay" />
   </div>
 </template>

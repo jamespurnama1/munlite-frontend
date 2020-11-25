@@ -1,18 +1,20 @@
 #rollcall {
   display: flex;
   flex-direction: column;
-  width: 40%;
-  height: 75%;
+  width: 40vw;
+  height: 75vh;
   min-width: 500px;
-  padding: 3% 3% 0 3%;
+  min-height: 450px;
+  padding: 3%;
   background-color: white;
   border-radius: 20px;
-  -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-  -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+  -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
 
-  @include max-media (mobile) {
-      min-width: 350px;
+  @include max-media(mobile) {
+    width: 60vw;
+    min-width: 290px;
   }
 
   #close {
@@ -44,28 +46,80 @@
       right: 5%;
 
       @include max-media(mobile) {
-        bottom: 21%;
+        top: 5%;
+        bottom: intial;
         right: initial;
       }
     }
 
     #selection {
+      position: relative;
       display: flex;
       flex-direction: column;
       width: 30%;
       min-width: 150px;
-      margin: auto 0 auto 30px;
+      margin: auto 0 0 30px;
 
       @include max-media(mobile) {
-        flex-direction: row;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 50% 50%;
+        grid-template-areas:
+          "top top top"
+          "botL . botR";
         width: 100%;
+        height: 25%;
+        min-height: 120px;
         margin: 0 auto;
+      }
+
+      #select {
+        display: flex;
+        grid-area: top;
+        justify-content: space-around;
+        flex-direction: column;
+        
+        @include max-media(mobile) {
+          flex-direction: row;
+        }
+      }
+    }
+  }
+
+  .verdict {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 25% 0 0 auto;
+    grid-area: botR;
+
+    p {
+      white-space: nowrap;
+
+      @include max-media(mobile) {
+        font-size: 14px;
+      }
+    }
+
+    #continue {
+      background-color: $blue;
+      color: white;
+      border: 1px solid $blue;
+
+      @include max-media(mobile) {
+        margin-top: 0;
+      }
+
+      &:hover {
+        box-shadow: 0 0 20px 0 rgba(95, 120, 255, 0.7);
       }
     }
   }
 
   button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 10px 0;
     border-radius: 10px;
     padding: 5px 10px;
@@ -75,15 +129,15 @@
     background-color: white;
     border: 1px solid $light-grey;
     cursor: pointer;
-    transition: all .3s ease;
+    @include transition(0.3s, ease);
 
     @include max-media(mobile) {
       font-size: 14px;
     }
 
     &:hover {
-      box-shadow: 0 0 20px 0 rgba(0,0,0,0.3);
-      border: 1px solid rgba(0,0,0,0);
+      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 0, 0, 0);
     }
 
     &:disabled {
@@ -98,39 +152,16 @@
       @include transition(ease, 0.3s);
 
       &:hover {
-        box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
+        box-shadow: 0 0 20px 0 rgba(255, 95, 95, 0.7);
       }
     }
 
     &#undo {
       margin-bottom: 30px;
-      width: 30%;
+      width: 35%;
+      min-width: 40px;
       margin: 10px;
-
-      @include max-media(mobile) {
-        position: absolute;
-        bottom: 0;
-        width: initial;
-      }
-    }
-
-    &#continue {
-      position: absolute;
-      background-color: $blue;
-      color: white;
-      border: 1px solid $blue;
-      bottom: 5%;
-      right: 5%;
-
-      &:hover {
-        box-shadow: 0 0 20px 0 rgba(95,120,255,0.7);
-      }
-
-      @include max-media(mobile) {
-        position: relative;
-        bottom: 0;
-        margin-left: auto;
-      }
+      grid-area: botL;
     }
 
     input {
@@ -138,7 +169,7 @@
       width: 0;
       color: $dark-grey;
       @include transition(linear, 0.3s);
-    
+
       &.show {
         width: 200px;
         margin-right: 1rem;
@@ -162,8 +193,6 @@
   }
 
   .cardList {
-    // display: flex;
-    // flex-direction: column;
     display: grid;
     grid-template-columns: 1fr 250px;
     grid-template-rows: 1fr;
@@ -176,9 +205,9 @@
       top: 0.75em;
       transform-origin: center top;
 
-      &~.cardWrapper {
+      & ~ .cardWrapper {
         transform: translateY(-50%);
       }
     }
   }
-  }
+}

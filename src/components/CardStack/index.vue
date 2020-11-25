@@ -39,7 +39,9 @@ export default {
       card: null,
       topCards: null,
       activEl: null,
-      tl: gsap.timeline({ paused: true }),
+      count: 0,
+      prevCount: 0,
+      tl: gsap.timeline({ defaults: { duration: 0.01, ease: 'power2.out' }, paused: true }),
     };
   },
   methods: {
@@ -47,30 +49,34 @@ export default {
       this.activEl = document.querySelector('.active');
       this.card.forEach((i, j) => {
         if (this.$store.state.active > j) { // cards before active
+          this.tl.to(this.card[j], {
+            zIndex: j,
+            duration: 0.1,
+          }, '<-1');
           if (this.$store.state.active - 3 < j) { // 3 cards before active
-            gsap.to(this.card[j], {
-              zIndex: j,
+            this.tl.to(this.card[j], {
               y: `${-25 * (this.$store.state.active - j)}%`,
               scale: 1 - (0.05 * (this.$store.state.active - j)),
             });
           } else {
-            gsap.to(this.card[j], {
-              zIndex: j,
+            this.tl.to(this.card[j], {
               y: '-75%',
               scale: 0.85,
             });
           }
           this.card[j].classList.add('top');
         } else if (this.$store.state.active < j) { // cards after active
+          this.tl.to(this.card[j], {
+            zIndex: this.card.length - j,
+            duration: 0.1,
+          }, '<-1');
           if (this.$store.state.active + 3 > j) { // 3 cards after active
-            gsap.to(this.card[j], {
-              zIndex: this.card.length - j,
+            this.tl.to(this.card[j], {
               y: `${25 * (j - this.$store.state.active)}%`,
               scale: 1 - (0.05 * (j - this.$store.state.active)),
             });
           } else {
-            gsap.to(this.card[j], {
-              zIndex: this.card.length - j,
+            this.tl.to(this.card[j], {
               y: '75%',
               scale: 0.85,
             });
@@ -79,14 +85,16 @@ export default {
         } else if (this.$store.state.active === j) { // active card
           this.card[j].classList.remove('top');
           this.card[j].classList.remove('bottom');
-          gsap.to(this.activEl, {
+          this.tl.to(this.activEl, {
             zIndex: this.card.length,
-            y: 0,
-            duration: '.5s',
-            ease: 'ease',
-          });
-          this.activEl.style.cssText = `z-index: ${this.card.length}`;
+            duration: 0.1,
+          }, '<-1')
+            .to(this.activEl, {
+              y: 0,
+              ease: 'ease',
+            });
         }
+        // console.table(this.tl.getChildren().map((x) => x.vars));
       });
     },
     move(e) {
@@ -109,13 +117,18 @@ export default {
     this.card[this.$store.state.active].classList.add('active');
     this.sort();
     document.querySelector('.stackOverflow').onwheel = debounce(this.move, 100, true);
+    this.tl.play();
   },
   computed: {
-    count() {
+    countStore() {
       return this.$store.state.active;
     },
   },
   watch: {
+    countStore() {
+      this.prevCount = this.count;
+      this.count = this.countStore;
+    },
     count() {
       if (document.querySelector('.active') != null) {
         this.activEl = document.querySelector('.active');
@@ -123,6 +136,7 @@ export default {
       }
       this.card[this.$store.state.active].classList.add('active');
       this.sort();
+      this.tl.play();
     },
   },
 };
