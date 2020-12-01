@@ -49,7 +49,7 @@
           title="Are You Sure?"
           desc="This will discard all current roll call &amp; voting progress." />
         </transition>
-    <transition-group name="fade">
+    <transition-group class="trans" name="fade">
         <div class="overlay" v-if="warning" />
           <RollCall :key="1" v-if="stage === 1" />
           <Vote :key="2" v-else-if="stage === 2" />

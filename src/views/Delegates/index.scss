@@ -266,12 +266,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 3;
+    z-index: 4;
     @include transition(ease, 0.5s);
   }
 
-  .overlay {
-    z-index: 2;
+  .trans {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .overlay {
+      z-index: 2;
+    }
   }
 }
 
