@@ -18,11 +18,8 @@ describe('Roll Call Modal Test', () => {
     cy.get('button').contains('Continue').click();
   });
   it('Proceed to last modal', () => {
-    cy.wait(5000);
     cy.get('#select .selection:first-child .input').type('7');
-    cy.wait(5000);
     cy.get('.input.red').type('4');
-    cy.wait(5000);
     cy.get('button').contains('Pass').click();
   });
   it('Redirects to GSL', () => {
