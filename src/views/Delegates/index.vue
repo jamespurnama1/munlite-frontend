@@ -43,25 +43,20 @@
         </div>
       </div>
     </div>
+    <transition name="fade" mode="out-in">
       <div class="rollcall" v-if="showOverlay">
-        <transition name="fade">
-          <Warning :key="0" v-if='warning'
-          title="Are You Sure?"
-          desc="This will discard all current roll call &amp; voting progress." />
-        </transition>
-    <transition-group class="trans" name="fade">
-        <div class="overlay" v-if="warning" />
-          <RollCall :key="1" v-if="stage === 1" />
-          <Vote :key="2" v-else-if="stage === 2" />
-          <Pass :key="3" v-else-if='stage === 3' />
-    </transition-group>
+        <!-- <transition-group class="trans" name="fade" mode="out-in" @stage="stageListener"> -->
+            <RollCall :key="stage" v-if="stage === 1" />
+            <Vote :key="stage" v-else-if="stage === 2" />
+            <Pass :key="stage" v-else-if='stage === 3' />
+        <!-- </transition-group> -->
         </div>
+      </transition>
     <div class="overlay" v-if="showOverlay" />
   </div>
 </template>
 
 <script>
-import Warning from '@/components/Warning/index.vue';
 import RollCall from './components/RollCall/index.vue';
 import Vote from './components/Vote/index.vue';
 import Pass from './components/Pass/index.vue';
@@ -70,7 +65,6 @@ export default {
   name: 'Delegates',
   components: {
     RollCall,
-    Warning,
     Vote,
     Pass,
   },
@@ -107,7 +101,6 @@ export default {
       if (this.warning === 'discard') {
         this.stage = 0;
         this.showOverlay = false;
-        this.warning = false;
         this.$store.commit('reset');
       }
     },
@@ -118,12 +111,6 @@ export default {
         this.showOverlay = false;
       }
       this.stage = i;
-    });
-    this.$on('no-modal-warn', () => {
-      this.warning = true;
-    });
-    this.$on('confirm', (i) => {
-      this.warning = i;
     });
   },
 };

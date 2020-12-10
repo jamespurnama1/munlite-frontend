@@ -5,6 +5,7 @@
   
     @include max-media (mobile) {
       width: 90%;
+      // height: 60%;
     }
 
   .stack-cards {
@@ -16,16 +17,23 @@
     .stack-cards__item {
       position: absolute;
       height: 30%;
-      min-height: 100px;
+      min-height: 170px;
       width: 100%;
       top: 50%;
-      transform: translateY(-50%);
+      left: 50%;
+      transform: translate(-50%, -50%);
       transform-origin: center bottom;
       margin: 0 auto;
       @include transition(.5s, ease);
 
+      @include max-media(mobile) {
+        width: 90%;
+        min-height: 120px;
+        max-width: 300px;
+      }
+
       &.active {
-        transform: translateY(-50%) scale(1) !important;
+        transform: translate(-50%, -50%) scale(1) !important;
       }
 
       > * {

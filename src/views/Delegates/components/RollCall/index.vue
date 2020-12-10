@@ -1,6 +1,6 @@
 <template>
   <div id='rollcall'>
-    <a @click="$parent.$emit('no-modal-warn')" id='close' title="Close">
+    <a @click="$parent.$emit('stage', 0)" id='close' title="Close">
       <font-awesome-icon :icon="['fas', 'times']" size="lg" />
     </a>
     <h2>Roll Call</h2>
@@ -8,12 +8,6 @@
     <div id='call'>
       <CardStack prgrs="presence" desc="presence" />
       <div id='selection'>
-        <button @click="un()"
-        :disabled="$store.state.active === 0"
-        title="Undo"
-        class="red" id="undo">
-          <font-awesome-icon :icon="['fas', 'undo']" size="lg" />
-        </button>
         <div id='select'>
           <button @click="presence('Present')"
           :disabled="$store.state.done === $store.state.delegates.length">
@@ -65,10 +59,6 @@ export default {
       } else if (j === 'Not Present') {
         this.$store.commit('notPresent');
       }
-    },
-    un() {
-      this.$store.commit('active', -1);
-      this.$store.commit('undo');
     },
   },
 };
