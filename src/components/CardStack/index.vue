@@ -4,6 +4,7 @@
       <li v-for="(del, i) in $store.state.delegates" :key="i"
       class="stack-cards__item js-stack-cards__item">
         <Card
+        @click.native="click(i)"
         :country="del.id"
         :desc="desc"
         :color="color"
@@ -64,6 +65,7 @@ export default {
               scale: 0.85,
             });
           }
+          this.card[j].classList.remove('bottom');
           this.card[j].classList.add('top');
         } else if (this.$store.state.active < j) { // cards after active
           this.tl.to(this.card[j], {
@@ -81,6 +83,7 @@ export default {
               scale: 0.85,
             });
           }
+          this.card[j].classList.remove('top');
           this.card[j].classList.add('bottom');
         } else if (this.$store.state.active === j) { // active card
           this.card[j].classList.remove('top');
@@ -110,6 +113,10 @@ export default {
       } else if (direction === 'bottom' && this.$store.state.active !== 0) {
         this.$store.commit('active', -1);
       }
+    },
+    click(i) {
+      const j = this.$store.state.active - i;
+      this.$store.commit('active', -j);
     },
   },
   mounted() {
