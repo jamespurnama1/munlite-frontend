@@ -8,10 +8,6 @@
   background-color: white;
   border: 1px solid $light-grey;
   border-radius: 20px/20px;
-  // -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
-  // -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
-  // box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
-  // filter: drop-shadow(0 0 20px rgba(0,0,0,0.30));
 
   @include max-media(mobile) {
     border-radius: 15px/15px;
@@ -43,6 +39,19 @@
     top: 0;
     left: 0;
     z-index: -1;
+  }
+
+  .desc {
+    position: absolute;
+    left: 3%;
+    top: 1%;
+    align-self: flex-start;
+    z-index: 2;
+    @include transition(.5s, ease);
+
+    @include max-media (mobile) {
+      top: 6%;
+    }
   }
 
   .country {
@@ -82,18 +91,6 @@
     @include max-media (mobile) {
       font-size: 10px;
     }
-
-    &.desc {
-      position: relative;
-      left: 3%;
-      top: 1%;
-      align-self: flex-start;
-      z-index: 2;
-
-      @include max-media (mobile) {
-        top: 6%;
-      }
-    }
   }
 
   .time {
@@ -126,5 +123,13 @@
     bottom: 7%;
     top: initial;
     transform-origin: right bottom;
+  }
+
+  .desc {
+    top: 85%;
+
+    @include max-media (mobile) {
+      top: 86%;
+    }
   }
 }

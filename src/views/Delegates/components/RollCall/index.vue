@@ -9,16 +9,13 @@
       <CardStack prgrs="presence" desc="presence" />
       <div id='selection'>
         <div id='select'>
-          <button @click="presence('Present')"
-          :disabled="$store.state.done === $store.state.delegates.length">
+          <button @click="presence('Present')">
             <p>Present</p>
           </button>
-          <button @click="presence('Present & Voting')"
-          :disabled="$store.state.done === $store.state.delegates.length">
+          <button @click="presence('Present & Voting')">
             <p>Present<br>&amp; Voting</p>
           </button>
-          <button @click="presence('Not Present')" class="red"
-          :disabled="$store.state.done === $store.state.delegates.length">
+          <button @click="presence('Not Present')" class="red">
             <p>Not Present</p>
           </button>
         </div>

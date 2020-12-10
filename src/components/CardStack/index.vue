@@ -105,9 +105,9 @@ export default {
       }
     },
     swipe(direction) {
-      if (direction === 'top') {
+      if (direction === 'top' && this.$store.state.active < this.$store.state.delegates.length) {
         this.$store.commit('active', 1);
-      } else if (direction === 'bottom') {
+      } else if (direction === 'bottom' && this.$store.state.active !== 0) {
         this.$store.commit('active', -1);
       }
     },

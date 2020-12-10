@@ -52,7 +52,6 @@
         }
 
       .swipe {
-        // position: absolute;
         min-width: 100%;
       }
 
@@ -194,10 +193,6 @@
         &:disabled {
           opacity: 0.5;
           cursor: not-allowed;
-        }
-
-        @include max-media(tablet) {
-          // margin: 1rem 1rem 1rem 0;
         }
 
         @include max-media(mobile) {

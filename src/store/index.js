@@ -87,7 +87,7 @@ export default new Vuex.Store({
   mutations: {
     active(state, i) {
       const j = state.active + i;
-      state.active = Math.min(Math.max(parseInt(j, 10), 0), state.delegates.length);
+      state.active = Math.min(Math.max(parseInt(j, 10), 0), state.delegates.length - 1);
     },
     present(state) {
       state.prevInfo.push(state.info);
@@ -104,12 +104,6 @@ export default new Vuex.Store({
     notPresent(state) {
       state.done += 1;
     },
-    // undo(state) {
-    //   const [lastItem] = state.prevInfo.slice(-1);
-    //   state.info = lastItem;
-    //   state.prevInfo.pop();
-    //   state.done -= 1;
-    // },
     presence(state, { i, j }) {
       state.delegates[i].presence = j;
     },
