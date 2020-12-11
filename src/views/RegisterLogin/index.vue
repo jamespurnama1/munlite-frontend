@@ -117,7 +117,8 @@ export default {
         };
         this.$store.dispatch('login', user).then(
           () => {
-            this.$router.push('/');
+            this.$router.push(this.$route.query.from);
+            // this.$router.push('/');
           },
           (error) => {
             console.log(error);

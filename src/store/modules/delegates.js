@@ -106,7 +106,9 @@ const delegates = {
       state.delegates.map((e) => ({ ...e, presence: 'N/A' })); // not working
     },
   },
-  getters: {},
+  getters: {
+    getWidthWindow: (state) => state.widthWindow,
+  },
   modules: {},
 };
 

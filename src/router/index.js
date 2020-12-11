@@ -11,12 +11,12 @@ const routes = [
     component: () => import('@/views/Home'),
   },
   {
-    path: '/overview',
+    path: '/overview/:id',
     name: 'Overview',
     component: () => import('@/views/Overview'),
   },
   {
-    path: '/delegates',
+    path: '/delegates/:id',
     name: 'Delegates',
     component: () => import('@/views/Delegates'),
   },
@@ -39,12 +39,22 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/login', '/signup'];
-  const authRequired = !publicPages.includes(to.path);
-  const { loggedIn } = store.getters;
+  const publicPages = ['Log In', 'Sign Up'];
+  const authRequired = !publicPages.includes(to.name);
+  const status = store.getters.loggedIn;
 
-  if (authRequired && !loggedIn) {
-    next('/login');
+  if (authRequired && !status) {
+    store.dispatch('fetchJWT').then(
+      () => {
+        next();
+      },
+      (error) => {
+        console.log(error);
+        const loginpath = window.location.pathname;
+        next({ name: 'Log In', query: { from: loginpath } });
+        // next('/login');
+      },
+    );
   } else {
     next();
   }

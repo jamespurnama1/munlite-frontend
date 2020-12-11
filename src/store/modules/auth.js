@@ -1,5 +1,5 @@
 import {
-  getJWT, login, signup, logout,
+  fetchJWT, login, signup, logout,
 } from '@/api/user';
 
 const UserModule = {
@@ -25,6 +25,7 @@ const UserModule = {
     },
     logout(state) {
       state.loggedIn = false;
+      state.currentJWT = '';
     },
     registerSuccess(state) {
       state.loggedIn = false;
@@ -35,9 +36,19 @@ const UserModule = {
   },
 
   actions: {
-    async fetchJWT({ commit }) {
-      const res = await getJWT();
-      commit('setJWT', await res.data.data.access_token);
+    fetchJWT({ commit }) {
+      return fetchJWT().then(
+        (response) => {
+          commit('loginSuccess');
+          commit('setJWT', response.data.data.access_token);
+          console.log(response);
+          return Promise.resolve(response);
+        },
+        (error) => {
+          commit('loginFailure');
+          return Promise.reject(error.response);
+        },
+      );
     },
     login({ commit }, user) {
       return login(user).then(

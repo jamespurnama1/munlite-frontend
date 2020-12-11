@@ -152,7 +152,7 @@ export default {
     },
     async updateDelegatesData() {
       try {
-        const delegates = await getAllDelegates('5f96e22bdb7ee38458e581e9');
+        const delegates = await getAllDelegates(this.$route.params.id);
         if (delegates.data.data !== null) {
           this.delegatesData = this.sortCountry(delegates.data.data);
         }
@@ -163,7 +163,7 @@ export default {
     async deleteDelegatesData(country) {
       try {
         const responses = new Promise((resolve) => {
-          resolve(deleteDelegates('5f96e22bdb7ee38458e581e9', country));
+          resolve(deleteDelegates(this.$route.params.id, country));
         });
         responses.then(() => {
           this.updateDelegatesData();
@@ -194,7 +194,7 @@ export default {
   async created() {
     this.updateDelegatesData();
     try {
-      const conference = await getConference('5f96e22bdb7ee38458e581e9');
+      const conference = await getConference(this.$route.params.id);
       this.rulesData = conference.data.data.rules;
       const [parse] = (conference.data.data.rules.dr_vote).split(' ');
       const num = parse.split('/');

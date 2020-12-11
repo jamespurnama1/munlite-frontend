@@ -29,13 +29,18 @@
           <button class="button"><font-awesome-icon :icon="['fas', 'plus']"/></button>
         </div>
         <div class="list-conferences">
-          <div v-for="(data, index) in conferences" :key="index" class="conference-data">
+          <div
+            v-for="(data, index) in conferences"
+            :key="index"
+            class="conference-data"
+            @click="$router.push(`/overview/${data._id}`)"
+          >
             <div class="img"></div>
             <div class="detail">
-              <p class="name">{{ data.name }}</p>
+              <p class="name">{{ data.title }}</p>
               <div class="info">
                 <span class="started-time">
-                  {{ data.timestamp }}
+                  2020
                 </span>
               </div>
             </div>
@@ -50,43 +55,31 @@
 </template>
 
 <script>
+import { getUserData } from '@/api/profile';
+import { getAllConference } from '@/api/conference';
+
 export default {
   name: 'Home',
   data() {
     return {
-      name: 'John',
+      name: '',
       ongoing: {
         name: 'Indonesia MUN',
         timestamp: 10,
         flag: 'id',
       },
-      conferences: [
-        {
-          name: 'Indonesia MUN',
-          timestamp: 2020,
-          flag: 'in',
-          status: 'ongoing',
-        },
-        {
-          name: 'Jakarta MUN',
-          timestamp: 2020,
-          flag: 'in',
-          status: 'best delegate',
-        },
-        {
-          name: 'HI MUN',
-          timestamp: 2019,
-          flag: 'in',
-          status: 'delegate',
-        },
-        {
-          name: 'INI MUN',
-          timestamp: 2019,
-          flag: 'in',
-          status: 'chair',
-        },
-      ],
+      conferences: [],
     };
+  },
+  async created() {
+    try {
+      const profile = await getUserData();
+      this.name = profile.data.data.first_name;
+      const conference = await getAllConference();
+      this.conferences = conference.data.data;
+    } catch (err) {
+      console.error(err);
+    }
   },
 };
 </script>

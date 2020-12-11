@@ -58,7 +58,7 @@ export default {
           country: this.delegatesData[i].country,
           status: j,
         };
-        await editDelegates('5f96e22bdb7ee38458e581e9', data);
+        await editDelegates(this.$route.params.id, data);
         this.$emit('update');
 
         this.getVoteCount();
@@ -75,7 +75,7 @@ export default {
       this.currentCountry = index;
     },
     async getVoteCount() {
-      const vote = await getAllDelegates('5f96e22bdb7ee38458e581e9');
+      const vote = await getAllDelegates(this.$route.params.id);
       this.voteCount = (vote.data.data.filter((obj) => obj.status !== 'N/A')).length;
     },
   },

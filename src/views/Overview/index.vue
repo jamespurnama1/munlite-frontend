@@ -55,7 +55,7 @@ export default {
   },
   async created() {
     try {
-      const conference = await getConference('5fb23ebf26d2fc33c926eaba');
+      const conference = await getConference(this.$route.params.id);
       this.rulesData = Object.values(conference.data.data.rules);
       this.title = conference.data.data.title;
       if (conference.data.data.chairman) {

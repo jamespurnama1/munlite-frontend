@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
+import router from '../router';
 import store from '../store';
 
 const service = axios.create({
@@ -14,10 +15,22 @@ service.interceptors.request.use(
       config.headers['Content-Type'] = 'application/json';
       return config;
     }
+    store.dispatch('fetchJWT').then(
+      (response) => {
+        config.headers.Authorization = `Bearer ${response.data.data.access_token}`;
+        config.headers['Content-Type'] = 'application/json';
+        return config;
+      },
+      (error) => {
+        console.log(error);
+        router.push('/login');
+      },
+    );
     return config;
   },
   (error) => {
     console.log(error); // for debug
+    router.push('/login');
     return Promise.reject(error);
   },
 );
