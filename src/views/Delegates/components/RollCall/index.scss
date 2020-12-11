@@ -6,17 +6,21 @@
   min-width: 500px;
   min-height: 450px;
   padding: 3%;
+  padding-bottom: 0;
   background-color: white;
   border-radius: 20px/20px;
   -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
   -moz-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
 
-  @include max-media(mobile) {
+  @include max-media(small-tablet) {
+    min-height: 0;
+  }
+
+  @include max-media(mobile-landscape) {
     width: 75vw;
-    height: 75vh;
+    height: 85vh;
     min-width: 265px;
-    min-height: 600px;
   }
 
   #close {
@@ -35,7 +39,7 @@
     padding: 0 20px;
     margin: 0 -20px;
 
-    @include max-media(mobile) {
+    @include max-media(mobile-landscape) {
       height: 90%;
       flex-direction: column;
       justify-content: space-between;
@@ -46,7 +50,7 @@
       bottom: 13%;
       right: 5%;
 
-      @include max-media(mobile) {
+      @include max-media(mobile-landscape) {
         top: 5%;
         bottom: intial;
         right: initial;
@@ -62,7 +66,7 @@
       height: 100%;
       margin-left: auto;
 
-      @include max-media(mobile) {
+      @include max-media(mobile-landscape) {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 50% 50%;
@@ -87,7 +91,12 @@
         justify-content: space-around;
         flex-direction: column;
         
-        @include max-media(mobile) {
+        @include max-media(small-tablet) {
+          min-height: 120px;
+          transform: translateY(-70%);
+        }
+
+        @include max-media(mobile-landscape) {
           position: relative;
           flex-direction: row;
           height: initial;
@@ -112,7 +121,11 @@
     p {
       white-space: nowrap;
 
-      @include max-media(mobile) {
+      @include max-media(small-tablet) {
+        font-size: 12px;
+      }
+      
+      @include max-media(mobile-landscape) {
         font-size: 12px;
       }
     }
@@ -122,10 +135,6 @@
       color: white;
       border: 1px solid $blue;
       width: initial;
-
-      @include max-media(mobile) {
-        margin: 0;
-      }
 
       &:hover {
         box-shadow: 0 0 20px 0 rgba(95, 120, 255, 0.7);
@@ -137,7 +146,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px 0;
+    margin-bottom: 10px;
     border-radius: 10px/10px;
     padding: 5px 10px;
     font-family: 'Montserrat', sans-serif;
@@ -147,10 +156,18 @@
     border: 1px solid $light-grey;
     cursor: pointer;
     @include transition(0.3s, ease);
-    
-    @include max-media(mobile) {
+
+    @include max-media(mobile-landscape) {
       width: 30%;
       font-size: 12px;
+    }
+  
+    @include max-media(small-tablet) {
+      font-size: 12px;
+    }
+
+    @include max-media(small-tablet) {
+      font-size: 14px;
     }
 
     &:hover {
@@ -185,14 +202,14 @@
         margin-right: 1rem;
         padding-left: 5px;
         font-size: 18px;
-
-        @include max-media(mobile) {
-          width: 100px;
-          font-size: 14px;
-        }
-
+        
         @include max-media(small-mobile) {
           width: 60px;
+        }
+        
+        @include max-media(mobile-landscape) {
+          width: 100px;
+          font-size: 12px;
         }
       }
 
