@@ -11,7 +11,6 @@ const service = axios.create({
 service.interceptors.request.use(
   (config) => {
     if (store.getters.jwt.length > 0) {
-      console.log(store.getters.jwt);
       config.headers.Authorization = `Bearer ${store.getters.jwt}`;
       config.headers['Content-Type'] = 'application/json';
       return config;

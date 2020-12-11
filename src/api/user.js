@@ -29,7 +29,6 @@ export async function fetchJWT() {
   return fetch(`${process.env.VUE_APP_BASE_API}/refresh`, {
     method: 'POST',
     credentials: 'include',
-    mode: 'cors',
   })
     .then((response) => {
       console.log(response);

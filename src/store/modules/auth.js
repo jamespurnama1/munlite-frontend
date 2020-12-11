@@ -1,5 +1,5 @@
 import {
-  fetchJWT, login, signup, logout,
+  getJWT, login, signup, logout,
 } from '@/api/user';
 
 const UserModule = {
@@ -37,11 +37,11 @@ const UserModule = {
 
   actions: {
     fetchJWT({ commit }) {
-      return fetchJWT().then(
+      return getJWT().then(
         (response) => {
           commit('loginSuccess');
           console.log(response);
-          commit('setJWT', response.data.data.access_token);
+          commit('setJWT', response);
           return Promise.resolve(response);
         },
         (error) => {
