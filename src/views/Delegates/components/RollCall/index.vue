@@ -13,7 +13,7 @@
             <p>Present</p>
           </button>
           <button @click="presence('Present & Voting')">
-            <p>Present<br>&amp; Voting</p>
+            <p>{{ decoder(button) }}</p>
           </button>
           <button @click="presence('Not Present')" class="red">
             <p>Not Present</p>
@@ -44,6 +44,11 @@ export default {
   components: {
     CardStack,
   },
+  data() {
+    return {
+      button: 'Present &amp;&nbsp;Voting',
+    };
+  },
   methods: {
     presence(j) {
       const i = this.$store.state.active;
@@ -56,6 +61,11 @@ export default {
       } else if (j === 'Not Present') {
         this.$store.commit('notPresent');
       }
+    },
+    decoder(str) { // Vue workaround for &nbsp;
+      const textArea = document.createElement('textarea');
+      textArea.innerHTML = str;
+      return textArea.value;
     },
   },
 };
