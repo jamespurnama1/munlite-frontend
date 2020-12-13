@@ -15,7 +15,7 @@ service.interceptors.request.use(
       config.headers['Content-Type'] = 'application/json';
       return config;
     }
-    store.dispatch('fetchJWT').then(
+    const temp = store.dispatch('fetchJWT').then(
       (response) => {
         config.headers.Authorization = `Bearer ${response.data.data.access_token}`;
         config.headers['Content-Type'] = 'application/json';
@@ -26,7 +26,7 @@ service.interceptors.request.use(
         router.push('/login');
       },
     );
-    return config;
+    return temp;
   },
   (error) => {
     console.log(error); // for debug

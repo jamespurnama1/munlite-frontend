@@ -7,7 +7,7 @@
       <div class="navTab" :class="{toggle: open}">
         <div
           class="navLeft"
-          v-if="pathCheckConference"
+          v-show="pathCheckConference"
         >
           <div  v-for="(route, index) in conference" :key="index">
             <router-link
@@ -18,19 +18,10 @@
               {{ capitalize(route) }}
             </router-link>
           </div>
-          <div
-            class="border"
-            v-if="$store.getters.getWidthWindow > 960"
-            :style="{
-              left: `${borderStyles.left-1}px`,
-              width: `${borderStyles.width}px`,
-              height: `${borderStyles.height}px`
-            }"
-          ></div>
         </div>
         <div
           class="navLeft"
-          v-else
+          v-show="pathCheckGeneral"
         >
           <div  v-for="(route, index) in general" :key="index">
             <router-link
@@ -41,21 +32,17 @@
               {{ capitalize(route) }}
             </router-link>
           </div>
-          <div
-            class="border"
-            v-if="$store.getters.getWidthWindow > 960"
-            :style="{
-              left: `${borderStyles.left-1}px`,
-              width: `${borderStyles.width}px`,
-              height: `${borderStyles.height}px`
-            }"
-          ></div>
         </div>
         <div class="navRight">
           <a>Settings</a>
           <a @click="logout()">Log Out</a>
           <a><img src="@/assets/img/icon/Share.png" /></a>
         </div>
+        <div
+          class="border conff"
+          id="border"
+          v-if="$store.getters.getWidthWindow > 960"
+        ></div>
       </div>
       <div class="burger"
       @click="toggleMenu"
@@ -114,7 +101,7 @@ export default {
     window.addEventListener('resize', this.checkMobileView);
   },
   beforeUpdate() {
-    if (this.open) {
+    if (!this.open) {
       this.onTabClick();
     }
   },
@@ -124,7 +111,7 @@ export default {
   methods: {
     onTabClick() {
       const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
-      // console.log(tab);
+      console.log(tab);
       if (tab) {
         const styles = {
           left: tab.offsetLeft,

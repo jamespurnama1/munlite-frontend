@@ -34,6 +34,7 @@
   }
 
   &Tab {
+    position: relative;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -147,6 +148,7 @@
   box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.16);
   border-radius: 10px;
   left: 0;
+  top: 6px;
   width: 69px;
   pointer-events: none;
 }
