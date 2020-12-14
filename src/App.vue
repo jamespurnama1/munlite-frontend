@@ -53,7 +53,9 @@
         <span></span>
       </div>
     </div>
-    <router-view/>
+    <transition name="fade" mode="out-in">
+      <router-view :key="$route.fullPath" />
+    </transition>
     <div class="overlay-nav" v-if="open"></div>
   </div>
 </template>
