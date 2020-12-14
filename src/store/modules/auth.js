@@ -40,8 +40,7 @@ const UserModule = {
       return getJWT().then(
         (response) => {
           commit('loginSuccess');
-          console.log(response);
-          commit('setJWT', response);
+          commit('setJWT', response.data.data.access_token);
           return Promise.resolve(response);
         },
         (error) => {
