@@ -15,3 +15,8 @@ export async function getAllConference() {
   const resp = await request.get('/api/conference');
   return resp;
 }
+
+export async function getUserConference() {
+  const resp = await request.get('/api/conference/me');
+  return resp;
+}

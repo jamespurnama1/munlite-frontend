@@ -111,19 +111,18 @@ export default {
   methods: {
     onTabClick() {
       const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
-      console.log(tab);
       if (tab) {
         const styles = {
           left: tab.offsetLeft,
           width: tab.offsetWidth,
           height: tab.offsetHeight,
         };
-        console.log(styles);
         this.border = styles;
       }
       this.open = false;
     },
     async logout() {
+      this.open = false;
       try {
         await logout();
         this.$store.dispatch('logout');

@@ -42,14 +42,12 @@ const router = new VueRouter({
 
 function navbarTab(path) {
   const tab = path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(path.split('/')[1]);
-  console.log(tab);
   if (tab) {
     const styles = {
       left: tab.offsetLeft,
       width: tab.offsetWidth,
       height: tab.offsetHeight,
     };
-    console.log(styles);
     document.getElementById('border').style.left = `${styles.left + 8}px`;
     document.getElementById('border').style.width = `${styles.width}px`;
     document.getElementById('border').style.height = `${styles.height}px`;

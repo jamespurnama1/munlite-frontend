@@ -66,7 +66,7 @@ export default {
             country: this.newCountry,
             status: 'N/A',
           }];
-          await addDelegates('5f96e22bdb7ee38458e581e9', data);
+          await addDelegates(this.$route.params.id, data);
           this.$emit('update');
 
           this.newCountry = '';

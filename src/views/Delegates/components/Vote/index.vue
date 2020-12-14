@@ -5,8 +5,8 @@
       </a>
       <h2>Roll Call</h2>
       <h3>Voting</h3>
-      <p v-if="$store.state.widthWindow < 600">Swipe to view more</p>
-      <div class="info" v-if="$store.state.widthWindow > 600">
+      <p v-if="$store.getters.getWidthWindow < 600">Swipe to view more</p>
+      <div class="info" v-if="$store.getters.getWidthWindow > 600">
         <PresenceInfo :info="info"/>
         <div class="line" />
         <OtherInfo :rulesData="rulesData"/>

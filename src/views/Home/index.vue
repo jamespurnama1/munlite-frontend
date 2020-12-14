@@ -56,7 +56,7 @@
 
 <script>
 import { getUserData } from '@/api/profile';
-import { getAllConference } from '@/api/conference';
+import { getUserConference } from '@/api/conference';
 
 export default {
   name: 'Home',
@@ -75,7 +75,8 @@ export default {
     try {
       const profile = await getUserData();
       this.name = profile.data.data.first_name;
-      const conference = await getAllConference();
+      const conference = await getUserConference();
+      console.log(conference);
       this.conferences = conference.data.data;
     } catch (err) {
       console.error(err);
