@@ -42,6 +42,8 @@ export default {
       activEl: null,
       count: 0,
       prevCount: 0,
+      stacks: 3,
+      stackHeight: 75,
       tl: gsap.timeline({ defaults: { duration: 0.01, ease: 'power2.out' }, paused: true }),
     };
   },
@@ -54,14 +56,14 @@ export default {
             zIndex: j,
             duration: 0.1,
           }, '<-1');
-          if (this.$store.state.active - 3 < j) { // 3 cards before active
+          if (this.$store.state.active - this.stacks < j) { // 2 or 3 cards before active
             this.tl.to(this.card[j], {
               y: `${-25 * (this.$store.state.active - j)}%`,
               scale: 1 - (0.05 * (this.$store.state.active - j)),
             });
           } else {
             this.tl.to(this.card[j], {
-              y: '-75%',
+              y: `-${this.stackHeight}%`,
               scale: 0.85,
             });
           }
@@ -72,14 +74,14 @@ export default {
             zIndex: this.card.length - j,
             duration: 0.1,
           }, '<-1');
-          if (this.$store.state.active + 3 > j) { // 3 cards after active
+          if (this.$store.state.active + this.stacks > j) { // 2 or 3 cards after active
             this.tl.to(this.card[j], {
               y: `${25 * (j - this.$store.state.active)}%`,
               scale: 1 - (0.05 * (j - this.$store.state.active)),
             });
           } else {
             this.tl.to(this.card[j], {
-              y: '75%',
+              y: `${this.stackHeight}%`,
               scale: 0.85,
             });
           }
@@ -99,6 +101,15 @@ export default {
         }
         // console.table(this.tl.getChildren().map((x) => x.vars));
       });
+    },
+    checkWidth() {
+      if (this.width < 600) {
+        this.stacks = 2;
+        this.stackHeight = 50;
+      } else if (this.width > 600) {
+        this.stacks = 3;
+        this.stackHeight = 75;
+      }
     },
     move(e) {
       if (e.deltaY > 0) {
@@ -122,6 +133,7 @@ export default {
   mounted() {
     this.card = document.getElementsByClassName('stack-cards__item');
     this.card[this.$store.state.active].classList.add('active');
+    this.checkWidth();
     this.sort();
     document.querySelector('.stackOverflow').onwheel = debounce(this.move, 100, true);
     this.tl.play();
@@ -129,6 +141,9 @@ export default {
   computed: {
     countStore() {
       return this.$store.state.active;
+    },
+    width() {
+      return this.$store.state.widthWindow;
     },
   },
   watch: {
@@ -144,6 +159,10 @@ export default {
       this.card[this.$store.state.active].classList.add('active');
       this.sort();
       this.tl.play();
+    },
+    width() {
+      this.checkWidth();
+      this.sort();
     },
   },
 };

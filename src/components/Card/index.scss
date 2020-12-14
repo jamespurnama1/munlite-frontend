@@ -44,12 +44,12 @@
   .desc {
     position: absolute;
     left: 3%;
-    top: 1%;
+    top: 3%;
     align-self: flex-start;
     z-index: 2;
     @include transition(.5s, ease);
 
-    @include max-media (mobile) {
+    @include max-media (mobile-landscape) {
       top: 6%;
     }
   }
@@ -67,7 +67,7 @@
     transform-origin: right top;
     @include transition(.5s, ease);
 
-    @include max-media (mobile) {
+    @include max-media (mobile-landscape) {
       top: -15%;
     }
 
@@ -81,14 +81,22 @@
       font-size: 4rem;
       margin-left: 5px;
 
-      @include max-media (mobile) {
+      @include max-media (small-tablet) {
         font-size: 3rem;
+      }
+
+      @include max-media (mobile-landscape) {
+        font-size: 2rem;
       }
     }
   }
 
   p {
-    @include max-media (mobile) {
+    @include max-media(small-tablet) {
+      font-size: 12px;
+    }
+
+    @include max-media (mobile-landscape) {
       font-size: 10px;
     }
   }
@@ -126,10 +134,11 @@
   }
 
   .desc {
-    top: 85%;
+    top: initial;
+    bottom: 6%;
 
-    @include max-media (mobile) {
-      top: 86%;
+    @include max-media (mobile-landscape) {
+      // bottom: 3%;
     }
   }
 }

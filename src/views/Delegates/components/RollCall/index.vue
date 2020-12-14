@@ -19,19 +19,19 @@
             <p>Not Present</p>
           </button>
         </div>
-        <div class="verdict">
-          <p v-if="$store.state.done !== $store.state.delegates.length">
-            {{ $store.state.delegates.length - $store.state.done }} countries left
-          </p>
-          <p v-else-if="$store.state.done === $store.state.delegates.length">
-            no countries left
-          </p>
-          <button @click="$parent.$emit('stage', 2)"
-          :disabled="$store.state.done !== $store.state.delegates.length"
-          id="continue">
-            <p>Continue</p>
-          </button>
-        </div>
+      </div>
+      <div class="verdict">
+        <p v-if="$store.state.done !== $store.state.delegates.length">
+          {{ $store.state.delegates.length - $store.state.done }} countries left
+        </p>
+        <p v-else-if="$store.state.done === $store.state.delegates.length">
+          no countries left
+        </p>
+        <button @click="$parent.$emit('stage', 2)"
+        :disabled="$store.state.done !== $store.state.delegates.length"
+        id="continue">
+          <p>Continue</p>
+        </button>
       </div>
     </div>
   </div>

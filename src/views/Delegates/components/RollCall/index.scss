@@ -5,8 +5,7 @@
   height: 75vh;
   min-width: 500px;
   min-height: 375px;
-  padding: 3%;
-  padding-bottom: 0;
+  padding: 20px;
   background-color: white;
   border-radius: 20px/20px;
   -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
@@ -21,6 +20,7 @@
     width: 75vw;
     height: 85vh;
     min-width: 265px;
+    // padding: 10px;
   }
 
   #close {
@@ -32,15 +32,14 @@
   #call {
     position: relative;
     display: flex;
-    overflow: hidden;
     width: 100%;
     height: 100%;
     align-items: center;
-    padding: 0 20px;
-    margin: 0 -20px;
+    // padding: 0 20px;
+    // margin: 0 -20px;
 
     @include max-media(mobile-landscape) {
-      height: 90%;
+      // height: 90%;
       flex-direction: column;
       justify-content: space-between;
     }
@@ -63,7 +62,7 @@
       flex-direction: column;
       justify-content: flex-end;
       width: 30%;
-      height: 100%;
+      height: 80%;
       margin-left: auto;
 
       @include max-media(mobile-landscape) {
@@ -99,7 +98,7 @@
         @include max-media(mobile-landscape) {
           position: relative;
           flex-direction: row;
-          height: initial;
+          height: 80%;
           right: initial;
           top: initial;
           transform: translate(0);
@@ -111,23 +110,19 @@
   }
 
   .verdict {
+    position: absolute;
+    right: 0;
+    bottom: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    align-self: end;
+    // justify-content: flex-end;
+    // align-self: end;
     grid-area: botR;
-    margin-left: auto;
+    // padding: 0 3%;
+    // margin-left: auto;
 
     p {
       white-space: nowrap;
-
-      @include max-media(small-tablet) {
-        font-size: 12px;
-      }
-      
-      @include max-media(mobile-landscape) {
-        font-size: 12px;
-      }
     }
 
     #continue {
@@ -135,10 +130,21 @@
       color: white;
       border: 1px solid $blue;
       width: initial;
+      margin-bottom: 0;
 
       &:hover {
         box-shadow: 0 0 20px 0 rgba(95, 120, 255, 0.7);
       }
+    }
+  }
+
+  p {
+    @include max-media(small-tablet) {
+      font-size: 12px;
+    }
+    
+    @include max-media(mobile-landscape) {
+      font-size: 10px;
     }
   }
 
@@ -159,15 +165,11 @@
 
     @include max-media(mobile-landscape) {
       width: 30%;
-      font-size: 12px;
+      font-size: 10px;
     }
   
     @include max-media(small-tablet) {
       font-size: 12px;
-    }
-
-    @include max-media(small-tablet) {
-      font-size: 14px;
     }
 
     &:hover {
