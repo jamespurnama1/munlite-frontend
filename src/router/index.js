@@ -1,4 +1,6 @@
 import Vue from 'vue';
+import NProgress from 'nprogress'; // loading progress bar
+import 'nprogress/nprogress.css'; // loading progress bar style
 import VueRouter from 'vue-router';
 import store from '../store';
 
@@ -54,7 +56,10 @@ function navbarTab(path) {
   }
 }
 
+NProgress.configure({ easing: 'ease-out', speed: 1700 });
+
 router.beforeEach((to, from, next) => {
+  NProgress.start();
   if (store.getters.getWidthWindow > 960) {
     navbarTab(to.path);
   }
@@ -77,6 +82,11 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+});
+
+router.afterEach(() => {
+  // finish progress bar
+  NProgress.done();
 });
 
 export default router;
