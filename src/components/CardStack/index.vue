@@ -99,7 +99,6 @@ export default {
               ease: 'ease',
             });
         }
-        // console.table(this.tl.getChildren().map((x) => x.vars));
       });
     },
     checkWidth() {

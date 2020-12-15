@@ -47,7 +47,7 @@
     top: 3%;
     align-self: flex-start;
     z-index: 2;
-    @include transition(.5s, ease);
+    @include transition(.3s, ease);
 
     @include max-media (mobile-landscape) {
       top: 6%;
@@ -65,7 +65,7 @@
     width: fit-content;
     z-index: 2;
     transform-origin: right top;
-    @include transition(.5s, ease);
+    @include transition(.3s, ease);
 
     @include max-media (mobile-landscape) {
       top: -15%;
@@ -136,9 +136,5 @@
   .desc {
     top: initial;
     bottom: 6%;
-
-    @include max-media (mobile-landscape) {
-      // bottom: 3%;
-    }
   }
 }
