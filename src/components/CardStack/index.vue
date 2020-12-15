@@ -58,12 +58,12 @@ export default {
           }, '<-1');
           if (this.$store.state.active - this.stacks < j) { // 2 or 3 cards before active
             this.tl.to(this.card[j], {
-              y: `${-25 * (this.$store.state.active - j)}%`,
+              y: `${-3 * (this.$store.state.active - j)}rem`,
               scale: 1 - (0.05 * (this.$store.state.active - j)),
             });
           } else {
             this.tl.to(this.card[j], {
-              y: `-${this.stackHeight}%`,
+              y: `-${this.stackHeight}rem`,
               scale: 0.85,
             });
           }
@@ -76,12 +76,12 @@ export default {
           }, '<-1');
           if (this.$store.state.active + this.stacks > j) { // 2 or 3 cards after active
             this.tl.to(this.card[j], {
-              y: `${25 * (j - this.$store.state.active)}%`,
+              y: `${3 * (j - this.$store.state.active)}rem`,
               scale: 1 - (0.05 * (j - this.$store.state.active)),
             });
           } else {
             this.tl.to(this.card[j], {
-              y: `${this.stackHeight}%`,
+              y: `${this.stackHeight}rem`,
               scale: 0.85,
             });
           }
@@ -105,10 +105,10 @@ export default {
     checkWidth() {
       if (this.width < 600) {
         this.stacks = 2;
-        this.stackHeight = 50;
+        this.stackHeight = 6;
       } else if (this.width > 600) {
         this.stacks = 3;
-        this.stackHeight = 75;
+        this.stackHeight = 9;
       }
     },
     move(e) {
