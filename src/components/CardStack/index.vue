@@ -64,12 +64,14 @@ export default {
           }, '<-1');
           if (this.$store.state.active - this.stacks < j) { // 2 or 3 cards before active
             this.tl.to(this.card[j], {
-              y: `${-3 * (this.$store.state.active - j)}em`,
+              y: `-${3 * (this.$store.state.active - j)}em`,
+              x: 0,
               scale: 1 - (0.05 * (this.$store.state.active - j)),
             });
           } else {
             this.tl.to(this.card[j], {
               y: `-${this.stackHeight}em`,
+              x: 0,
               scale: 0.85,
             });
           }
@@ -83,11 +85,13 @@ export default {
           if (this.$store.state.active + this.stacks > j) { // 2 or 3 cards after active
             this.tl.to(this.card[j], {
               y: `${3 * (j - this.$store.state.active)}em`,
+              x: 0,
               scale: 1 - (0.05 * (j - this.$store.state.active)),
             });
           } else {
             this.tl.to(this.card[j], {
               y: `${this.stackHeight}em`,
+              x: 0,
               scale: 0.85,
             });
           }
