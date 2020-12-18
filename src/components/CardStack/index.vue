@@ -1,5 +1,5 @@
 <template>
-  <div class="stackOverflow" v-touch:swipe="swipe">
+  <div class="stackOverflow" v-hotkey.prevent="keymap" v-touch:swipe="swipe">
     <ul class="stack-cards js-stack-cards">
       <li v-for="(del, i) in $store.state.delegates" :key="i"
       class="stack-cards__item js-stack-cards__item">
@@ -49,6 +49,12 @@ export default {
   },
   methods: {
     sort() {
+      gsap.set('.stack-cards__item', {
+        xPercent: -50,
+        yPercent: -50,
+        left: '50%',
+        top: '50%',
+      });
       this.activEl = document.querySelector('.active');
       this.card.forEach((i, j) => {
         if (this.$store.state.active > j) { // cards before active
@@ -58,12 +64,12 @@ export default {
           }, '<-1');
           if (this.$store.state.active - this.stacks < j) { // 2 or 3 cards before active
             this.tl.to(this.card[j], {
-              y: `${-3 * (this.$store.state.active - j)}rem`,
+              y: `${-3 * (this.$store.state.active - j)}em`,
               scale: 1 - (0.05 * (this.$store.state.active - j)),
             });
           } else {
             this.tl.to(this.card[j], {
-              y: `-${this.stackHeight}rem`,
+              y: `-${this.stackHeight}em`,
               scale: 0.85,
             });
           }
@@ -76,12 +82,12 @@ export default {
           }, '<-1');
           if (this.$store.state.active + this.stacks > j) { // 2 or 3 cards after active
             this.tl.to(this.card[j], {
-              y: `${3 * (j - this.$store.state.active)}rem`,
+              y: `${3 * (j - this.$store.state.active)}em`,
               scale: 1 - (0.05 * (j - this.$store.state.active)),
             });
           } else {
             this.tl.to(this.card[j], {
-              y: `${this.stackHeight}rem`,
+              y: `${this.stackHeight}em`,
               scale: 0.85,
             });
           }
@@ -110,23 +116,31 @@ export default {
         this.stackHeight = 9;
       }
     },
-    move(e) {
+    scroll(e) {
       if (e.deltaY > 0) {
-        this.$store.commit('active', 1);
+        this.goNext();
       } else if (e.deltaY < 0) {
-        this.$store.commit('active', -1);
+        this.goPrev();
       }
     },
     swipe(direction) {
       if (direction === 'top' && this.$store.state.active < this.$store.state.delegates.length) {
-        this.$store.commit('active', 1);
+        this.goNext();
       } else if (direction === 'bottom' && this.$store.state.active !== 0) {
-        this.$store.commit('active', -1);
+        this.goPrev();
       }
     },
     click(i) {
       const j = this.$store.state.active - i;
       this.$store.commit('active', -j);
+    },
+    goPrev() {
+      this.$store.commit('active', -1);
+      console.log('previous');
+    },
+    goNext() {
+      this.$store.commit('active', 1);
+      console.log('next');
     },
   },
   mounted() {
@@ -134,7 +148,7 @@ export default {
     this.card[this.$store.state.active].classList.add('active');
     this.checkWidth();
     this.sort();
-    document.querySelector('.stackOverflow').onwheel = debounce(this.move, 100, true);
+    document.querySelector('.stackOverflow').onwheel = debounce(this.scroll, 35, true);
     this.tl.play();
   },
   computed: {
@@ -143,6 +157,12 @@ export default {
     },
     width() {
       return this.$store.state.widthWindow;
+    },
+    keymap() {
+      return {
+        up: this.goPrev,
+        down: this.goNext,
+      };
     },
   },
   watch: {

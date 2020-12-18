@@ -7,6 +7,7 @@ import * as Sentry from '@sentry/browser';
 import { Vue as VueIntegration } from '@sentry/integrations';
 import { Integrations } from '@sentry/tracing';
 import Vue2TouchEvents from 'vue2-touch-events';
+import VueHotkey from 'v-hotkey';
 
 import './registerServiceWorker';
 import store from './store';
@@ -14,7 +15,8 @@ import router from './router';
 import App from './App.vue';
 
 Vue.use(Vue2TouchEvents)
-  .component('font-awesome-icon', FontAwesomeIcon);
+  .component('font-awesome-icon', FontAwesomeIcon)
+  .use(VueHotkey);
 
 library.add(fas);
 
