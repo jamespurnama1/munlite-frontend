@@ -39,6 +39,6 @@ export async function fetchJWT() {
 }
 
 export async function logout() {
-  const res = service.post('/logout');
+  const res = serviceCred.post('/logout');
   return res;
 }
