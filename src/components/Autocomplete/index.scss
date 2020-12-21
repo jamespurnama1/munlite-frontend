@@ -6,7 +6,16 @@
 
   input {
     border: none;
+    border-bottom: 1px solid $light-grey;
+    padding: 5px;
     color: $dark-grey;
+    width: 220px;
+    min-width: 220px;
+
+    @include max-media(mobile) {
+      width: 180px;
+      min-width: 180px;
+    }
   }
 
   .results {

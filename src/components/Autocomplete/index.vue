@@ -3,7 +3,7 @@
     <input
       v-model="newCountry"
       type="text"
-      placeholder="add country..."
+      placeholder="Add Delegates"
       @input="fillAutocomplete"
       @keydown.enter="onEnter"
     />
