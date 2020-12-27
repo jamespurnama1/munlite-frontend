@@ -5,7 +5,7 @@
       type="text"
       placeholder="Add Delegates"
       @input="fillAutocomplete"
-      @keydown.enter="onEnter"
+      @change="emitData"
     />
     <div class="results" v-if="results.length > 0">
       <ul
@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import { addDelegates } from '@/api/delegates';
 
 export default {
   name: 'Autocomplete',
@@ -57,24 +56,11 @@ export default {
     },
     setResult(result) {
       this.newCountry = result.name;
+      this.$emit('onchangeCountry', this.newCountry);
       this.isOpen = false;
     },
-    async onEnter() {
-      try {
-        if (this.newCountry.length > 0) {
-          const data = [{
-            country: this.newCountry,
-            status: 'N/A',
-          }];
-          await addDelegates(this.$route.params.id, data);
-          this.$emit('update');
-
-          this.newCountry = '';
-          this.isOpen = false;
-        }
-      } catch (err) {
-        console.error(err.response);
-      }
+    emitData() {
+      this.$emit('onchangeCountry', this.newCountry);
     },
     handleClickOutside(evt) {
       if (!this.$el.contains(evt.target)) {

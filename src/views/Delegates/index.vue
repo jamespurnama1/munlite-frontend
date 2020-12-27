@@ -11,13 +11,12 @@
           Roll Call
         </button>
         <div class="button">
-          <!-- <Autocomplete
+          <add-delegates
+            v-if="showInput"
             :items="countryList"
-            :class="{show: showInput == true}"
-            class="input"
+            @exit="exit"
             @update="updateDelegatesData"
-          /> -->
-          <add-delegates v-if="showInput" :items="countryList" @exit="exit"/>
+          />
           <font-awesome-icon :icon="['fas', 'plus']" @click="toggleInput"/>
         </div>
       </div>

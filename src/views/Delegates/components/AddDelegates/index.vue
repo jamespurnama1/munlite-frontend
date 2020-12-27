@@ -8,21 +8,27 @@
     </div>
     <div class="mid">
       <div class="left">
-        <img class="def-img" :srcset='defImg' />
-        <input type="file" name="myImage" accept="image/*" class="inputimage"/>
+        <div class="profile-pic" :style="`background-image: url('${defImg}')`" >
+          <span class="cam-logo">
+            <font-awesome-icon :icon="['fas', 'camera']" size="lg" />
+          </span>
+          <span>Change Image</span>
+          <input type="file" name="myImage" accept="image/*" class="inputimage"/>
+        </div>
       </div>
       <div class="right">
         <label>Name</label>
-        <Autocomplete :items="items"/>
+        <Autocomplete :items="items" @onchangeCountry="onchangeCountry"/>
         <label>Short Name</label>
-        <input type="text" placeholder="Short Name"/>
+        <input type="text" placeholder="Short Name" v-model="newCountry.short"/>
       </div>
     </div>
-    <button>Add</button>
+    <button @click="addNewCountry()">Add</button>
   </div>
 </template>
 
 <script>
+import { addDelegates } from '@/api/delegates';
 import Autocomplete from '@/components/Autocomplete/index.vue';
 
 export default {
@@ -36,6 +42,10 @@ export default {
   data() {
     return {
       imageDel: null,
+      newCountry: {
+        name: null,
+        short: null,
+      },
     };
   },
   computed: {
@@ -47,6 +57,26 @@ export default {
   methods: {
     exit() {
       this.$emit('exit');
+    },
+    onchangeCountry(country) {
+      this.newCountry.name = country;
+    },
+    async addNewCountry() {
+      try {
+        if (this.newCountry.name.length > 0) {
+          const data = [{
+            country: this.newCountry.name,
+            status: 'N/A',
+          }];
+          await addDelegates(this.$route.params.id, data);
+          this.$emit('update');
+
+          this.newCountry = '';
+          this.$emit('exit');
+        }
+      } catch (err) {
+        console.error(err.response);
+      }
     },
   },
 };
