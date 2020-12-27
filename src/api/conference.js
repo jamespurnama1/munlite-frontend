@@ -10,3 +10,13 @@ export async function createConference(data) {
   const res = await request.post('/api/conference', data);
   return res;
 }
+
+export async function getAllConference() {
+  const resp = await request.get('/api/conference');
+  return resp;
+}
+
+export async function getUserConference() {
+  const resp = await request.get('/api/conference/me');
+  return resp;
+}

@@ -1,66 +1,83 @@
 <template>
-  <div class="home">
-    <div class="left">
-      <picture>
-        <source media="(min-device-width: 1280px)"
-          srcset="@/assets/img/home@3x.png">
-        <source media="(min-device-width: 800px)"
-          srcset="@/assets/img/home@2x.png">
-        <source media="(min-device-width: 500px)"
-          srcset="@/assets/img/home.png">
-        <img
-          class="banner-image"
-          src="@/assets/img/home@2x.png"
-          alt="Indonesia MUN 2020">
-      </picture>
-      <h1>{{ title }}</h1>
+  <div id="Home">
+    <div class="upper">
+      <div class="profile">
+        <div class="img"></div>
+        <div class="detail">
+          <h1>Hi, {{ name }}!</h1>
+          <p>Not {{ name }}? <a @click="$router.push('/login')">Change Account</a></p>
+        </div>
+      </div>
+      <div class="ongoing" @click="$router.push('/overview')">
+        <p class="ongoing-title">Ongoing</p>
+        <div class="ongoing-conference">
+          <img class="conference-img" src="@/assets/img/home.png" />
+          <div class="conference-detail">
+            <p class="name">{{ ongoing.name }}</p>
+            <p class="started-time">
+              started {{ ongoing.timestamp }} mins ago
+              <img :src="`https://www.countryflags.io/${ongoing.flag}/flat/64.png`"/>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="right">
-      <div class="chair">
-        <p class="chair-sub-header">Chair</p>
-        <div class="chair-list" v-if="chairData.length > 0">
-          <div v-for="(data, index) in chairData" :key="index" class="chair-data">
-            <div class="chair-img"></div>
-            <div class="info">
-              <p class="chair-name">{{data.name}}</p>
-              <p class="chair-email">{{data.email}}</p>
+    <div class="bottom">
+      <div class="conferences">
+        <div class="sub-title">
+          <h2>Conferences</h2>
+          <button class="button"><font-awesome-icon :icon="['fas', 'plus']"/></button>
+        </div>
+        <div class="list-conferences">
+          <div
+            v-for="(data, index) in conferences"
+            :key="index"
+            class="conference-data"
+            @click="$router.push(`/overview/${data._id}`)"
+          >
+            <div class="img"></div>
+            <div class="detail">
+              <p class="name">{{ data.title }}</p>
+              <div class="info">
+                <span class="started-time">
+                  2020
+                </span>
+              </div>
             </div>
           </div>
         </div>
-        <p v-else class="empty-data">No chair in the list</p>
-      </div>
-      <div class="rules">
-        <p class="rules-sub-header">Rules</p>
-        <div v-for="(data, index) in rules" :key="index" class="rules-data">
-          <p class="rules-point">{{data}}</p>
-          <p class="rules-val">{{rulesData[index]}}</p>
-        </div>
+        <button class="viewall button" @click="$router.push('/conferences')">
+          View All <font-awesome-icon :icon="['fas', 'chevron-right']"/>
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getConference } from '@/api/conference';
+import { getUserData } from '@/api/profile';
+import { getUserConference } from '@/api/conference';
 
 export default {
   name: 'Home',
   data() {
     return {
-      title: '',
-      chairData: [],
-      rules: ['Majority', 'DR Votes', 'Quorum', 'Rounding'],
-      rulesData: [],
+      name: '',
+      ongoing: {
+        name: 'Indonesia MUN',
+        timestamp: 10,
+        flag: 'id',
+      },
+      conferences: [],
     };
   },
   async created() {
     try {
-      const conference = await getConference('5f96e22bdb7ee38458e581e9');
-      this.rulesData = Object.values(conference.data.data.rules);
-      this.title = conference.data.data.title;
-      if (conference.data.data.chairman) {
-        this.chairData = conference.data.data.chairman;
-      }
+      const profile = await getUserData();
+      this.name = profile.data.data.first_name;
+      const conference = await getUserConference();
+      console.log(conference);
+      this.conferences = conference.data.data;
     } catch (err) {
       console.error(err);
     }

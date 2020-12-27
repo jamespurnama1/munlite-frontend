@@ -67,11 +67,11 @@ export default {
       return 'ad';
     },
     color(presence) {
-      if (presence === 'Present' || presence === 'Present & Voting') {
+      if (presence.toLowerCase() === 'present' || presence.toLowerCase() === 'present & voting') {
         return 'blue';
       }
 
-      if (presence === 'Not Present') {
+      if (presence.toLowerCase() === 'not present') {
         return 'red';
       }
 
