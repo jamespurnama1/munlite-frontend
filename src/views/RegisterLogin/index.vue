@@ -1,7 +1,7 @@
 <template>
   <div class="regist-login">
     <img src="@/assets/img/logo_alt@2x.png" />
-    <div class="form-data">
+    <form class="form-data">
       <input
         type="text"
         v-if="$route.path != '/login' && $route.path !='signup'"
@@ -30,16 +30,12 @@
         placeholder="Confirm Password"
         required
       />
-      <div class="remember">
-        <input type="checkbox" v-model="checked" class="checked">
-        <label for="checkbox">Remember Me</label>
-      </div>
       <p class="errmsg">{{ errorMessage }}</p>
       <div class="buttons">
-        <button v-if="$route.path =='/signup'" @click="signup()">Sign Up</button>
-        <button v-if="$route.path =='/login'" @click="login()">Log in</button>
+        <input type="submit" v-if="$route.path =='/signup'" @click="signup()" value="Sign Up" />
+        <input type="submit" v-if="$route.path =='/login'" @click="login()" value="Log In" />
       </div>
-    </div>
+    </form>
     <div class="footer">
       <p v-if="$route.path == '/login'">
         Don't have an account? <a @click="changeRoute()">Sign Up</a>
