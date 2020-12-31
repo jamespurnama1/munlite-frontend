@@ -10,7 +10,6 @@
 //
 //
 // -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
 Cypress.Commands.add('isNotInViewport', (element) => {
   cy.get(element).then(($el) => {
     const bottom = Cypress.$(cy.state('window')).height();
@@ -34,15 +33,3 @@ Cypress.Commands.add('isInViewport', (element) => {
     expect(rect.bottom).not.to.be.greaterThan(bottom);
   });
 });
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })

@@ -1,16 +1,19 @@
 <template>
-  <div class="stackOverflow" v-hotkey.prevent="keymap" v-touch:swipe="swipe">
+  <div class="stackOverflow"
+  v-shortkey="{up: ['arrowup'], down: ['arrowdown']}"
+  @shortkey="keymap"
+  v-touch:swipe="swipe">
     <ul class="stack-cards js-stack-cards">
-      <li v-for="(del, i) in $store.state.delegates" :key="i"
+      <li v-for="(delegate, i) in delegates" :key="i"
       class="stack-cards__item js-stack-cards__item">
         <Card
         @click.native="click(i)"
-        :country="del.id"
+        :del="delegates[i]"
         :desc="desc"
         :color="color"
         :yieldTo="yieldTo"
         :time="time"
-        :progress="prgrs" />
+        :prgrs="progress" />
       </li>
     </ul>
   </div>
@@ -25,12 +28,20 @@ export default {
   name: 'CardStack',
   props: {
     color: String,
-    prgrs: {
+    progress: {
       type: [String, Number],
     },
     desc: String,
     yieldTo: String,
     time: Number,
+    delegates: {
+      type: Array,
+      required: true,
+    },
+    active: {
+      type: Number,
+      required: true,
+    },
   },
   components: {
     Card,
@@ -40,8 +51,6 @@ export default {
       card: null,
       topCards: null,
       activEl: null,
-      count: 0,
-      prevCount: 0,
       stacks: 3,
       stackHeight: 75,
       tl: gsap.timeline({ defaults: { duration: 0.01, ease: 'power2.out' }, paused: true }),
@@ -57,16 +66,16 @@ export default {
       });
       this.activEl = document.querySelector('.active');
       this.card.forEach((i, j) => {
-        if (this.$store.state.active > j) { // cards before active
+        if (this.active > j) { // cards before active
           this.tl.to(this.card[j], {
             zIndex: j,
             duration: 0.1,
           }, '<-1');
-          if (this.$store.state.active - this.stacks < j) { // 2 or 3 cards before active
+          if (this.active - this.stacks < j) { // 2 or 3 cards before active
             this.tl.to(this.card[j], {
-              y: `-${3 * (this.$store.state.active - j)}em`,
+              y: `-${3 * (this.active - j)}em`,
               x: 0,
-              scale: 1 - (0.05 * (this.$store.state.active - j)),
+              scale: 1 - (0.05 * (this.active - j)),
             });
           } else {
             this.tl.to(this.card[j], {
@@ -77,16 +86,16 @@ export default {
           }
           this.card[j].classList.remove('bottom');
           this.card[j].classList.add('top');
-        } else if (this.$store.state.active < j) { // cards after active
+        } else if (this.active < j) { // cards after active
           this.tl.to(this.card[j], {
             zIndex: this.card.length - j,
             duration: 0.1,
           }, '<-1');
-          if (this.$store.state.active + this.stacks > j) { // 2 or 3 cards after active
+          if (this.active + this.stacks > j) { // 2 or 3 cards after active
             this.tl.to(this.card[j], {
-              y: `${3 * (j - this.$store.state.active)}em`,
+              y: `${3 * (j - this.active)}em`,
               x: 0,
-              scale: 1 - (0.05 * (j - this.$store.state.active)),
+              scale: 1 - (0.05 * (j - this.active)),
             });
           } else {
             this.tl.to(this.card[j], {
@@ -97,7 +106,7 @@ export default {
           }
           this.card[j].classList.remove('top');
           this.card[j].classList.add('bottom');
-        } else if (this.$store.state.active === j) { // active card
+        } else if (this.active === j) { // active card
           this.card[j].classList.remove('top');
           this.card[j].classList.remove('bottom');
           this.tl.to(this.activEl, {
@@ -128,58 +137,55 @@ export default {
       }
     },
     swipe(direction) {
-      if (direction === 'top' && this.$store.state.active < this.$store.state.delegates.length) {
+      if (direction === 'top' && this.active < this.delegates.length) {
         this.goNext();
-      } else if (direction === 'bottom' && this.$store.state.active !== 0) {
+      } else if (direction === 'bottom' && this.active !== 0) {
         this.goPrev();
       }
     },
     click(i) {
-      const j = this.$store.state.active - i;
-      this.$store.commit('active', -j);
+      this.$emit('move', i);
+    },
+    keymap(event) {
+      switch (event.srcKey) {
+        case 'up':
+          this.goPrev();
+          break;
+        case 'down':
+          this.goNext();
+          break;
+        default:
+          console.error(event);
+          break;
+      }
     },
     goPrev() {
-      this.$store.commit('active', -1);
-      console.log('previous');
+      this.$emit('move', this.active - 1);
     },
     goNext() {
-      this.$store.commit('active', 1);
-      console.log('next');
+      this.$emit('move', this.active + 1);
     },
   },
   mounted() {
     this.card = document.getElementsByClassName('stack-cards__item');
-    this.card[this.$store.state.active].classList.add('active');
+    this.card[this.active].classList.add('active');
     this.checkWidth();
     this.sort();
-    document.querySelector('.stackOverflow').onwheel = debounce(this.scroll, 35, true);
+    document.querySelector('.stackOverflow').onwheel = debounce(this.scroll, 50, true);
     this.tl.play();
   },
   computed: {
-    countStore() {
-      return this.$store.state.active;
-    },
     width() {
       return this.$store.state.widthWindow;
     },
-    keymap() {
-      return {
-        up: this.goPrev,
-        down: this.goNext,
-      };
-    },
   },
   watch: {
-    countStore() {
-      this.prevCount = this.count;
-      this.count = this.countStore;
-    },
-    count() {
+    active() {
       if (document.querySelector('.active') != null) {
         this.activEl = document.querySelector('.active');
         this.activEl.classList.remove('active');
       }
-      this.card[this.$store.state.active].classList.add('active');
+      this.card[this.active].classList.add('active');
       this.sort();
       this.tl.play();
     },

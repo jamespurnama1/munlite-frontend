@@ -31,9 +31,6 @@
     .button {
       font-family: 'Montserrat', sans-serif;
       border: 1px solid $light-grey;
-      -webkit-box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.16);
-      -moz-box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.16);
-      box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.16);
       border-radius: 10px/10px;
       background-color: white;
       padding: 5px 10px;
@@ -42,6 +39,24 @@
       margin-left: 1rem;
       cursor: pointer;
       height: auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      transition: all .3s ease;
+
+      &.warning {
+        background-color: $red;
+        color: white;
+        border-color: transparent;
+
+        &:disabled {
+          opacity: 0.6;
+        }
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+      }
 
       @include max-media(tablet) {
         margin: 1rem 1rem 1rem 0;
@@ -51,26 +66,35 @@
         font-size: 14px;
       }
 
+      &:hover {
+        border: 1px solid rgba(0,0,0,0);
+        -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
+        -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
+        box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
+      }
+
+    .input {
       input {
         margin-right: 0;
-        border: none;
         width: 0;
-        color: $dark-grey;
         @include transition(linear, 0.3s);
+      }
 
         &.show {
-          width: 200px;
-          margin-right: 1rem;
-          padding-left: 5px;
-          font-size: 18px;
+          input {
+            width: 200px;
+            margin-right: 1rem;
+            padding-left: 5px;
+            font-size: 18px;
 
-          @include max-media(mobile) {
-            width: 100px;
-            font-size: 14px;
-          }
+            @include max-media(mobile) {
+              width: 100px;
+              font-size: 14px;
+            }
 
-          @include max-media(small-mobile) {
-            width: 60px;
+            @include max-media(small-mobile) {
+              width: 60px;
+            }
           }
         }
 
@@ -98,6 +122,10 @@
         
         @include max-media(tablet) {
           width: 100%;
+        }
+
+        &.empty-data {
+          color: gray;
         }
   
         .data {
@@ -176,7 +204,7 @@
 
           @include max-media(mobile) {
             width: 90%;
-            justify-content: center;
+            justify-content: space-evenly;
           }
 
           .emphasize {
@@ -199,6 +227,7 @@
             @include max-media(mobile) {
               flex-direction: row;
               width: 8rem;
+              margin-right: 0;
             }
           }
 
@@ -266,20 +295,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 4;
+    z-index: 6;
     @include transition(ease, 0.5s);
   }
 
-  .trans {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .overlay {
-      z-index: 2;
-    }
+  .overlay {
+    z-index: 5;
   }
 }
 

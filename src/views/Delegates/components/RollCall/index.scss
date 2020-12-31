@@ -187,7 +187,6 @@
       width: 0;
       color: $dark-grey;
       @include transition(linear, 0.3s);
-
       &.show {
         width: 200px;
         margin-right: 1rem;

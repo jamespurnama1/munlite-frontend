@@ -1,50 +1,68 @@
 <template>
   <div id="app">
-    <div class="nav">
+    <div class="nav" v-if="$route.name != 'Log In' && $route.name !='Sign Up'">
       <div class="navLogo">
-        <img id="logo" src="@/assets/img/logo_main.png" @click="$router.push('/')"/>
+        <img id="logo" src="@/assets/img/logo_main.png" @click="goToHome()"/>
       </div>
       <div class="navTab" :class="{toggle: open}">
-        <div class="navLeft">
-          <router-link id="overview" to="/" @click.native="onTabClick">Overview</router-link>
-          <router-link id="delegates" to="/delegates" @click.native="onTabClick">
-            Delegates
-          </router-link>
-          <router-link id="gsl" to="/gsl" @click.native="onTabClick">GSL</router-link>
-          <router-link id="motions" to="/motions" @click.native="onTabClick">Motions</router-link>
-          <router-link id="caucus" to="/caucus" @click.native="onTabClick">Caucus</router-link>
-          <router-link id="crisis" to="/crisis" @click.native="onTabClick">Crisis</router-link>
-          <div
-            class="border"
-            v-if="$store.state.widthWindow > 960"
-            :style="{
-              left: `${borderStyles.left-1}px`,
-              width: `${borderStyles.width}px`,
-              height: `${borderStyles.height}px`
-            }"
-          ></div>
+        <div
+          class="navLeft"
+          v-show="pathCheckConference"
+        >
+          <div  v-for="(route, index) in conference" :key="index">
+            <router-link
+              :id="route"
+              :to="`/${route}/${$route.params.id}`"
+              @click.native="onTabClick"
+            >
+              {{ capitalize(route) }}
+            </router-link>
+          </div>
+        </div>
+        <div
+          class="navLeft"
+          v-show="pathCheckGeneral"
+        >
+          <div  v-for="(route, index) in general" :key="index">
+            <router-link
+              :id="route"
+              :to="`/${routeGeneral(route)}`"
+              @click.native="onTabClick"
+            >
+              {{ capitalize(route) }}
+            </router-link>
+          </div>
         </div>
         <div class="navRight">
           <a>Settings</a>
-          <a>SignIn/Up</a>
+          <a @click="logout()">Log Out</a>
           <a><img src="@/assets/img/icon/Share.png" /></a>
         </div>
+        <div
+          class="border conff"
+          id="border"
+          v-if="$store.getters.getWidthWindow > 960"
+        ></div>
       </div>
       <div class="burger"
       @click="toggleMenu"
       :class="{open: open}"
-      v-if="$store.state.widthWindow <= 960">
+      v-if="$store.getters.getWidthWindow <= 960">
         <span></span>
         <span></span>
         <span></span>
       </div>
     </div>
-    <router-view/>
+    <transition name="fade" mode="out-in">
+      <router-view :key="$route.fullPath" />
+    </transition>
     <div class="overlay-nav" v-if="open"></div>
   </div>
 </template>
 
 <script>
+import { logout } from '@/api/user';
+
 export default {
   name: 'MUN',
   data() {
@@ -56,6 +74,8 @@ export default {
       },
       borderTemp: null,
       open: false,
+      conference: ['overview', 'delegates', 'gsl', 'motions', 'caucus', 'crisis'],
+      general: ['home', 'conferences', 'connections', 'files', 'account'],
     };
   },
   computed: {
@@ -63,37 +83,74 @@ export default {
       return this.borderTemp == null ? this.border : this.borderTemp;
     },
     showNavBar() {
-      return this.$store.state.widthWindow > 960 || this.open;
+      return this.$store.getters.getWidthWindow > 960 || this.open;
     },
+    pathCheckConference() {
+      if (this.$route.path === '/') {
+        return false;
+      }
+      return this.conference.includes(this.$route.path.split('/')[1]);
+    },
+    pathCheckGeneral() {
+      if (this.$route.path === '/') {
+        return true;
+      }
+      return this.general.includes(this.$route.path.split('/')[1]);
+    },
+  },
+  created() {
+    this.checkMobileView();
+    window.addEventListener('resize', this.checkMobileView);
   },
   beforeUpdate() {
     if (!this.open) {
       this.onTabClick();
     }
   },
-  created() {
-    this.checkMobileView();
-    window.addEventListener('resize', this.checkMobileView);
+  beforeMount() {
     this.onTabClick();
   },
   methods: {
     onTabClick() {
-      const tab = this.$route.path.substring(1) === '' ? document.getElementById('overview') : document.getElementById(this.$route.path.substring(1));
+      const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
       if (tab) {
         const styles = {
           left: tab.offsetLeft,
-          width: tab.clientWidth,
-          height: tab.clientHeight,
+          width: tab.offsetWidth,
+          height: tab.offsetHeight,
         };
         this.border = styles;
       }
       this.open = false;
+    },
+    async logout() {
+      this.open = false;
+      try {
+        await logout();
+        this.$store.dispatch('logout');
+        this.$router.push('/login');
+      } catch (err) {
+        console.error(err);
+      }
     },
     toggleMenu() {
       this.open = !this.open;
     },
     checkMobileView() {
       this.$store.commit('getWidth', window.innerWidth);
+      this.onTabClick();
+    },
+    capitalize(string) {
+      if (string === 'gsl') {
+        return string.toUpperCase();
+      }
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    },
+    routeGeneral(string) {
+      return string === 'home' ? '' : string;
+    },
+    goToHome() {
+      this.$router.push('/');
       this.onTabClick();
     },
   },

@@ -1,29 +1,29 @@
-describe('Roll Call Modal Test', () => {
-  it('Render Modal', () => {
-    cy.visit('/delegates');
-    cy.get('button')
-      .contains('Roll Call')
-      .click();
-    cy.contains('h2', 'Roll Call').should('be.visible');
-  });
-  it('Roll call and able to scroll then proceed to vote', () => {
-    cy.get('button#continue').should('be.disabled').contains('Continue');
-    for (let i = 0; i < 10; i += 1) {
-      cy.get('button').contains('Present').click();
-    }
-    cy.get('button').contains('Not Present').click();
-    cy.get('.card').contains('NZL').click();
-    cy.get('.active .card').should('contain', 'NZL');
-    cy.get('.stackOverflow').trigger('mousedown').should('contain', 'USA');
-    cy.get('button').contains('Continue').click();
-  });
-  it('Proceed to last modal', () => {
-    cy.get('#select .selection:first-child .input').type('7');
-    cy.get('.input.red').type('4');
-    cy.get('button').contains('Pass').click();
-  });
-  it('Redirects to GSL', () => {
-    cy.wait(1000);
-    cy.url().should('include', '/gsl');
-  });
-});
+// describe('Roll Call Modal Test', () => {
+//   it('Render Modal', () => {
+//     cy.visit('/delegates');
+//     cy.get('button')
+//       .contains('Roll Call')
+//       .click();
+//     cy.contains('h2', 'Roll Call').should('be.visible');
+//   });
+//   it('Roll call then proceed to vote', () => {
+//     cy.get('button#continue').should('be.disabled').contains('Continue');
+//     let dataLength = 0;
+//     cy.request('GET', 'https://dev.api.munlite.co/api/conference/5f96e22bdb7ee38458e581e9/delegates').then((response) => {
+//       dataLength = response.body.data;
+//       if (dataLength.length > 0) {
+//         for (let i = 0; i < dataLength.length; i += 1) {
+//           cy.get('button').contains('Present').click();
+//           cy.wait(850);
+//         }
+//         cy.wait(850);
+//         cy.get('button').contains('Continue').click();
+//         cy.get('#select .selection:first-child .input').type(dataLength.length - 1);
+//         cy.get('.input.red').type(1);
+//         cy.get('button').contains('Pass').click();
+//         cy.wait(1000);
+//         cy.url().should('include', '/gsl');
+//       }
+//     });
+//   });
+// });

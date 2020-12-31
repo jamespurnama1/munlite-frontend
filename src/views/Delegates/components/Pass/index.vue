@@ -42,6 +42,9 @@ export default {
   watch: {
     countdown() {
       if (this.countdown === 0) {
+        document.querySelector('body').style.removeProperty('height');
+        document.querySelector('body').style.removeProperty('width');
+        document.querySelector('body').style.removeProperty('overflow');
         this.$router.push('/gsl');
       }
     },
