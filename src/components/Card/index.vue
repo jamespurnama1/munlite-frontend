@@ -85,21 +85,16 @@ export default {
       } else {
         this.clr = this.color;
       }
-
-      if (this.progress === 'presence' && this.del.status.toLowerCase() === 'n/a') {
+      if (this.prgrs === 'presence' && this.del.status.toLowerCase() === 'n/a') {
         this.progress = 0;
-        console.log('0');
-      } else if (this.progress === 'presence' && this.del.status.toLowerCase() !== 'n/a') {
+      } else if (this.prgrs === 'presence' && this.del.status.toLowerCase() !== 'n/a') {
         this.progress = 100;
-        console.log('100');
         if (this.del.status.toLowerCase() === 'not present' && !this.color) {
           this.clr = '#FF5F5F';
-          console.log('red');
         } else {
           this.clr = '#5F78FF';
-          console.log('blue');
         }
-      } else if (!this.progress && !this.time) {
+      } else if (!this.prgrs && !this.time) {
         this.progress = 0;
       }
     },
