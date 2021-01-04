@@ -3,11 +3,17 @@
   grid-template-columns: auto auto;
   grid-template-rows: auto auto;
   grid-gap: 20px;
+  text-align: center;
 
-  .delegates {
+  .delegates-row {
     white-space: pre-wrap;
     display: flex;
     align-items: center;
+    justify-content: center;
+
+    @include max-media (mobile) {
+      font-size: 0.7rem;
+    }
   }
 
   h3 {
@@ -20,9 +26,10 @@
 
   p {
     font-size: 1rem;
+    text-align: center;
 
     @include max-media (mobile) {
-          font-size: 0.7rem;
-        }
+      font-size: 0.7rem;
+    }
   }
 }

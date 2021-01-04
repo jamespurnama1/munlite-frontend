@@ -1,22 +1,27 @@
 #rollcall {
     display: flex;
     flex-direction: column;
-    width: 40vw;
-    height: fit-content;
+    width: 40%;
     min-width: 500px;
-    min-height: 450px;
     padding: 3%;
     background-color: white;
-    border-radius: 20px/20px;
+    border-radius: 20px;
     -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
     -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
     box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
 
-    @include max-media(mobile-landscape) {
-      width: 75vw;
-      height: 75vh;
-      min-width: 265px;
-      min-height: 600px;
+    @include max-media (mobile) {
+      min-width: 350px;
+      padding: 5%;
+    }
+
+    @include max-media (small-mobile) {
+      min-width: 260px;
+      padding: 5%;
+    }
+
+    @media only screen and (max-width: 300px) {
+      min-width: 220px;
     }
 
     #close {
@@ -30,9 +35,9 @@
         white-space: pre-wrap;
         font-size: 1rem;
 
-        @include max-media (mobile-landscape) {
+        @include max-media (mobile) {
           font-size: 0.7rem;
-          margin-top: 10%;
+          margin-top: .5rem;
         }
       }
 
@@ -40,26 +45,26 @@
       display: flex;
       flex-direction: row;
       justify-content: center;
-      margin: 10% 0;
+      margin: 5% 0;
 
-      @include max-media (mobile-landscape) {
+      @include max-media (mobile) {
           position: relative;
           margin: 3%;
-          height: 30%;
-          width: 100%;
+          max-height: fit-content;
+          width: 94%;
           justify-content: flex-start;
           overflow: hidden;
         }
 
       .swipe {
         min-width: 100%;
+        height: fit-content;
       }
 
       .line {
         width: 0;
-        height: 100%;
         border-right: 1px solid black;
-        margin: 0 10%;
+        margin: 0 5%;
       }
 
       .center {
@@ -74,11 +79,15 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      margin-top: auto;
+      margin: 2rem 0;
+
+      @include max-media(mobile) {
+        margin: 0;
+      }
 
       #indicator {
         position: absolute;
-        border-radius: 20px/20px;
+        border-radius: 20px;
         width: 40%;
         height: 100%;
         opacity: 0;
@@ -148,13 +157,12 @@
       }
     }
 
-    .verdict {
+    #verdict {
       display: flex;
       flex-direction: column;
-      width: 25%;
-      margin: auto 0 0 auto;
+      align-items: center;
 
-      @include max-media(mobile-landscape) {
+      @include max-media(mobile) {
         width: 100%;
       }
 
@@ -172,7 +180,7 @@
 
       button {
         margin: 10px 0;
-        border-radius: 10px/10px;
+        border-radius: 10px;
         padding: 5px 10px;
         font-family: 'Montserrat', sans-serif;
         white-space: nowrap;
@@ -184,6 +192,7 @@
         -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
         box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
         cursor: pointer;
+        width: 50%;
         @include transition(ease, 0.3s);
 
         &:hover {
@@ -195,8 +204,9 @@
           cursor: not-allowed;
         }
 
-        @include max-media(mobile-landscape) {
+        @include max-media(mobile) {
           font-size: 14px;
+          width: 100%;
         }
         
         input {
@@ -211,7 +221,7 @@
             padding-left: 5px;
             font-size: 18px;
 
-            @include max-media(mobile-landscape) {
+            @include max-media(mobile) {
               width: 100px;
               font-size: 14px;
             }
