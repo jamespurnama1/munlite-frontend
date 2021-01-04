@@ -1,7 +1,7 @@
 <template>
   <div class="regist-login">
     <img src="@/assets/img/logo_alt@2x.png" />
-    <form class="form-data">
+    <form class="form-data" @submit.prevent="login()">
       <input
         type="text"
         v-if="$route.path != '/login' && $route.path !='signup'"
