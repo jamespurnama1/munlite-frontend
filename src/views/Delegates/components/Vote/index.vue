@@ -1,6 +1,6 @@
 <template>
   <div id="rollcall">
-      <a @click="$parent.$emit('confirm', 'discard')" id="close">
+      <a @click="$parent.$emit('stage', 0)" id="close">
         <font-awesome-icon :icon="['fas', 'times']" size="lg" />
       </a>
       <h2>Roll Call</h2>
