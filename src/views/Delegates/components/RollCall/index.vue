@@ -1,48 +1,58 @@
 <template>
   <div id='rollcall'>
-    <a @click="$parent.$emit('confirm', 'discard')" id='close' title="Close">
+    <a @click="$parent.$emit('stage', 0)" id='close' title="Close">
       <font-awesome-icon :icon="['fas', 'times']" size="lg" />
     </a>
     <h2>Roll Call</h2>
-    <h3>Countries</h3>
+    <p>Scroll to move up &amp; down</p>
     <div id='call'>
-      <Slider
-        :active="voteCount"
-        :current="currentCountry"
-        @move="move" v-if="true"
-        :delegatesData="delegatesData"
-      />
+      <CardStack
+      :progress="`presence`"
+      :desc="`presence`"
+      :delegates="delegatesData"
+      :active="currentCountry"
+      @move="move" />
       <div id='selection'>
-        <button @click="presence('Present')">
-          Present
-        </button>
-        <button @click="presence('Present & Voting')">
-          Present &amp; Voting
-        </button>
-        <button @click="presence('Not Present')" class="red">
-          Not Present
+        <div id='select'>
+          <button @click="presence('Present')">
+            <p>Present</p>
+          </button>
+          <button @click="presence('Present & Voting')">
+            <p>{{ decoder(button) }}</p>
+          </button>
+          <button @click="presence('Not Present')" class="red">
+            <p>Not Present</p>
+          </button>
+        </div>
+      </div>
+      <div class="verdict">
+        <p v-if="$store.state.done !== delegatesData.length">
+          {{ delegatesData.length - voteCount }} countries left
+        </p>
+        <p v-else-if="$store.state.done === delegatesData.length">
+          no countries left
+        </p>
+        <button @click="$parent.$emit('stage', 2)"
+        :disabled="voteCount !== delegatesData.length"
+        id="continue">
+          <p>Continue</p>
         </button>
       </div>
-      <button @click="$parent.$emit('stage', 2)"
-        :disabled="voteCount !== delegatesData.length"
-        id="continue"
-      >
-        Continue
-      </button>
     </div>
   </div>
 </template>
 
 <script>
 import { editDelegates, getAllDelegates } from '@/api/delegates';
-import Slider from '@/components/Slider/index.vue';
+import CardStack from '@/components/CardStack/index.vue';
 
 export default {
   components: {
-    Slider,
+    CardStack,
   },
   data() {
     return {
+      button: 'Present &amp;&nbsp;Voting',
       voteCount: 0,
       currentCountry: 0,
     };
@@ -60,23 +70,24 @@ export default {
         };
         await editDelegates(this.$route.params.id, data);
         this.$emit('update');
-
         this.getVoteCount();
       } catch (err) {
         console.error(err);
       }
-      this.$children[0].nextSlide();
-    },
-    un() {
-      this.voteCount -= 1;
-      this.$store.commit('undo');
+      this.$children[0].goNext();
     },
     move(index) {
-      this.currentCountry = index;
+      const j = Math.min(Math.max(parseInt(index, 10), 0), this.delegatesData.length - 1);
+      this.currentCountry = j;
     },
     async getVoteCount() {
       const vote = await getAllDelegates(this.$route.params.id);
       this.voteCount = (vote.data.data.filter((obj) => obj.status !== 'N/A')).length;
+    },
+    decoder(str) { // Vue workaround for &nbsp;
+      const textArea = document.createElement('textarea');
+      textArea.innerHTML = str;
+      return textArea.value;
     },
   },
   created() {

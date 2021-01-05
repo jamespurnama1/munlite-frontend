@@ -4,19 +4,13 @@
   align-items: flex-start;
   justify-content: space-between;
   overflow: hidden;
-  padding: 1%;
-  width: 22vw;
-  height: 13vw;
+  // padding: 1%;
   background-color: white;
   border: 1px solid $light-grey;
-  border-radius: 20px;
+  border-radius: 20px/20px;
 
-  &:first-child {
-    margin-top: 50%;
-  }
-
-  &:last-child {
-    margin-bottom: 50%;
+  @include max-media(mobile) {
+    border-radius: 15px/15px;
   }
 
   .progress {
@@ -27,6 +21,7 @@
     left: 0;
     padding: 1%;
     display: flex;
+    border: 1px solid rgba(0,0,0,0);
     align-items: flex-start;
     justify-content: space-between;
     z-index: 5;
@@ -46,18 +41,33 @@
     z-index: -1;
   }
 
+  .desc {
+    position: absolute;
+    left: 3%;
+    top: 5px;
+    align-self: flex-start;
+    z-index: 2;
+    @include transition(.3s, ease);
+
+    @include max-media (mobile-landscape) {
+      top: 5px;
+    }
+  }
+
   .country {
     position: absolute;
-    left: 50%;
-    top: -10%;
-    transform: translate(-50%, 0) scale(0.3);
+    right: 5%;
+    top: 2%;
+    transform:  scale(0.3);
     display: flex;
     align-items: center;
     height: 5rem;
+    width: fit-content;
     z-index: 2;
-    @include transition(.5s, ease);
+    transform-origin: right top;
+    @include transition(.3s, ease);
 
-    @include max-media (mobile) {
+    @include max-media (mobile-landscape) {
       top: -15%;
     }
 
@@ -71,27 +81,23 @@
       font-size: 4rem;
       margin-left: 5px;
 
-      @include max-media (mobile) {
+      @include max-media (small-tablet) {
         font-size: 3rem;
+      }
+
+      @include max-media (mobile-landscape) {
+        font-size: 2rem;
       }
     }
   }
 
   p {
-    @include max-media (mobile) {
-      font-size: 10px;
+    @include max-media(small-tablet) {
+      font-size: 12px;
     }
 
-    &.desc {
-      position: relative;
-      left: 3%;
-      top: 1%;
-      align-self: flex-start;
-      z-index: 2;
-
-      @include max-media (mobile) {
-        top: 6%;
-      }
+    @include max-media (mobile-landscape) {
+      font-size: 10px;
     }
   }
 
@@ -107,6 +113,28 @@
 .active .card {
   .country {
     top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
+  }
+}
+
+.top .card {
+  .country {
+    bottom: initial;
+    top: 4px;
+    transform-origin: right top;
+  }
+}
+
+.bottom .card {
+  .country {
+    bottom: 8px;
+    top: initial;
+    transform-origin: right bottom;
+  }
+
+  .desc {
+    top: initial;
+    bottom: 12px;
   }
 }

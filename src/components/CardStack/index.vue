@@ -1,39 +1,47 @@
 <template>
-<div class="stackOverflow">
-  <ul class="stack-cards js-stack-cards">
-    <li v-for="(del, i) in $store.state.delegates" :key="i"
-    class="stack-cards__item js-stack-cards__item">
-      <Card
-      :country="del.id"
-      :desc="desc"
-      :color="color"
-      :yieldTo='yieldTo'
-      :time="time"
-      :progress="prgrs" />
-    </li>
-  </ul>
-</div>
+  <div class="stackOverflow"
+  v-shortkey="{up: ['arrowup'], down: ['arrowdown']}"
+  @shortkey="keymap"
+  v-touch:swipe="swipe">
+    <ul class="stack-cards js-stack-cards">
+      <li v-for="(delegate, i) in delegates" :key="i"
+      class="stack-cards__item js-stack-cards__item">
+        <Card
+        @click.native="click(i)"
+        :del="delegates[i]"
+        :desc="desc"
+        :color="color"
+        :yieldTo="yieldTo"
+        :time="time"
+        :prgrs="progress" />
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
-import { ScrollScene } from 'scrollscene';
 import { gsap } from 'gsap';
+import { debounce } from 'debounce';
 import Card from '@/components/Card/index.vue';
 
 export default {
   name: 'CardStack',
   props: {
-    active: {
-      type: Number,
-      required: true,
-    },
     color: String,
-    prgrs: {
+    progress: {
       type: [String, Number],
     },
     desc: String,
     yieldTo: String,
     time: Number,
+    delegates: {
+      type: Array,
+      required: true,
+    },
+    active: {
+      type: Number,
+      required: true,
+    },
   },
   components: {
     Card,
@@ -41,65 +49,155 @@ export default {
   data() {
     return {
       card: null,
-      topPos: null,
       topCards: null,
-      activ: null,
-      prevActive: 0,
-      tl: gsap.timeline({ paused: true }),
+      activEl: null,
+      stacks: 3,
+      stackHeight: 75,
+      tl: gsap.timeline({ defaults: { duration: 0.01, ease: 'power2.out' }, paused: true }),
     };
+  },
+  methods: {
+    sort() {
+      gsap.set('.stack-cards__item', {
+        xPercent: -50,
+        yPercent: -50,
+        left: '50%',
+        top: '50%',
+      });
+      this.activEl = document.querySelector('.active');
+      this.card.forEach((i, j) => {
+        if (this.active > j) { // cards before active
+          this.tl.to(this.card[j], {
+            zIndex: j,
+            duration: 0.1,
+          }, '<-1');
+          if (this.active - this.stacks < j) { // 2 or 3 cards before active
+            this.tl.to(this.card[j], {
+              y: `-${3 * (this.active - j)}em`,
+              x: 0,
+              scale: 1 - (0.05 * (this.active - j)),
+            });
+          } else {
+            this.tl.to(this.card[j], {
+              y: `-${this.stackHeight}em`,
+              x: 0,
+              scale: 0.85,
+            });
+          }
+          this.card[j].classList.remove('bottom');
+          this.card[j].classList.add('top');
+        } else if (this.active < j) { // cards after active
+          this.tl.to(this.card[j], {
+            zIndex: this.card.length - j,
+            duration: 0.1,
+          }, '<-1');
+          if (this.active + this.stacks > j) { // 2 or 3 cards after active
+            this.tl.to(this.card[j], {
+              y: `${3 * (j - this.active)}em`,
+              x: 0,
+              scale: 1 - (0.05 * (j - this.active)),
+            });
+          } else {
+            this.tl.to(this.card[j], {
+              y: `${this.stackHeight}em`,
+              x: 0,
+              scale: 0.85,
+            });
+          }
+          this.card[j].classList.remove('top');
+          this.card[j].classList.add('bottom');
+        } else if (this.active === j) { // active card
+          this.card[j].classList.remove('top');
+          this.card[j].classList.remove('bottom');
+          this.tl.to(this.activEl, {
+            zIndex: this.card.length,
+            duration: 0.1,
+          }, '<-1')
+            .to(this.activEl, {
+              y: 0,
+              ease: 'ease',
+            });
+        }
+      });
+    },
+    checkWidth() {
+      if (this.width < 600) {
+        this.stacks = 2;
+        this.stackHeight = 6;
+      } else if (this.width > 600) {
+        this.stacks = 3;
+        this.stackHeight = 9;
+      }
+    },
+    scroll(e) {
+      if (e.deltaY > 0) {
+        this.goNext();
+      } else if (e.deltaY < 0) {
+        this.goPrev();
+      }
+    },
+    swipe(direction) {
+      if (direction === 'top' && this.active < this.delegates.length) {
+        this.goNext();
+      } else if (direction === 'bottom' && this.active !== 0) {
+        this.goPrev();
+      }
+    },
+    click(i) {
+      this.$emit('move', i);
+    },
+    keymap(event) {
+      switch (event.srcKey) {
+        case 'up':
+          this.goPrev();
+          break;
+        case 'down':
+          this.goNext();
+          break;
+        default:
+          console.error(event);
+          break;
+      }
+    },
+    goPrev() {
+      this.$emit('move', this.active - 1);
+    },
+    goNext() {
+      this.$emit('move', this.active + 1);
+    },
   },
   mounted() {
     this.card = document.getElementsByClassName('stack-cards__item');
     this.card[this.active].classList.add('active');
-    this.activ = document.querySelector('.active');
-    this.topPos = 0;
-
-    this.card.forEach((i, j) => {
-      this.card[j].style.cssText = `top: ${-25 + (5 * j)}%`;
-    });
-
-    const wrap = document.querySelector('.stackOverflow');
-    // eslint-disable-next-line no-unused-vars
-    const scrollScene = new ScrollScene({
-      triggerElement: this.card[0],
-      gsap: {
-        timeline: this.tl,
-      },
-      triggerHook: 0,
-      duration: 500,
-      useGlobalController: false,
-      controller: {
-        container: wrap,
-      },
-    });
-
-    this.topCards = Array.from(this.card).slice(3, this.card.length);
-    this.tl.to(this.topCards, {
-      top: '-=25%',
-    });
+    this.checkWidth();
+    this.sort();
+    document.querySelector('.stackOverflow').onwheel = debounce(this.scroll, 50, true);
+    this.tl.play();
+  },
+  computed: {
+    width() {
+      return this.$store.state.widthWindow;
+    },
   },
   watch: {
     active() {
-      this.activ = document.querySelector('.active');
-      if (this.active !== this.card.length) {
-        this.activ.classList.remove('active');
-        // this.card[this.active - 1].classList.remove('active');
-        // this.card[this.active + 1].classList.remove('active');
+      if (document.querySelector('.active') != null) {
+        this.activEl = document.querySelector('.active');
+        this.activEl.classList.remove('active');
       }
-      if (this.active > this.prevActive) {
-        this.topPos += this.activ.offsetHeight;
-      } else if (this.active < this.prevActive) {
-        this.topPos -= this.activ.offsetHeight;
-      }
-      this.prevActive = this.active;
       this.card[this.active].classList.add('active');
-      document.querySelector('.stackOverflow').scrollTop = this.topPos;
+      this.sort();
+      this.tl.play();
+    },
+    width() {
+      this.checkWidth();
+      this.sort();
     },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '@/styles/index.scss';
 @import './index.scss'
 </style>

@@ -3,8 +3,8 @@
     <a @click="$parent.$emit('stage', 0)" id='close'>
       <font-awesome-icon :icon="['fas', 'times']" size="lg" />
     </a>
-    <h2>The Motion Passes!</h2>
-    <p>The debate is now open.</p>
+    <h1>The Motion Passes!</h1>
+    <h3>The debate is now open.</h3>
     <router-link to="/gsl">
       <button>
         Speakers List ({{ countdown }})

@@ -1,46 +1,74 @@
-.stackOverflow {
-  height: 100%;
-  width: 60%;
-  overflow-y: hidden;
-  overflow-x: hidden;
-  padding: 50px;
-  margin: -50px;
-  margin-bottom: 0;
-  padding-bottom: 0;
-  scroll-behavior: smooth;
-  -ms-overflow-style: none;  // IE and Edge
-  scrollbar-width: none;  // Firefox
+  .stackOverflow {
+    position: relative;
+    height: 100%;
+    width: 60%;
+    overflow: hidden;
 
-  @include max-media (mobile) {
-    height: 75%;
-    width: 100%;
-  }
+    @include max-media(mobile-landscape) {
+      height: 80%;  
+    }
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+    &:before {
+      content: '';
+      background: linear-gradient(rgb(255, 255, 255), rgba(255, 255, 255, 0));
+      z-index: 15;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 25%;
+      pointer-events: none;
+    }
+
+    &:after {
+      content: '';
+      background: linear-gradient(rgba(255, 255, 255, 0), rgb(255, 255, 255));
+      z-index: 15;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 25%;
+      pointer-events: none;
+    }
+  
+    @include max-media (mobile-landscape) {
+      height: 70%;
+      width: 90%;
+    }
 
   .stack-cards {
-    --stack-cards-gap: 2.75em; // cards gap on scrolling
+    position: relative;
+    height: 100%;
+    width: 100%;
     list-style-type: none;
-    filter: drop-shadow(0 0 15px rgba(0,0,0,0.3));
-
+  
     .stack-cards__item {
-      position: relative; // fallback for browsers not supporting sticky position
-      position: sticky;
-      top: -25; // cards top position when they get fixed
-      height: 0;
-      padding-bottom: 50%; // 18:9 aspect ratio
-      transform-origin: center top;
-      width: 100%;
+      position: absolute;
+      height: 30%;
+      min-height: 140px;
+      width: 90%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transform-origin: center bottom;
       margin: 0 auto;
+      @include transition(.5s, ease);
+
+      @include max-media(mobile-landscape) {
+        width: 90%;
+        min-height: 100px;
+        max-width: 300px;
+      }
+
+      &.active {
+        transform: translate(-50%, -50%) scale(1) !important;
+      }
 
       > * {
-        position: absolute;
+        position: relative;
         top: 0;
         left: 0;
-        width: 100%;
         height: 100%;
+        width: 100%;
         will-change: transform, opacity;
       }
     }

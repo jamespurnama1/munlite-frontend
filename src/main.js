@@ -14,6 +14,7 @@ import router from './router';
 import App from './App.vue';
 
 Vue.use(Vue2TouchEvents)
+  .use(require('vue-shortkey'))
   .component('font-awesome-icon', FontAwesomeIcon);
 
 library.add(fas);

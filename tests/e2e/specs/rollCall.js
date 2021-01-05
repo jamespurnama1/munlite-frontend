@@ -1,4 +1,3 @@
-
 // describe('Roll Call Modal Test', () => {
 //   it('Render Modal', () => {
 //     cy.visit('/delegates');

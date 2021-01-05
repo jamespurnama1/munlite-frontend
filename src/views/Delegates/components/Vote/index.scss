@@ -1,23 +1,23 @@
 #rollcall {
     display: flex;
     flex-direction: column;
-    width: 40%;
+    width: 40vw;
     min-width: 500px;
-    padding: 3%;
+    min-height: 375px;
+    padding: 20px;
     background-color: white;
-    border-radius: 20px;
+    border-radius: 20px/20px;
     -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
     -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
     box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
 
-    @include max-media (mobile) {
-      min-width: 350px;
-      padding: 5%;
+    @include max-media(small-tablet) {
+      min-height: 275px;
     }
 
-    @include max-media (small-mobile) {
-      min-width: 260px;
-      padding: 5%;
+    @include max-media(mobile-landscape) {
+      width: 75vw;
+      min-width: 265px;
     }
 
     @media only screen and (max-width: 300px) {
@@ -31,15 +31,15 @@
     }
 
     p {
-        text-align: center;
-        white-space: pre-wrap;
-        font-size: 1rem;
+      text-align: center;
+      white-space: pre-wrap;
+      font-size: 1rem;
 
-        @include max-media (mobile) {
-          font-size: 0.7rem;
-          margin-top: .5rem;
-        }
+      @include max-media (mobile) {
+        font-size: 0.7rem;
+        margin-top: .5rem;
       }
+    }
 
     .info {
       display: flex;

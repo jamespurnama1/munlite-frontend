@@ -1,15 +1,15 @@
 <template>
   <div class="card">
-    <p class="desc" v-if="dsc">{{ dsc }}</p>
-    <div class="country">
+    <p class="desc" v-if="dsc && progress !== 100">{{ dsc }}</p>
+    <div class="country" v-if="progress !== 100">
       <img
-        :src="`https://www.countryflags.io/${country}/flat/64.png`"
-        :alt="this.cntry.name"
+        :src="`https://www.countryflags.io/${countryId(del.country)}/flat/64.png`"
+        :alt="del.country"
         class="img"
       />
-      <h1>{{ this.cntry.short }}</h1>
+      <h1>{{ countryShort(del.country) }}</h1>
     </div>
-    <span v-if="sec" class="time">
+    <span v-if="sec && progress !== 100" class="time">
       <p>{{ sec }}sec</p>
       <span v-if="yieldTo">
         <font-awesome-icon :icon="['fas', 'arrow-right']" size="s" />
@@ -18,15 +18,16 @@
     </span>
     <div
       class="progress"
-      :style="'clip-path: inset(0 ' + (-prgrs + 100) + '% 0 0); background-color:' + clr">
+      :style="'clip-path: inset(0 ' + (-progress + 100) + '% 0 0); border: 1px solid' + clr +
+      '; background-color:' + clr">
       <p class="desc" v-if="dsc">{{ dsc }}</p>
       <div class="country">
         <img
-          :src="`https://www.countryflags.io/${country}/flat/64.png`"
-          :alt="this.cntry.name"
+          :src="`https://www.countryflags.io/${countryId(del.country)}/flat/64.png`"
+          :alt="del.country"
           class="img"
         />
-        <h1>{{ this.cntry.short }}</h1>
+        <h1>{{ countryShort(del.country) }}</h1>
       </div>
       <span v-if="sec" class="time">
         <p>{{ sec }}sec</p>
@@ -40,14 +41,16 @@
 </template>
 
 <script>
+import { negara } from '@/const/country';
+
 export default {
   name: 'card',
   props: {
-    country: String,
+    del: Object,
     time: Number,
     yieldTo: String,
     desc: String,
-    progress: {
+    prgrs: {
       type: [String, Number],
     },
     color: String,
@@ -55,7 +58,7 @@ export default {
   data() {
     return {
       sec: this.time,
-      prgrs: this.progress,
+      progress: this.prgrs,
       dsc: null,
       clr: null,
       isActive: null,
@@ -71,12 +74,8 @@ export default {
       }
     },
     defaults() {
-      if (!this.minimized) {
-        this.min = false;
-      }
-
       if (this.desc === 'presence') {
-        this.dsc = this.cntry.presence;
+        this.dsc = this.del.status;
       } else {
         this.dsc = this.desc;
       }
@@ -86,19 +85,29 @@ export default {
       } else {
         this.clr = this.color;
       }
-
-      if (this.progress === 'presence' && this.cntry.presence === 'N/A') {
-        this.prgrs = 0;
-      } else if (this.progress === 'presence' && this.cntry.presence !== 'N/A' && !this.color) {
-        this.prgrs = 100;
-        if (this.cntry.presence === 'Not Present') {
+      if (this.prgrs === 'presence' && this.del.status.toLowerCase() === 'n/a') {
+        this.progress = 0;
+      } else if (this.prgrs === 'presence' && this.del.status.toLowerCase() !== 'n/a') {
+        this.progress = 100;
+        if (this.del.status.toLowerCase() === 'not present' && !this.color) {
           this.clr = '#FF5F5F';
         } else {
           this.clr = '#5F78FF';
         }
-      } else if (!this.progress && !this.time) {
-        this.prgrs = 0;
+      } else if (!this.prgrs && !this.time) {
+        this.progress = 0;
       }
+    },
+    countryId(name) {
+      const data = negara.filter((obj) => obj.name === name);
+      if (data.length > 0) {
+        return data[0].id;
+      }
+      return 'ad';
+    },
+    countryShort(name) {
+      const short = name.substring(0, 3).toUpperCase();
+      return short;
     },
   },
   watch: {
@@ -106,9 +115,9 @@ export default {
       this.pos();
     },
     sec() {
-      this.prgrs = (this.sec / this.time) * 100;
+      this.progress = (this.sec / this.time) * 100;
     },
-    cntry: {
+    del: {
       handler: 'defaults',
       deep: true,
     },
@@ -136,9 +145,9 @@ export default {
     });
   },
   computed: {
-    cntry() {
-      return this.$store.state.delegates.find((obj) => obj.id === this.country);
-    },
+    // cntry() {
+    //   return this.$store.state.delegates.find((obj) => obj.id === this.country);
+    // },
   },
 };
 </script>

@@ -6,7 +6,7 @@
         <button
           class="button"
           @click="showModal"
-          :disabled="delegatesData.length<1"
+          :disabled="delegatesData.length < 1"
         >
           Roll Call
         </button>
@@ -145,7 +145,6 @@ export default {
         if (nameA > nameB) {
           return 1;
         }
-
         return 0;
       });
       return items;
@@ -183,13 +182,13 @@ export default {
         document.querySelector('body').style.removeProperty('overflow');
       }
     },
-    warning() {
-      if (this.warning === 'discard') {
-        this.stage = 0;
-        this.showOverlay = false;
-        this.warning = false;
-      }
-    },
+    // warning() {
+    //   if (this.warning === 'discard') {
+    //     this.stage = 0;
+    //     this.showOverlay = false;
+    //     this.warning = false;
+    //   }
+    // },
   },
   async created() {
     this.updateDelegatesData();
@@ -211,12 +210,12 @@ export default {
       }
       this.stage = i;
     });
-    this.$on('no-modal-warn', () => {
-      this.warning = true;
-    });
-    this.$on('confirm', (i) => {
-      this.warning = i;
-    });
+    // this.$on('no-modal-warn', () => {
+    //   this.warning = true;
+    // });
+    // this.$on('confirm', (i) => {
+    //   this.warning = i;
+    // });
   },
 };
 </script>
