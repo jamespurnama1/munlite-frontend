@@ -21,6 +21,10 @@
     min-width: 265px;
   }
 
+  @media only screen and (max-width: 300px) {
+      min-width: 220px;
+  }
+
   #close {
     position: absolute;
     align-self: flex-end;

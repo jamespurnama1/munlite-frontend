@@ -4,7 +4,7 @@
   align-items: flex-start;
   justify-content: space-between;
   overflow: hidden;
-  padding: 1%;
+  // padding: 1%;
   background-color: white;
   border: 1px solid $light-grey;
   border-radius: 20px/20px;
@@ -44,13 +44,13 @@
   .desc {
     position: absolute;
     left: 3%;
-    top: 3%;
+    top: 5px;
     align-self: flex-start;
     z-index: 2;
     @include transition(.3s, ease);
 
     @include max-media (mobile-landscape) {
-      top: 6%;
+      top: 5px;
     }
   }
 
@@ -121,20 +121,20 @@
 .top .card {
   .country {
     bottom: initial;
-    top: 3%;
+    top: 4px;
     transform-origin: right top;
   }
 }
 
 .bottom .card {
   .country {
-    bottom: 7%;
+    bottom: 8px;
     top: initial;
     transform-origin: right bottom;
   }
 
   .desc {
     top: initial;
-    bottom: 6%;
+    bottom: 12px;
   }
 }
