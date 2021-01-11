@@ -173,7 +173,6 @@ export default {
       }
     },
     exit() {
-      console.log('jir');
       this.showInput = false;
     },
   },

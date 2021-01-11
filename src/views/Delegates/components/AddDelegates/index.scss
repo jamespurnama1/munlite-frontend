@@ -26,6 +26,10 @@
     align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 2rem;
+
+    #close {
+      cursor: pointer;
+    }
   }
 
   .mid {
