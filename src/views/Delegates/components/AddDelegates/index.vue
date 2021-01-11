@@ -1,7 +1,7 @@
 <template>
   <div id="addModal">
     <div class="upper">
-      <h2>Add New Delegates</h2>
+      <h2>Add New Delegate</h2>
       <a id='close' @click="exit()">
         <font-awesome-icon :icon="['fas', 'times']" size="lg" />
       </a>
