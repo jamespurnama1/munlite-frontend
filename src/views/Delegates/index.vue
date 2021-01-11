@@ -2,6 +2,12 @@
   <div class="delegates">
     <div class="delegates-upper">
       <h1 class="title">Delegates</h1>
+      <div class="info" v-if="$store.getters.getWidthWindow <= 960">
+        <div class="info-data" v-for="(value, key) in info" :key="key">
+          <p class="title emphasize">{{ key }}</p>
+          <p class="data"><b class="emphasize">{{ value }}</b> Delegates</p>
+        </div>
+      </div>
       <div class="delegates-button">
         <button
           class="button"
@@ -44,10 +50,10 @@
             </div>
           </div>
           <div class="table-data empty-data" v-else>No Delegates in the list</div>
-          <div class="info">
+          <div class="info" v-if="$store.getters.getWidthWindow > 960">
             <div class="info-data" v-for="(value, key) in info" :key="key">
               <p class="title emphasize">{{ key }}</p>
-              <p class="data"><b class="emphasize">{{ value }}</b> Delegates</p>
+              <div class="data"><b class="emphasize">{{ value }}</b> Delegates</div>
             </div>
           </div>
         </div>

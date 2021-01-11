@@ -1,7 +1,7 @@
 .delegates {
   margin: auto;
   width: 90%;
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
 
   &-upper {
     display: flex;
@@ -283,6 +283,73 @@
 
     .presence {
       width: 30%;
+    }
+  }
+
+  .info {
+    display: flex;
+    flex-wrap: wrap;
+    margin: auto;
+    width: 45%;
+
+    @include max-media(tablet) {
+      width: 100%;
+      margin-top: 1rem;
+      padding-top: 1rem;
+    }
+
+    @include max-media(small-mobile) {
+      font-size: 12px;
+    }
+
+    &-data {
+      width: 35%;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: .5rem;
+
+      @include max-media(tablet) {
+        flex-direction: row;
+        width: 45%;
+      }
+
+      @include max-media(mobile) {
+        flex-wrap: wrap;
+      }
+
+      .emphasize {
+        font-size: 18px;
+
+        @include max-media(small-mobile) {
+          font-size: 15px;
+        }  
+      }
+
+      .title {
+        border-bottom: none;
+        margin-bottom: 0;
+        
+        @include max-media(tablet) {
+          margin-right: 1rem;
+          width: 45%;
+          font-weight: bold;
+        }
+
+        @include max-media(mobile) {
+          flex-direction: row;
+          width: 100%;
+          margin-right: 0;
+        }
+
+        @include max-media(small-mobile) {
+          font-size: 15px;
+        } 
+      }
+
+      .data {
+        margin-bottom: 1.5rem;
+      }
     }
   }
 
