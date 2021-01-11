@@ -4,6 +4,7 @@
   padding: 3%;
   min-height: 75vh;
   font-family: 'Montserrat', sans-serif;
+  margin-bottom: 4rem;
 
   @include max-media(mobile){
     flex-direction: column;
