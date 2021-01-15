@@ -32,8 +32,9 @@
       />
       <p class="errmsg">{{ errorMessage }}</p>
       <div class="buttons">
-        <input type="submit" v-if="$route.path =='/signup'" @click="signup()" value="Sign Up" />
-        <input type="submit" v-if="$route.path =='/login'" @click="login()" value="Log In" />
+        <input type="submit" v-if="$route.path =='/signup'" @click="signup()"
+          :value="signupButton" />
+        <input type="submit" v-if="$route.path =='/login'" @click="login()" :value="loginButton" />
       </div>
     </form>
     <div class="footer">
@@ -61,6 +62,8 @@ export default {
       },
       checked: false,
       errorMessage: '',
+      signupButton: 'Sign Up',
+      loginButton: 'Log In',
     };
   },
   computed: {
@@ -88,6 +91,7 @@ export default {
           this.errorMessage = 'E-mail is not valid';
         }
       } else {
+        this.signupButton = 'Signing up...';
         const user = {
           first_name: this.formData.first,
           last_name: this.formData.last,
@@ -100,6 +104,7 @@ export default {
           },
           (error) => {
             console.log(error);
+            this.signupButton = 'Sign Up';
             this.errorMessage = 'Failed to Register';
           },
         );
@@ -107,6 +112,7 @@ export default {
     },
     async login() {
       if (this.formData.email.length > 0 && this.formData.password.length > 0) {
+        this.loginButton = 'Logging in...';
         const user = {
           email: this.formData.email,
           password: this.formData.password,
@@ -120,8 +126,9 @@ export default {
             }
           },
           (error) => {
-            console.log(error);
-            this.errorMessage = 'Failed to login';
+            this.loginButton = 'Log In';
+            const errResponse = error.response.data.error.message;
+            this.errorMessage = `Failed to login. ${errResponse.charAt(0).toUpperCase() + errResponse.slice(1)}.`;
           },
         );
       } else {

@@ -117,7 +117,6 @@ export default {
   methods: {
     onTabClick() {
       if (this.$route.path.split('/')[1] === '') {
-        console.log('1');
         const styles = {
           left: 32,
           width: 57,
@@ -125,7 +124,6 @@ export default {
         };
         this.border = styles;
       } else if (this.$route.path.split('/')[1] === 'overview') {
-        console.log('2');
         const styles = {
           left: 32,
           width: 86,
@@ -133,7 +131,6 @@ export default {
         };
         this.border = styles;
       } else {
-        console.log('3');
         const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
         const styles = {
           left: tab.offsetLeft + 32,
@@ -143,7 +140,6 @@ export default {
         this.border = styles;
       }
       this.open = false;
-      console.log(this.border);
     },
     async logout() {
       this.open = false;

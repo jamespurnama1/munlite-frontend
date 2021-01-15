@@ -113,8 +113,8 @@ export default {
   },
   computed: {
     info() {
-      const present = this.delegatesData.filter((obj) => obj.status === 'Present');
-      const pv = this.delegatesData.filter((obj) => obj.status === 'Present & Voting');
+      const present = this.delegatesData.filter((obj) => obj.status.toLowerCase() === 'present');
+      const pv = this.delegatesData.filter((obj) => obj.status.toLowerCase() === 'present & voting');
       const total = present.length + pv.length;
       const data = {
         Present: present.length,

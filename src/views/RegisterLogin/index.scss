@@ -82,6 +82,7 @@
       border-radius: 10px;
       font-size: 14px;
       font-weight: bold;
+      cursor: pointer;
       @include transition(ease, .5s);
 
       &:hover {
