@@ -17,10 +17,10 @@
           Roll Call
         </button>
         <div class="button">
-          <Autocomplete
+          <add-delegates
+            v-if="showInput"
             :items="countryList"
-            :class="{show: showInput == true}"
-            class="input"
+            @exit="exit"
             @update="updateDelegatesData"
           />
           <font-awesome-icon :icon="['fas', 'plus']" @click="toggleInput"/>
@@ -91,8 +91,8 @@
 import { getAllDelegates, deleteDelegates } from '@/api/delegates';
 import { getConference } from '@/api/conference';
 import { negara } from '@/const/country';
-import Autocomplete from '@/components/Autocomplete/index.vue';
 import Confirmation from '@/components/Confirmation/index.vue';
+import AddDelegates from './components/AddDelegates/index.vue';
 import RollCall from './components/RollCall/index.vue';
 import Vote from './components/Vote/index.vue';
 import Pass from './components/Pass/index.vue';
@@ -103,8 +103,8 @@ export default {
     RollCall,
     Vote,
     Pass,
-    Autocomplete,
     Confirmation,
+    AddDelegates,
   },
   data() {
     return {
@@ -217,7 +217,6 @@ export default {
     try {
       const conference = await getConference(this.$route.params.id);
       this.rulesData = conference.data.data.rules;
-      console.log(conference);
       const [parse] = (conference.data.data.rules.dr_vote).split(' ');
       const num = parse.split('/');
       this.dr_vote = (num[0] / num[1]).toFixed(2);
