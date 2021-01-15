@@ -41,11 +41,18 @@
                 {{ data.country }}
                 <span
                   :class="{show: hoverable == index}"
-                  @click="deleteDelegatesData(data.country)"
+                  @click="showConfirm = data.country"
                 >
                   <font-awesome-icon :icon="['fas', 'trash-alt']" />
                 </span>
               </p>
+              <Confirmation
+                content="Are you sure you want to delete?"
+                :action="deleteDelegatesData"
+                :delegateId="data.country"
+                v-if="showConfirm === data.country"
+                @exit="exit"
+              />
               <p class="presence">{{ data.status }}</p>
             </div>
           </div>
@@ -76,7 +83,7 @@
         <Pass :key="3" v-else-if='stage === 3' />
       </div>
     </transition>
-    <div class="overlay" v-if="showOverlay" />
+    <div class="overlay" v-if="showOverlay || showInput || showConfirm != null" />
   </div>
 </template>
 
@@ -85,6 +92,7 @@ import { getAllDelegates, deleteDelegates } from '@/api/delegates';
 import { getConference } from '@/api/conference';
 import { negara } from '@/const/country';
 import Autocomplete from '@/components/Autocomplete/index.vue';
+import Confirmation from '@/components/Confirmation/index.vue';
 import RollCall from './components/RollCall/index.vue';
 import Vote from './components/Vote/index.vue';
 import Pass from './components/Pass/index.vue';
@@ -96,6 +104,7 @@ export default {
     Vote,
     Pass,
     Autocomplete,
+    Confirmation,
   },
   data() {
     return {
@@ -109,6 +118,7 @@ export default {
       dr_vote: 0,
       rulesData: [],
       countryList: negara,
+      showConfirm: null,
     };
   },
   computed: {
@@ -172,11 +182,16 @@ export default {
           resolve(deleteDelegates(this.$route.params.id, country));
         });
         responses.then(() => {
+          this.exit();
           this.updateDelegatesData();
         });
       } catch (err) {
         console.error(err);
       }
+    },
+    exit() {
+      this.showInput = false;
+      this.showConfirm = null;
     },
   },
   watch: {

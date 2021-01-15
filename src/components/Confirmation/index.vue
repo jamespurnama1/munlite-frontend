@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div id="confirmation">
     <h3>{{ content }}</h3>
     <div class="buttons">
-      <button @click="exit()">Cancel</button>
-      <button @click="action()">Yes</button>
+      <button @click="exit()" class="cancel">Cancel</button>
+      <button @click="action(delegateId)">Yes</button>
     </div>
   </div>
 </template>
@@ -13,11 +13,8 @@ export default {
   name: 'Confirmation',
   props: {
     action: Function,
-  },
-  data() {
-    return {
-      content: 'Are you sure you want to delete?',
-    };
+    content: String,
+    delegateId: String,
   },
   methods: {
     exit() {
