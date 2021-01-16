@@ -119,14 +119,14 @@ export default {
       if (this.$route.path.split('/')[1] === '') {
         const styles = {
           left: 32,
-          width: 57,
+          width: 59,
           height: 28,
         };
         this.border = styles;
       } else if (this.$route.path.split('/')[1] === 'overview') {
         const styles = {
           left: 32,
-          width: 86,
+          width: 88,
           height: 28,
         };
         this.border = styles;
@@ -134,7 +134,7 @@ export default {
         const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
         const styles = {
           left: tab.offsetLeft + 32,
-          width: tab.offsetWidth,
+          width: tab.offsetWidth + 2,
           height: tab.offsetHeight,
         };
         this.border = styles;
