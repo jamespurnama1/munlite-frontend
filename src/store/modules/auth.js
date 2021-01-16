@@ -45,7 +45,7 @@ const UserModule = {
         },
         (error) => {
           commit('loginFailure');
-          return Promise.reject(error.response);
+          return Promise.reject(error);
         },
       );
     },

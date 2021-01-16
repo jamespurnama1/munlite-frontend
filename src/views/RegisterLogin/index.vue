@@ -1,7 +1,7 @@
 <template>
   <div class="regist-login">
     <img src="@/assets/img/logo_alt@2x.png" />
-    <form class="form-data" @submit.prevent="login()">
+    <form class="form-data" @submit.prevent="formSubmission()">
       <input
         type="text"
         v-if="$route.path != '/login' && $route.path !='signup'"
@@ -133,6 +133,13 @@ export default {
         );
       } else {
         this.errorMessage = 'Fill all required fields';
+      }
+    },
+    formSubmission() {
+      if (this.$route.path === '/signup') {
+        this.signup();
+      } else {
+        this.login();
       }
     },
     changeRoute() {
