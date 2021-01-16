@@ -11,12 +11,14 @@
           Roll Call
         </button>
         <div class="button">
-          <add-delegates
-            v-if="showInput"
-            :items="countryList"
-            @exit="exit"
-            @update="updateDelegatesData"
-          />
+          <transition name="fade">
+            <add-delegates
+              v-if="showInput"
+              :items="countryList"
+              @exit="exit"
+              @update="updateDelegatesData"
+            />
+          </transition>
           <font-awesome-icon :icon="['fas', 'plus']" @click="toggleInput"/>
         </div>
       </div>
