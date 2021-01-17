@@ -84,14 +84,6 @@ export const negara = [
     name: 'Anguilla',
   },
   {
-    id: 'AH',
-    name: '',
-  },
-  {
-    id: 'AK',
-    name: '',
-  },
-  {
     id: 'AL',
     name: 'Albania',
   },
@@ -352,10 +344,6 @@ export const negara = [
     name: 'Ethiopia',
   },
   {
-    id: 'EU',
-    name: '',
-  },
-  {
     id: 'FI',
     name: 'Finland',
   },
@@ -478,10 +466,6 @@ export const negara = [
   {
     id: 'HU',
     name: 'Hungary',
-  },
-  {
-    id: 'IC',
-    name: '',
   },
   {
     id: 'ID',
@@ -762,10 +746,6 @@ export const negara = [
   {
     id: 'NU',
     name: 'Niue',
-  },
-  {
-    id: 'NY',
-    name: '',
   },
   {
     id: 'NZ',
@@ -1062,10 +1042,6 @@ export const negara = [
   {
     id: 'WS',
     name: 'Samoa',
-  },
-  {
-    id: 'XK',
-    name: '',
   },
   {
     id: 'YE',
