@@ -39,3 +39,12 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555; 
 }
+
+textarea,
+input.text,
+input[type="text"],
+input[type="button"],
+input[type="submit"]{
+  -webkit-appearance: none;
+  border-radius: 0;
+}
