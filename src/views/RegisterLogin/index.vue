@@ -1,7 +1,7 @@
 <template>
   <div class="regist-login">
     <img src="@/assets/img/logo_alt@2x.png" />
-    <div class="form-data">
+    <form class="form-data" @submit.prevent="formSubmission()">
       <input
         type="text"
         v-if="$route.path != '/login' && $route.path !='signup'"
@@ -30,16 +30,13 @@
         placeholder="Confirm Password"
         required
       />
-      <div class="remember">
-        <input type="checkbox" v-model="checked" class="checked">
-        <label for="checkbox">Remember Me</label>
-      </div>
       <p class="errmsg">{{ errorMessage }}</p>
       <div class="buttons">
-        <button v-if="$route.path =='/signup'" @click="signup()">Sign Up</button>
-        <button v-if="$route.path =='/login'" @click="login()">Log in</button>
+        <input type="submit" v-if="$route.path =='/signup'" @click="signup()"
+          :value="signupButton" />
+        <input type="submit" v-if="$route.path =='/login'" @click="login()" :value="loginButton" />
       </div>
-    </div>
+    </form>
     <div class="footer">
       <p v-if="$route.path == '/login'">
         Don't have an account? <a @click="changeRoute()">Sign Up</a>
@@ -65,6 +62,8 @@ export default {
       },
       checked: false,
       errorMessage: '',
+      signupButton: 'Sign Up',
+      loginButton: 'Log In',
     };
   },
   computed: {
@@ -92,6 +91,7 @@ export default {
           this.errorMessage = 'E-mail is not valid';
         }
       } else {
+        this.signupButton = 'Signing up...';
         const user = {
           first_name: this.formData.first,
           last_name: this.formData.last,
@@ -104,6 +104,7 @@ export default {
           },
           (error) => {
             console.log(error);
+            this.signupButton = 'Sign Up';
             this.errorMessage = 'Failed to Register';
           },
         );
@@ -111,6 +112,7 @@ export default {
     },
     async login() {
       if (this.formData.email.length > 0 && this.formData.password.length > 0) {
+        this.loginButton = 'Logging in...';
         const user = {
           email: this.formData.email,
           password: this.formData.password,
@@ -124,12 +126,20 @@ export default {
             }
           },
           (error) => {
-            console.log(error);
-            this.errorMessage = 'Failed to login';
+            this.loginButton = 'Log In';
+            const errResponse = error.response.data.error.message;
+            this.errorMessage = `Failed to login. ${errResponse.charAt(0).toUpperCase() + errResponse.slice(1)}.`;
           },
         );
       } else {
         this.errorMessage = 'Fill all required fields';
+      }
+    },
+    formSubmission() {
+      if (this.$route.path === '/signup') {
+        this.signup();
+      } else {
+        this.login();
       }
     },
     changeRoute() {

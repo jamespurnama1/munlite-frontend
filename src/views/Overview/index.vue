@@ -62,7 +62,7 @@ export default {
         this.chairData = conference.data.data.chairman;
       }
     } catch (err) {
-      console.error(err.response);
+      console.error(err);
     }
   },
 };

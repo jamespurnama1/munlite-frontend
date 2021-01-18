@@ -75,7 +75,7 @@ export default {
           this.$emit('exit');
         }
       } catch (err) {
-        console.error(err.response);
+        console.error(err);
       }
     },
   },

@@ -28,7 +28,7 @@
     margin-bottom: 2rem;
   }
 
-  .form-data {
+  form {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -61,14 +61,6 @@
       font-size: 12px;
       margin-bottom: 10px;
     }
-
-    .remember {
-      font-size: 12px;
-      
-      @include max-media(mobile) {
-        font-size: 10px;
-      }
-    }
   }
 
   .buttons {
@@ -78,17 +70,26 @@
     align-items: center;
     flex-direction: column;
 
-    button {
+    input {
       -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
       -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
       box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
-      background-color: #5F78FF;
+      background-color: $blue;
       color: white;
       padding: 10px;
       width: 70%;
       border: none;
       border-radius: 10px;
       font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      @include transition(ease, .5s);
+
+      &:hover {
+        -webkit-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.72);
+        -moz-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.72);
+        box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.72);
+      }
 
       @include max-media(mobile) {
         font-size: 12px;
@@ -106,6 +107,7 @@
 
     a {
       text-decoration: underline;
+      cursor: pointer;
     }
   }
 }

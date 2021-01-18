@@ -5,10 +5,10 @@
         <div class="img"></div>
         <div class="detail">
           <h1>Hi, {{ name }}!</h1>
-          <p>Not {{ name }}? <a @click="logout()">Change Account</a></p>
+          <p>Not {{ name }}? <a @click="changeAcc()">Change Account</a></p>
         </div>
       </div>
-      <div class="ongoing" @click="$router.push('/overview')">
+      <!-- <div class="ongoing" @click="$router.push('/overview')">
         <p class="ongoing-title">Ongoing</p>
         <div class="ongoing-conference">
           <img class="conference-img" src="@/assets/img/home.png" />
@@ -20,7 +20,7 @@
             </p>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="bottom">
       <div class="conferences">
@@ -83,8 +83,7 @@ export default {
     }
   },
   methods: {
-    async logout() {
-      this.open = false;
+    async changeAcc() {
       try {
         await logout();
         this.$store.dispatch('logout');

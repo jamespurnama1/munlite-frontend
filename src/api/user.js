@@ -34,7 +34,7 @@ export async function fetchJWT() {
     .then((response) => {
       console.log(response);
     }).catch((err) => {
-      console.log(err.response);
+      console.log(err);
     });
 }
 

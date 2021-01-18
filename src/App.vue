@@ -42,6 +42,10 @@
           class="border conff"
           id="border"
           v-if="$store.getters.getWidthWindow > 960"
+          :style="{
+            left: `${borderStyles.left-1}px`,
+            width: `${borderStyles.width}px`,
+          }"
         ></div>
       </div>
       <div class="burger"
@@ -112,11 +116,25 @@ export default {
   },
   methods: {
     onTabClick() {
-      const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
-      if (tab) {
+      if (this.$route.path.split('/')[1] === '') {
         const styles = {
-          left: tab.offsetLeft,
-          width: tab.offsetWidth,
+          left: 32,
+          width: 59,
+          height: 28,
+        };
+        this.border = styles;
+      } else if (this.$route.path.split('/')[1] === 'overview') {
+        const styles = {
+          left: 32,
+          width: 88,
+          height: 28,
+        };
+        this.border = styles;
+      } else {
+        const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
+        const styles = {
+          left: tab.offsetLeft + 32,
+          width: tab.offsetWidth + 2,
           height: tab.offsetHeight,
         };
         this.border = styles;

@@ -2,6 +2,12 @@
   <div class="delegates">
     <div class="delegates-upper">
       <h1 class="title">Delegates</h1>
+      <div class="info" v-if="$store.getters.getWidthWindow <= 960">
+        <div class="info-data" v-for="(value, key) in info" :key="key">
+          <p class="title emphasize">{{ key }}</p>
+          <p class="data"><b class="emphasize">{{ value }}</b> Delegates</p>
+        </div>
+      </div>
       <div class="delegates-button">
         <button
           class="button"
@@ -37,19 +43,26 @@
                 {{ data.country }}
                 <span
                   :class="{show: hoverable == index}"
-                  @click="deleteDelegatesData(data.country)"
+                  @click="showConfirm = data.country"
                 >
                   <font-awesome-icon :icon="['fas', 'trash-alt']" />
                 </span>
               </p>
+              <Confirmation
+                content="Are you sure you want to delete?"
+                :action="deleteDelegatesData"
+                :delegateId="data.country"
+                v-if="showConfirm === data.country"
+                @exit="exit"
+              />
               <p class="presence">{{ data.status }}</p>
             </div>
           </div>
           <div class="table-data empty-data" v-else>No Delegates in the list</div>
-          <div class="info">
+          <div class="info" v-if="$store.getters.getWidthWindow > 960">
             <div class="info-data" v-for="(value, key) in info" :key="key">
               <p class="title emphasize">{{ key }}</p>
-              <p class="data"><b class="emphasize">{{ value }}</b> Delegates</p>
+              <div class="data"><b class="emphasize">{{ value }}</b> Delegates</div>
             </div>
           </div>
         </div>
@@ -72,7 +85,7 @@
         <Pass :key="3" v-else-if='stage === 3' />
       </div>
     </transition>
-    <div class="overlay" v-if="showOverlay || showInput" />
+    <div class="overlay" v-if="showOverlay || showInput || showConfirm != null" />
   </div>
 </template>
 
@@ -80,6 +93,7 @@
 import { getAllDelegates, deleteDelegates } from '@/api/delegates';
 import { getConference } from '@/api/conference';
 import { negara } from '@/const/country';
+import Confirmation from '@/components/Confirmation/index.vue';
 import AddDelegates from './components/AddDelegates/index.vue';
 import RollCall from './components/RollCall/index.vue';
 import Vote from './components/Vote/index.vue';
@@ -91,6 +105,7 @@ export default {
     RollCall,
     Vote,
     Pass,
+    Confirmation,
     AddDelegates,
   },
   data() {
@@ -105,12 +120,13 @@ export default {
       dr_vote: 0,
       rulesData: [],
       countryList: negara,
+      showConfirm: null,
     };
   },
   computed: {
     info() {
-      const present = this.delegatesData.filter((obj) => obj.status === 'Present');
-      const pv = this.delegatesData.filter((obj) => obj.status === 'Present & Voting');
+      const present = this.delegatesData.filter((obj) => obj.status.toLowerCase() === 'present');
+      const pv = this.delegatesData.filter((obj) => obj.status.toLowerCase() === 'present & voting');
       const total = present.length + pv.length;
       const data = {
         Present: present.length,
@@ -167,6 +183,7 @@ export default {
           resolve(deleteDelegates(this.$route.params.id, country));
         });
         responses.then(() => {
+          this.exit();
           this.updateDelegatesData();
         });
       } catch (err) {
@@ -175,6 +192,7 @@ export default {
     },
     exit() {
       this.showInput = false;
+      this.showConfirm = null;
     },
   },
   watch: {

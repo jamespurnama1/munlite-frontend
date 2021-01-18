@@ -40,27 +40,10 @@ const router = new VueRouter({
   routes,
 });
 
-function navbarTab(path) {
-  const tab = path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(path.split('/')[1]);
-  if (tab) {
-    const styles = {
-      left: tab.offsetLeft,
-      width: tab.offsetWidth,
-      height: tab.offsetHeight,
-    };
-    document.getElementById('border').style.left = `${styles.left + 8}px`;
-    document.getElementById('border').style.width = `${styles.width}px`;
-    document.getElementById('border').style.height = `${styles.height}px`;
-  }
-}
-
-NProgress.configure({ easing: 'ease-out', speed: 1700 });
+NProgress.configure({ easing: 'ease-out', speed: 1700, showSpinner: false });
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
-  if (store.getters.getWidthWindow > 960) {
-    navbarTab(to.path);
-  }
   const publicPages = ['Log In', 'Sign Up'];
   const authRequired = !publicPages.includes(to.name);
   const status = store.getters.loggedIn;
