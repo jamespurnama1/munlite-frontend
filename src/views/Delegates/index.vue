@@ -11,12 +11,14 @@
           Roll Call
         </button>
         <div class="button">
-          <Autocomplete
-            :items="countryList"
-            :class="{show: showInput == true}"
-            class="input"
-            @update="updateDelegatesData"
-          />
+          <transition name="fade">
+            <add-delegates
+              v-if="showInput"
+              :items="countryList"
+              @exit="exit"
+              @update="updateDelegatesData"
+            />
+          </transition>
           <font-awesome-icon :icon="['fas', 'plus']" @click="toggleInput"/>
         </div>
       </div>
@@ -70,7 +72,7 @@
         <Pass :key="3" v-else-if='stage === 3' />
       </div>
     </transition>
-    <div class="overlay" v-if="showOverlay" />
+    <div class="overlay" v-if="showOverlay || showInput" />
   </div>
 </template>
 
@@ -78,7 +80,7 @@
 import { getAllDelegates, deleteDelegates } from '@/api/delegates';
 import { getConference } from '@/api/conference';
 import { negara } from '@/const/country';
-import Autocomplete from '@/components/Autocomplete/index.vue';
+import AddDelegates from './components/AddDelegates/index.vue';
 import RollCall from './components/RollCall/index.vue';
 import Vote from './components/Vote/index.vue';
 import Pass from './components/Pass/index.vue';
@@ -89,7 +91,7 @@ export default {
     RollCall,
     Vote,
     Pass,
-    Autocomplete,
+    AddDelegates,
   },
   data() {
     return {
@@ -171,6 +173,9 @@ export default {
         console.error(err);
       }
     },
+    exit() {
+      this.showInput = false;
+    },
   },
   watch: {
     stage() {
@@ -195,7 +200,6 @@ export default {
     try {
       const conference = await getConference(this.$route.params.id);
       this.rulesData = conference.data.data.rules;
-      console.log(conference);
       const [parse] = (conference.data.data.rules.dr_vote).split(' ');
       const num = parse.split('/');
       this.dr_vote = (num[0] / num[1]).toFixed(2);

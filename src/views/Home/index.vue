@@ -5,7 +5,7 @@
         <div class="img"></div>
         <div class="detail">
           <h1>Hi, {{ name }}!</h1>
-          <p>Not {{ name }}? <a @click="$router.push('/login')">Change Account</a></p>
+          <p>Not {{ name }}? <a @click="logout()">Change Account</a></p>
         </div>
       </div>
       <div class="ongoing" @click="$router.push('/overview')">
@@ -57,6 +57,7 @@
 <script>
 import { getUserData } from '@/api/profile';
 import { getUserConference } from '@/api/conference';
+import { logout } from '@/api/user';
 
 export default {
   name: 'Home',
@@ -76,11 +77,22 @@ export default {
       const profile = await getUserData();
       this.name = profile.data.data.first_name;
       const conference = await getUserConference();
-      console.log(conference);
       this.conferences = conference.data.data;
     } catch (err) {
       console.error(err);
     }
+  },
+  methods: {
+    async logout() {
+      this.open = false;
+      try {
+        await logout();
+        this.$store.dispatch('logout');
+        this.$router.push('/login');
+      } catch (err) {
+        console.error(err);
+      }
+    },
   },
 };
 </script>

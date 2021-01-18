@@ -3,10 +3,20 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  font-size: 15px;
 
   input {
     border: none;
+    border-bottom: 1px solid $light-grey;
+    padding: 5px;
     color: $dark-grey;
+    width: 220px;
+    min-width: 220px;
+
+    @include max-media(mobile) {
+      width: 180px;
+      min-width: 180px;
+    }
   }
 
   .results {
@@ -14,6 +24,13 @@
     top: 1.5rem;
     left: 0;
     background-color: white;
+    width: 220px;
+    min-width: 220px;
+
+    @include max-media(mobile) {
+      width: 180px;
+      min-width: 180px;
+    }
 
     .autocomplete-results {
       padding: 0;
