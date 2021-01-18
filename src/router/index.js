@@ -32,6 +32,11 @@ const routes = [
     name: 'Log In',
     component: () => import('@/views/RegisterLogin'),
   },
+  {
+    path: '/gsl/:id',
+    name: 'GSL',
+    component: () => import('@/views/GSL'),
+  },
 ];
 
 const router = new VueRouter({

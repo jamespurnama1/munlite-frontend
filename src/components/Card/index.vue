@@ -123,7 +123,7 @@ export default {
     },
     isActive() {
       let int;
-      if (this.time && this.isActive) {
+      if (this.time && this.isActive && this.sec > 0) {
         int = setInterval(() => {
           this.sec -= 1;
         }, 1000);
