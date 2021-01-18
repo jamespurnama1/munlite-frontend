@@ -4,7 +4,6 @@
   align-items: flex-start;
   justify-content: space-between;
   overflow: hidden;
-  // padding: 1%;
   background-color: white;
   border: 1px solid $light-grey;
   border-radius: 20px/20px;
@@ -19,17 +18,21 @@
     width: 100%;
     top: 0;
     left: 0;
-    padding: 1%;
+    border-radius: 20px/20px;
     display: flex;
     border: 1px solid rgba(0,0,0,0);
     align-items: flex-start;
     justify-content: space-between;
     z-index: 5;
-    @include transition(1s, ease);
+    @include transition(.3s, ease);
 
-      h1, .desc, .time {
-        color: white;
-      }
+    h1, .desc, .time {
+      color: white;
+    }
+
+    @include max-media(mobile) {
+      border-radius: 15px/15px;
+    }
   }
 
   svg {
@@ -102,11 +105,7 @@
   }
 
   .time {
-    position: relative;
-    top: 1%;
-    right: 3%;
-    align-self: flex-start;
-    z-index: 2;
+    display: none;
   }
 }
 
@@ -115,6 +114,14 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+  
+  .time {
+    position: absolute;
+    top: 2%;
+    right: 3%;
+    z-index: 2;
+    display: block;
   }
 }
 
