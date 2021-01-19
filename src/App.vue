@@ -152,6 +152,11 @@ export default {
       }
     },
     toggleMenu() {
+      if (this.open) {
+        document.body.style.overflow = 'visible';
+      } else {
+        document.body.style.overflow = 'hidden';
+      }
       this.open = !this.open;
     },
     checkMobileView() {
