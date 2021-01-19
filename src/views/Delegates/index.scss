@@ -151,12 +151,17 @@
             flex-direction: row;
             align-items: center;
       
-            img {
+            .img {
+              font-size: 3.5rem;
               margin-right: 1rem;
+
+              @include max-media(mobile) {
+                font-size: 2rem;
+              }
             }
           }
 
-          span {
+          span.hidden {
             visibility: hidden;
             margin-left: 1rem;
             color: $red;

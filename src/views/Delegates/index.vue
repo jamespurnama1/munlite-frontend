@@ -31,9 +31,11 @@
           <div class="table-data" v-if="delegatesData.length > 0">
             <div v-for="(data, index) in delegatesData" :key="index" class="data">
               <p class="name" @mouseover="hoverable = index" @mouseleave="hoverable = null">
-                <img :src="`https://www.countryflags.io/${getDelegatesID(data.country)}/flat/64.png`" :alt="data.name" class="img"/>
+                <span
+                :class="`flag-icon img flag-icon-${getDelegatesID(data.country).toLowerCase()}`" />
                 {{ data.country }}
                 <span
+                  class="hidden"
                   :class="{show: hoverable == index}"
                   @click="deleteDelegatesData(data.country)"
                 >

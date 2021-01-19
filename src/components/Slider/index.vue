@@ -8,11 +8,7 @@
     >
       <p class="desc">{{ countryDesc(del.status) }}</p>
       <div class="country">
-        <img
-          :src="`https://www.countryflags.io/${countryId(del.country)}/flat/64.png`"
-          :alt="del.country"
-          class="img"
-        />
+        <span :class="`flag-icon img flag-icon-${countryId(del.country).toLowerCase()}`" />
         <h1>{{ countryShort(del.country) }}</h1>
       </div>
       <div class="progress" :class="color(del.status)"></div>
