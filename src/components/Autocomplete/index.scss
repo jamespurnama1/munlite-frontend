@@ -7,10 +7,9 @@
 
   input {
     border: none;
-    border-bottom: 1px solid $light-grey;
     padding: 5px;
     color: $dark-grey;
-    width: 220px;
+    width: 100%;
     min-width: 220px;
 
     @include max-media(mobile) {
@@ -24,7 +23,7 @@
     top: 1.5rem;
     left: 0;
     background-color: white;
-    width: 220px;
+    width: 100%;
     min-width: 220px;
 
     @include max-media(mobile) {
@@ -46,6 +45,8 @@
       text-align: left;
       padding: 4px 2px;
       cursor: pointer;
+      color: black;
+      font-weight: normal;
     }
 
     .autocomplete-result:hover {

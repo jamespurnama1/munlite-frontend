@@ -11,7 +11,8 @@
       :desc="`presence`"
       :delegates="delegatesData"
       :active="currentCountry"
-      @move="move" />
+      @move="move"
+      class="left" />
       <div id='selection'>
         <div id='select'>
           <button @click="presence('Present')">
@@ -35,7 +36,7 @@
         <button @click="$parent.$emit('stage', 2)"
         :disabled="voteCount !== delegatesData.length"
         id="continue">
-          <p>Continue</p>
+          Continue
         </button>
       </div>
     </div>

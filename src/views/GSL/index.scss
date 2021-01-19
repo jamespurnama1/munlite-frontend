@@ -20,7 +20,7 @@
   .wrapper {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
     margin-bottom: 1rem;
     height: 100%;
@@ -50,7 +50,7 @@
     .cards {
       position: relative;
       display: flex;
-      width: 35%;
+      width: 40%;
       min-width: 30vh;
       height: 100%;
       align-items: center;
@@ -66,7 +66,6 @@
     .options {
       width: 40%;
       min-width: 30vh;
-      margin: 0 5% 0 20%;
 
       @include max-media(tablet) {
         width: 90%;
@@ -87,6 +86,10 @@
           margin: 0 5px;
           padding: 10px 15px;
           width: 60%;
+
+          input {
+            border-bottom: none;
+          }
         }
 
         button {
@@ -94,6 +97,10 @@
           font-size: 20px;
           border-radius: 10px/10px;
           width: 30%;
+
+          &:focus{
+            outline: none;
+          }
         }
       }
 
@@ -113,6 +120,10 @@
 
         button {
           margin: 0 10px;
+
+          &:focus{
+            outline: none;
+          }
         }
 
         .selected {

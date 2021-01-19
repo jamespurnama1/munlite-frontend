@@ -15,12 +15,13 @@
       <div class="options">
         <h3>Add to Queue</h3>
         <div class="add">
-          <Autocomplete
-            :items="countryList"
-            :class="{show: showInput == true}"
-            class="input"
-            @update="updateDelegatesData"
-          />
+          <div class="input">
+            <Autocomplete
+              :items="countryList"
+              :class="{show: showInput == true}"
+              @update="updateDelegatesData"
+            />
+          </div>
           <button @click="toggleInput">Add</button>
         </div>
         <hr>
@@ -62,7 +63,7 @@ export default {
       countryList: negara,
       currentCountry: 0,
       newCountry: '',
-      selected: 1,
+      selected: null,
     };
   },
   methods: {

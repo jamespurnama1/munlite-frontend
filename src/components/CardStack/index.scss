@@ -41,7 +41,7 @@
       position: absolute;
       height: 45%;
       min-height: 140px;
-      max-height: 250px;
+      max-height: 35%;
       width: 100%;
       top: 50%;
       left: 50%;
@@ -52,7 +52,7 @@
 
       @include max-media(mobile-landscape) {
         width: 90%;
-        min-height: 100px;
+        min-height: 125px;
         max-width: 300px;
       }
 

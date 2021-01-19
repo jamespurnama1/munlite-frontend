@@ -18,9 +18,11 @@
       </div>
       <div class="right">
         <label>Name</label>
-        <Autocomplete :items="items" @onchangeCountry="onchangeCountry"/>
+        <Autocomplete :items="items" @onchangeCountry="onchangeCountry" class="country"/>
         <label>Short Name</label>
-        <input type="text" placeholder="Short Name" v-model="newCountry.short"/>
+        <div class="inputtext">
+          <input type="text" placeholder="Short Name" v-model="newCountry.short"/>
+        </div>
       </div>
     </div>
     <button @click="addNewCountry()">Add</button>

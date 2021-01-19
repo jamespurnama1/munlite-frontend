@@ -116,19 +116,29 @@
       }
     }
 
+    .country {
+      border-bottom: 1px solid $light-grey;
+    }
+
     @include max-media(mobile) {
       margin-top: 5px;
     }
   }
 }
 
+.inputtext {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 15px;
+  border-bottom: 1px solid $light-grey;
+}
+
 input {
   border: none;
-  border-bottom: 1px solid $light-grey;
   padding: 5px;
   color: $dark-grey;
-  width: 220px;
-  max-width: 220px;
+  width: 100%;
 
   @include max-media(mobile) {
     width: 180px;
