@@ -10,12 +10,7 @@
     padding: 5px;
     color: $dark-grey;
     width: 100%;
-    min-width: 220px;
 
-    @include max-media(mobile) {
-      width: 180px;
-      min-width: 180px;
-    }
   }
 
   .results {
@@ -24,12 +19,6 @@
     left: 0;
     background-color: white;
     width: 100%;
-    min-width: 220px;
-
-    @include max-media(mobile) {
-      width: 180px;
-      min-width: 180px;
-    }
 
     .autocomplete-results {
       padding: 0;

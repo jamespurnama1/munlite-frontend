@@ -2,7 +2,7 @@
   margin: auto;
   width: 90%;
   height: 80vh;
-  margin-bottom: 2rem;
+  margin-bottom: 5rem;
 
   @include max-media(tablet) {
     height: 100vh;
@@ -41,6 +41,14 @@
       font-size: 15px;
       @include transition(0.3s, ease);
 
+      @include max-media(tablet) {
+        padding: 10px;
+      }
+
+      @include max-media(mobile) {
+        font-size: 12px;
+      }
+
       &:hover {
         box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
         border: 1px solid rgba(0, 0, 0, 0);
@@ -54,12 +62,25 @@
       min-width: 30vh;
       height: 100%;
       align-items: center;
+      max-width: 550px;
+
+      @include max-media(desktop) {
+        width: 50%;
+      }
 
       @include max-media(tablet) {
         height: 50%;
-        width: 90%;
+        width: 55%;
         align-items: flex-start;
         justify-content: center;
+      }
+
+      @include max-media(mobile) {
+        width: 75%;
+      }
+
+      @include max-media(mobile-landscape) {
+        width: 95%;
       }
     }
 
@@ -78,6 +99,14 @@
         margin: 20px auto 0 auto;
         justify-content: space-around;
 
+        @include max-media(tablet) {
+          width: 70%;
+        }
+
+        @include max-media(mobile) {
+          width: 100%;
+        }
+
         .input {
           font-family: 'Montserrat', sans-serif;
           font-size: 15px;
@@ -86,6 +115,10 @@
           margin: 0 5px;
           padding: 10px 15px;
           width: 60%;
+
+          @include max-media(tablet) {
+            padding: 10px;
+          }
 
           input {
             border-bottom: none;
@@ -100,6 +133,11 @@
 
           &:focus{
             outline: none;
+          }
+
+          @include max-media(tablet) {
+            font-size: 15px;
+            width: 4rem;
           }
         }
       }
@@ -137,12 +175,6 @@
       .autoplay {
         margin-top: 30px;
         display: flex;
-        width: 35%;
-        min-width: 300px;
-
-        // @include max-media(mobile) {
-        //   width
-        // }
 
         .switch {
           position: relative;
