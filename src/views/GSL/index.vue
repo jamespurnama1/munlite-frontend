@@ -13,30 +13,38 @@
         @move="move" />
       </div>
       <div class="options">
-        <h3>Add to Queue</h3>
-        <div class="add">
-          <div class="input">
-            <Autocomplete
-              :items="countryList"
-              :class="{show: showInput == true}"
-              @update="updateDelegatesData"
-            />
+        <div>
+          <h3>Add to Queue</h3>
+          <div class="add">
+            <div class="input">
+              <Autocomplete
+                :items="countryList"
+                :class="{show: showInput == true}"
+                @update="updateDelegatesData"
+                placeholder="Delegate"
+              />
+            </div>
+            <button @click="toggleInput">Add</button>
           </div>
-          <button @click="toggleInput">Add</button>
         </div>
         <hr>
-        <h3>Yield To:</h3>
-        <div class="choice">
-          <button :class="{ selected: selected === 0 }" @click="select(0)">Chair</button>
-          <button :class="{ selected: selected === 1 }" @click="select(1)">Questions</button>
-          <button :class="{ selected: selected === 2 }" @click="select(2)">Country</button>
-        </div>
-        <div class="autoplay">
-          <label class="switch">
-            <input type="checkbox">
-            <span class="slider round"></span>
-          </label>
-          <p>autoplay</p>
+        <div>
+          <h3>Yield To:</h3>
+          <div class="choice">
+            <button :class="{ selected: selected === 0 }" @click="select(0)">Chair</button>
+            <button :class="{ selected: selected === 1 }" @click="select(1)">Questions</button>
+            <div class="yieldCountry">
+              <Autocomplete
+                :items="countryList"
+                :class="{show: showInput == true}"
+                @update="updateDelegatesData"
+                placeholder="Delegate"
+              />
+            </div>
+          </div>
+          <div class="yield">
+            <button>Yield</button>
+          </div>
         </div>
       </div>
     </div>

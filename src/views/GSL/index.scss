@@ -28,7 +28,7 @@
 
     button {
       background-color: white;
-      border-radius: 15px/15px;
+      border-radius: 10px/10px;
       padding: 10px 15px;
       border: 1px solid $light-grey;
       cursor: pointer;
@@ -88,6 +88,8 @@
         width: 90%;
         margin: 0;
         margin-top: 20px;
+        display: flex;
+        flex-direction: column-reverse;
       }
 
       .add {
@@ -151,6 +153,15 @@
         display: flex;
         justify-content: center;
         margin: 20px;
+        
+        @include max-media(tablet) {
+          justify-content: center;
+          margin: 20px 0;
+        }
+
+        @include max-media(small-mobile) {
+          justify-content: space-between;
+        }
 
         button {
           margin: 0 10px;
@@ -166,63 +177,43 @@
           color: white;
           border: 1px solid $blue;
         }
+
+        .yieldCountry {
+          height: fit-content;
+          border: 1px solid $light-grey;
+          border-top: 0;
+          padding: 5px;
+        }
       }
 
-      .autoplay {
-        margin-top: 30px;
+      .yield {
         display: flex;
+        margin: 20px 0;
+        justify-content: flex-end;
 
-        .switch {
-          position: relative;
-          display: inline-block;
-          width: 50px;
-          height: 23px;
-          margin-right: 10px;
+        @include max-media(tablet) {
+          margin: 0;
+          justify-content: center;
         }
 
-        .switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
+        @include max-media(mobile) {
+          justify-content: flex-end;
         }
 
-        /* The slider */
-        .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: $light-grey;
-          @include transition(0.3s, ease);
-          border-radius: 23px;
-        }
 
-        .slider:before {
-          position: absolute;
-          content: "";
-          height: 15px;
-          width: 15px;
-          left: 4px;
-          bottom: 4px;
-          background-color: white;
-          border-radius: 50%;
-          @include transition(0.3s, ease);
-        }
+        button {
+          font-weight: bold;
+          padding: 10px;
+          font-size: 20px;
+          margin: 0 10px;
 
-        input:checked + .slider {
-          background-color: $blue;
-        }
+          &:focus{
+            outline: none;
+          }
 
-        input:focus + .slider {
-          box-shadow: 0 0 1px $blue;
-        }
-
-        input:checked + .slider:before {
-          -webkit-transform: translateX(25px);
-          -ms-transform: translateX(25px);
-          transform: translateX(25px);
+          @include max-media(tablet) {
+            font-size: 15px;
+          }
         }
       }
     }

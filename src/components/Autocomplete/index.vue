@@ -3,7 +3,7 @@
     <input
       v-model="newCountry"
       type="text"
-      placeholder="Name"
+      :placeholder="placeholder"
       @input="fillAutocomplete"
       @change="emitData"
     />
@@ -34,6 +34,11 @@ export default {
       type: Array,
       required: true,
       default: () => [],
+    },
+    placeholder: {
+      type: String,
+      required: true,
+      default: () => 'Name',
     },
   },
   data() {
