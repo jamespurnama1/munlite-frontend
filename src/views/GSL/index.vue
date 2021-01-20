@@ -31,19 +31,19 @@
         <div>
           <h3>Yield To:</h3>
           <div class="choice">
-            <button :class="{ selected: selected === 0 }" @click="select(0)">Chair</button>
-            <button :class="{ selected: selected === 1 }" @click="select(1)">Questions</button>
-            <div class="yieldCountry">
+            <button :class="{ selected: selected === 1 }" @click="select(1)">Chair</button>
+            <button :class="{ selected: selected === 2 }" @click="select(2)">Questions</button>
+            <div class="yieldCountry" :class="{filled: selected === 3}">
               <Autocomplete
                 :items="countryList"
                 :class="{show: showInput == true}"
-                @update="updateDelegatesData"
+                @onchangeCountry="yieldInput"
                 placeholder="Delegate"
               />
             </div>
           </div>
           <div class="yield">
-            <button>Yield</button>
+            <button :disabled="selected === 0">Yield</button>
           </div>
         </div>
       </div>
@@ -72,15 +72,25 @@ export default {
       currentCountry: 0,
       newCountry: '',
       selected: null,
+      yieldDelegate: '',
     };
   },
   methods: {
     select(i) {
+      this.yieldDelegate = '';
       this.selected = i;
     },
     move(index) {
       const j = Math.min(Math.max(parseInt(index, 10), 0), this.delegatesData.length - 1);
       this.currentCountry = j;
+    },
+    yieldInput(country) {
+      if (country.length > 0) {
+        this.selected = 3;
+      } else {
+        this.selected = 0;
+      }
+      this.yieldDelegate = country;
     },
     toggleInput() {
       this.showInput = !this.showInput;

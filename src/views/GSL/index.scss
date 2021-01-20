@@ -183,6 +183,10 @@
           border: 1px solid $light-grey;
           border-top: 0;
           padding: 5px;
+
+          // &.filled {
+          //   border-color: $blue;
+          // }
         }
       }
 
@@ -213,6 +217,14 @@
 
           @include max-media(tablet) {
             font-size: 15px;
+          }
+
+          &:disabled {
+            cursor: not-allowed;
+            &:hover {
+              box-shadow: none;
+              border: 1px solid $light-grey;
+            }
           }
         }
       }

@@ -11,6 +11,9 @@
     color: $dark-grey;
     width: 100%;
 
+    &::placeholder {
+      color: $light-grey;
+    }
   }
 
   .results {

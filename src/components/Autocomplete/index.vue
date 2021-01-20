@@ -41,6 +41,11 @@ export default {
       default: () => 'Name',
     },
   },
+  watch: {
+    newCountry() {
+      this.emitData();
+    },
+  },
   data() {
     return {
       newCountry: '',
