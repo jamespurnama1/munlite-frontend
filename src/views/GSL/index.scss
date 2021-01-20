@@ -108,8 +108,7 @@
         .input {
           font-family: 'Montserrat', sans-serif;
           font-size: 15px;
-          border: 1px solid $light-grey;
-          border-top: 0;
+          border-bottom: 1px solid $light-grey;
           margin: 0 5px;
           padding: 10px 15px;
           width: 60%;
@@ -180,13 +179,12 @@
 
         .yieldCountry {
           height: fit-content;
-          border: 1px solid $light-grey;
-          border-top: 0;
+          border-bottom: 1px solid $light-grey;
           padding: 5px;
 
-          // &.filled {
-          //   border-color: $blue;
-          // }
+          &.filled {
+            border-color: black;
+          }
         }
       }
 

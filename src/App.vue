@@ -139,6 +139,7 @@ export default {
         };
         this.border = styles;
       }
+      document.body.style.overflow = 'visible';
       this.open = false;
     },
     async logout() {

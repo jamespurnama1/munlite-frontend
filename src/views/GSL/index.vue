@@ -77,7 +77,6 @@ export default {
   },
   methods: {
     select(i) {
-      this.yieldDelegate = '';
       this.selected = i;
     },
     move(index) {
