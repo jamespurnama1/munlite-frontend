@@ -155,7 +155,6 @@ export default {
     try {
       const conference = await getConference(this.$route.params.id);
       this.rulesData = conference.data.data.rules;
-      console.log(conference);
       const [parse] = (conference.data.data.rules.dr_vote).split(' ');
       const num = parse.split('/');
       this.dr_vote = (num[0] / num[1]).toFixed(2);

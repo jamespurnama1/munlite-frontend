@@ -113,7 +113,6 @@ export default {
           }, 1000);
         }
       } else {
-        console.log(this.int);
         clearInterval(this.int);
         this.interval = null;
       }
