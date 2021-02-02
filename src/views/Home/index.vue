@@ -16,7 +16,8 @@
             <p class="name">{{ ongoing.name }}</p>
             <p class="started-time">
               started {{ ongoing.timestamp }} mins ago
-              <img :src="`https://www.countryflags.io/${ongoing.flag}/flat/64.png`"/>
+              <span
+              :class="`flag-icon img flag-icon-squared flag-icon-${ongoing.flag.toLowerCase()}`" />
             </p>
           </div>
         </div>

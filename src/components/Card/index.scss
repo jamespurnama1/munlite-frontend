@@ -78,10 +78,14 @@
       top: -15%;
     }
 
-    img {
-      width: auto;
-      height: 5rem;
+    .img {
+      // width: auto;
+      font-size: 4.5rem;
       margin-right: 5px;
+
+      @include max-media(mobile) {
+        font-size: 2.5rem;
+      }
     }
     
     h1 {

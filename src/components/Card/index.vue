@@ -2,11 +2,7 @@
   <div class="card">
     <p class="desc" v-if="dsc && progress !== 100">{{ dsc }}</p>
     <div class="country" v-if="progress !== 100">
-      <img
-        :src="`https://www.countryflags.io/${countryId(del.country)}/flat/64.png`"
-        :alt="del.country"
-        class="img"
-      />
+      <span :class="`flag-icon img flag-icon-${countryId(del.country).toLowerCase()}`" />
       <h1>{{ countryShort(del.country) }}</h1>
     </div>
     <div
@@ -16,11 +12,7 @@
                 background-color: ${clr}`">
       <p class="desc" v-if="dsc">{{ dsc }}</p>
       <div class="country">
-        <img
-          :src="`https://www.countryflags.io/${countryId(del.country)}/flat/64.png`"
-          :alt="del.country"
-          class="img"
-        />
+        <span :class="`flag-icon img flag-icon-${countryId(del.country).toLowerCase()}`" />
         <h1>{{ countryShort(del.country) }}</h1>
       </div>
     </div>
