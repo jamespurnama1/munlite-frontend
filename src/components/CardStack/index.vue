@@ -22,7 +22,7 @@
 
 <script>
 import { gsap } from 'gsap';
-// import { debounce } from 'debounce';
+import { debounce } from 'debounce';
 import Card from '@/components/Card/index.vue';
 
 export default {
@@ -105,7 +105,7 @@ export default {
           this.card[j].classList.remove('top');
           this.card[j].classList.remove('bottom');
           this.tl.to(this.card[this.active], {
-            zIndex: this.card.length + 999,
+            zIndex: this.card.length,
             duration: 0.1,
           }, '<-1')
             .to(this.card[this.active], {
@@ -165,7 +165,7 @@ export default {
     this.card = document.getElementsByClassName('stack-cards__item');
     this.checkWidth();
     this.sort();
-    // document.querySelector('.stackOverflow').onwheel = debounce(this.scroll, 50, true);
+    document.querySelector('.stackOverflow').onwheel = debounce(this.scroll, 50, true);
   },
   computed: {
     width() {

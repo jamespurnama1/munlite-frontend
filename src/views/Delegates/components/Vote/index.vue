@@ -19,13 +19,13 @@
       <div id="select">
         <div class="selection">
           <input class="input blue" type="number" min="0"
-          :max="this.delegatesData.length - this.no"
+          :max="this.info['Total Present'] - this.no"
           v-model.number="yes">
           <h2 class="blue">Yes</h2>
         </div>
         <div class="selection">
           <input class="input red" type="number" min="0"
-          :max="this.delegatesData.length - this.yes"
+          :max="this.info['Total Present'] - this.yes"
           v-model.number="no">
           <h2 class="red">No</h2>
         </div>
@@ -78,7 +78,7 @@ export default {
       return false;
     },
     left() {
-      return this.delegatesData.length - (this.yes + this.no);
+      return this.info['Total Present'] - (this.yes + this.no);
     },
   },
   methods: {

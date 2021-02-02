@@ -88,7 +88,7 @@
       font-size: 4rem;
       margin-left: 5px;
 
-      @include max-media (small-tablet) {
+      @include max-media (tablet) {
         font-size: 3rem;
       }
 
@@ -99,7 +99,7 @@
   }
 
   p {
-    @include max-media(small-tablet) {
+    @include max-media(tablet) {
       font-size: 12px;
     }
 

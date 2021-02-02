@@ -11,12 +11,12 @@ export async function addDelegates(id, data) {
   return res;
 }
 
-export async function editDelegates(id, data) {
-  const res = await request.patch(`/api/conference/${id}/delegates`, data);
+export async function editDelegates(id, del, data) {
+  const res = await request.patch(`/api/conference/${id}/delegates/${del}`, data);
   return res;
 }
 
-export async function deleteDelegates(id, country) {
-  const res = await request.delete(`/api/conference/${id}/delegates/${country}`);
+export async function deleteDelegates(id, del) {
+  const res = await request.delete(`/api/conference/${id}/delegates/${del}`);
   return res;
 }

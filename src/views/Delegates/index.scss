@@ -362,12 +362,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 6;
+    z-index: 200;
     @include transition(ease, 0.5s);
   }
 
   .overlay {
-    z-index: 5;
+    z-index: 199;
   }
 }
 

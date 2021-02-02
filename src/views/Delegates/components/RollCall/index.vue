@@ -69,7 +69,8 @@ export default {
           country: this.delegatesData[i].country,
           status: j,
         };
-        await editDelegates(this.$route.params.id, data);
+        // eslint-disable-next-line no-underscore-dangle
+        await editDelegates(this.$route.params.id, this.delegatesData[i]._id, data);
         this.$emit('update');
         this.getVoteCount();
       } catch (err) {

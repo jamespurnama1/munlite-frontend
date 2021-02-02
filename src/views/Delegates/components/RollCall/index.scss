@@ -45,8 +45,8 @@
     }
 
     .left {
-      width: 50%;
-      padding: 0 1rem 0 2rem;
+      width: 60%;
+      padding: 0 1rem;
 
       @include max-media(mobile-landscape) {
         width: 100%;
@@ -173,6 +173,10 @@
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    &:focus {
+      outline: none;
     }
 
     &.red {

@@ -51,7 +51,8 @@
               <Confirmation
                 content="Are you sure you want to delete?"
                 :action="deleteDelegatesData"
-                :delegateId="data.country"
+                :delegateName="data.country"
+                :delegateId="data._id"
                 v-if="showConfirm === data.country"
                 @exit="exit"
               />
