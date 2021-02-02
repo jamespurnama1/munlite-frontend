@@ -1,6 +1,10 @@
 .card {
-  position: relative;
+  position: absolute;
   display: flex;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   align-items: flex-start;
   justify-content: space-between;
   overflow: hidden;
@@ -16,15 +20,15 @@
     position: absolute;
     height: 100%;
     width: 100%;
-    top: 0;
-    left: 0;
+    top: -1px;
+    left: -1px;
     border-radius: 20px/20px;
     display: flex;
     border: 1px solid rgba(0,0,0,0);
     align-items: flex-start;
     justify-content: space-between;
     z-index: 5;
-    @include transition(.3s, ease);
+    @include transition(.3s, ease-in-out);
 
     h1, .desc, .time {
       color: white;
@@ -88,7 +92,7 @@
         font-size: 3rem;
       }
 
-      @include max-media (mobile-landscape) {
+      @include max-media (small-mobile) {
         font-size: 2rem;
       }
     }
@@ -99,7 +103,7 @@
       font-size: 12px;
     }
 
-    @include max-media (mobile-landscape) {
+    @include max-media (small-mobile) {
       font-size: 10px;
     }
   }

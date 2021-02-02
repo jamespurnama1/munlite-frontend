@@ -19,7 +19,7 @@
   @include max-media(mobile-landscape) {
     width: 75vw;
     min-width: 265px;
-    height: 65vh;
+    height: 75vh;
   }
 
   @media only screen and (max-width: 300px) {
@@ -45,12 +45,13 @@
     }
 
     .left {
-      width: 65%;
-      padding: 0 1rem;
+      width: 50%;
+      padding: 0 1rem 0 2rem;
 
       @include max-media(mobile-landscape) {
         width: 100%;
         height: 65%;
+        padding: 0 1rem;
       }
     }
 

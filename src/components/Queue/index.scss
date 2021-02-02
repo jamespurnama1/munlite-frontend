@@ -1,0 +1,75 @@
+.add {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px/15px;
+  -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+  -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+  padding: 20px;
+  padding-top: 10px;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 120px;
+
+  @include max-media(tablet) {
+    width: 70%;
+  }
+
+  @include max-media(mobile) {
+    width: 100%;
+  }
+
+  .input {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    border-bottom: 1px solid $light-grey;
+    margin: auto;
+    padding: 10px 15px;
+    width: 80%;
+
+    @include max-media(tablet) {
+      padding: 10px;
+    }
+
+    input {
+      border-bottom: none;
+    }
+  }
+
+  .container {
+    position: absolute;
+    bottom: -1em;
+    left: 50%;
+    transform: translateX(-50%);
+
+    .button {
+      font-weight: bold;
+      font-size: 20px;
+      border-radius: 10px/10px;
+      width: 100%;
+      border: 0;
+      -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+      -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+      box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+
+      &:focus{
+        outline: none;
+      }
+
+      &:hover {
+          border: 0;
+          transform: scale(1.2);
+          -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+          -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+          box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+        }
+
+      @include max-media(tablet) {
+        font-size: 15px;
+        width: 4rem;
+      }
+    }
+  }
+}

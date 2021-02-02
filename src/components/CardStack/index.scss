@@ -3,6 +3,8 @@
     height: 100%;
     width: 100%;
     overflow: hidden;
+    padding: 0 2px;
+    user-select: none;
 
     &:before {
       content: '';
@@ -34,9 +36,7 @@
   
     .stack-cards__item {
       position: absolute;
-      height: 40%;
-      min-height: 140px;
-      max-height: 40%;
+      aspect-ratio: 16 / 9;
       width: 100%;
       top: 50%;
       left: 50%;
@@ -45,28 +45,33 @@
       margin: 0 auto;
       @include transition(.5s, ease);
 
+      @supports not (aspect-ratio: 16 / 9) { 
+        height: 0;
+        padding-top: 56.25%;
+      }
+
       @include max-media(mobile-landscape) {
-        width: 90%;
-        min-height: 125px;
-        max-width: 300px;
+        // width: 90%;
+        // min-height: 125px;
+        // max-width: 300px;
       }
 
       &.active {
         transform: translate(-50%, -50%) scale(1) !important;
       }
 
-      > * {
-        position: relative;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        will-change: transform, opacity;
-      }
+      // > * {
+      //   position: relative;
+      //   top: 0;
+      //   left: 0;
+      //   height: 100%;
+      //   width: 100%;
+      //   will-change: transform, opacity;
+      // }
 
       @include min-media(tablet) {
-        height: 35%;
-        min-height: 250px;
+        // height: 35%;
+        // min-height: 250px;
       }
     }
   }

@@ -3,36 +3,51 @@
     <h1 v-if="$store.getters.getWidthWindow > 960" class="title">General Speakers List</h1>
     <h1 v-else-if="$store.getters.getWidthWindow < 960" class="title">GSL</h1>
     <div class="wrapper">
+      <Timer
+        v-if="$store.getters.getWidthWindow < 961"
+        class="time"
+        :active="isActive"
+        :time="90"
+        :muted="muted"
+        @active="active()"
+        @sound="sound()" />
       <div class="cards">
       <CardStack
+        v-if="delegatesData.length > 0"
         :time="90"
-        :desc="`presence`"
+        yieldTo="USA"
         :delegates="delegatesData"
         :active="currentCountry"
+        :isActive="isActive"
         @update="updateDelegatesData"
         @move="move" />
       </div>
       <div class="options">
-        <div>
-          <h3>Add to Queue</h3>
-          <div class="add">
-            <div class="input">
-              <Autocomplete
-                :items="countryList"
-                :class="{show: showInput == true}"
-                @update="updateDelegatesData"
-                placeholder="Delegate"
-              />
-            </div>
-            <button @click="toggleInput">Add</button>
-          </div>
+        <div class="top" v-if="$store.getters.getWidthWindow > 960">
+          <Timer
+            class="time"
+            :active="isActive"
+            :time="90"
+            :muted="muted"
+            @active="active()"
+            @sound="sound()" />
+          <Queue
+            class="queue"
+            :items="countryList"
+            @update="updateDelegatesData" />
         </div>
-        <hr>
-        <div>
+        <Queue
+          v-else-if="$store.getters.getWidthWindow < 961"
+          class="queue"
+          :items="countryList"
+          @update="updateDelegatesData" />
+        <div class="bottom">
           <h3>Yield To:</h3>
           <div class="choice">
-            <button :class="{ selected: selected === 1 }" @click="select(1)">Chair</button>
-            <button :class="{ selected: selected === 2 }" @click="select(2)">Questions</button>
+            <span class="ChairQ">
+              <button :class="{ selected: selected === 1 }" @click="select(1)">Chair</button>
+              <button :class="{ selected: selected === 2 }" @click="select(2)">Questions</button>
+            </span>
             <div class="yieldCountry" :class="{filled: selected === 3}">
               <Autocomplete
                 :items="countryList"
@@ -43,8 +58,9 @@
             </div>
           </div>
           <div class="yield">
-            <button :disabled="selected === 0">Yield</button>
+            <button :disabled="!selected">Yield</button>
           </div>
+          <div class="selection" />
         </div>
       </div>
     </div>
@@ -57,25 +73,36 @@ import { negara } from '@/const/country';
 import { getAllDelegates } from '@/api/delegates';
 import Autocomplete from '@/components/Autocomplete/index.vue';
 import CardStack from '@/components/CardStack/index.vue';
+import Timer from '@/components/Timer/index.vue';
+import Queue from '@/components/Queue/index.vue';
 
 export default {
   name: 'GSL',
   components: {
     CardStack,
+    Timer,
+    Queue,
     Autocomplete,
   },
   data() {
     return {
       delegatesData: [],
-      showInput: false,
       countryList: negara,
-      currentCountry: 0,
-      newCountry: '',
+      currentCountry: 1,
       selected: null,
       yieldDelegate: '',
+      muted: false,
+      isActive: true,
+      showInput: false,
     };
   },
   methods: {
+    sound() {
+      this.muted = !this.muted;
+    },
+    active() {
+      this.isActive = !this.isActive;
+    },
     select(i) {
       this.selected = i;
     },
@@ -90,10 +117,6 @@ export default {
         this.selected = 0;
       }
       this.yieldDelegate = country;
-    },
-    toggleInput() {
-      this.showInput = !this.showInput;
-      this.newCountry = '';
     },
     getDelegatesID(name) {
       const data = negara.filter((obj) => obj.name === name);

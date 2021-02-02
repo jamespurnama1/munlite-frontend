@@ -5,7 +5,7 @@
   v-touch:swipe="swipe">
     <ul class="stack-cards js-stack-cards">
       <li v-for="(delegate, i) in delegates" :key="i"
-      class="stack-cards__item js-stack-cards__item">
+      class="stack-cards__item js-stack-cards__item" :class="{active: i === active}">
         <Card
         @click.native="click(i)"
         :del="delegates[i]"
@@ -13,7 +13,8 @@
         :color="color"
         :yieldTo="yieldTo"
         :time="time"
-        :prgrs="progress" />
+        :prgrs="progress"
+        :active="isActive" />
       </li>
     </ul>
   </div>
@@ -21,7 +22,7 @@
 
 <script>
 import { gsap } from 'gsap';
-import { debounce } from 'debounce';
+// import { debounce } from 'debounce';
 import Card from '@/components/Card/index.vue';
 
 export default {
@@ -42,6 +43,9 @@ export default {
       type: Number,
       required: true,
     },
+    isActive: {
+      type: Boolean,
+    },
   },
   components: {
     Card,
@@ -49,22 +53,13 @@ export default {
   data() {
     return {
       card: null,
-      topCards: null,
-      activEl: null,
       stacks: 3,
       stackHeight: 75,
-      tl: gsap.timeline({ defaults: { duration: 0.01, ease: 'power2.out' }, paused: true }),
+      tl: gsap.timeline({ defaults: { duration: 0.01, ease: 'power2.out' } }),
     };
   },
   methods: {
     sort() {
-      gsap.set('.stack-cards__item', {
-        xPercent: -50,
-        yPercent: -50,
-        left: '50%',
-        top: '50%',
-      });
-      this.activEl = document.querySelector('.active');
       this.card.forEach((i, j) => {
         if (this.active > j) { // cards before active
           this.tl.to(this.card[j], {
@@ -109,11 +104,11 @@ export default {
         } else if (this.active === j) { // active card
           this.card[j].classList.remove('top');
           this.card[j].classList.remove('bottom');
-          this.tl.to(this.activEl, {
-            zIndex: this.card.length,
+          this.tl.to(this.card[this.active], {
+            zIndex: this.card.length + 999,
             duration: 0.1,
           }, '<-1')
-            .to(this.activEl, {
+            .to(this.card[this.active], {
               y: 0,
               ease: 'ease',
             });
@@ -168,11 +163,9 @@ export default {
   },
   mounted() {
     this.card = document.getElementsByClassName('stack-cards__item');
-    this.card[this.active].classList.add('active');
     this.checkWidth();
     this.sort();
-    document.querySelector('.stackOverflow').onwheel = debounce(this.scroll, 50, true);
-    this.tl.play();
+    // document.querySelector('.stackOverflow').onwheel = debounce(this.scroll, 50, true);
   },
   computed: {
     width() {
@@ -181,13 +174,7 @@ export default {
   },
   watch: {
     active() {
-      if (document.querySelector('.active') != null) {
-        this.activEl = document.querySelector('.active');
-        this.activEl.classList.remove('active');
-      }
-      this.card[this.active].classList.add('active');
       this.sort();
-      this.tl.play();
     },
     width() {
       this.checkWidth();

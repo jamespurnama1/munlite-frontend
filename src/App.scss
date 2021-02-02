@@ -3,6 +3,17 @@
   margin: 0;
 }
 
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
 #app {
   font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;

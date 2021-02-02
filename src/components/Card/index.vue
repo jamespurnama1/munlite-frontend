@@ -9,17 +9,11 @@
       />
       <h1>{{ countryShort(del.country) }}</h1>
     </div>
-    <span v-if="sec && progress !== 100" class="time">
-      <p>{{ sec }}sec</p>
-      <span v-if="yieldTo">
-        <font-awesome-icon :icon="['fas', 'arrow-right']" size="s" />
-        <p>{{ yieldTo }}</p>
-      </span>
-    </span>
     <div
       class="progress"
-      :style="'clip-path: inset(0 ' + (-progress + 100) + '% 0 0); border: 1px solid' + clr +
-      '; background-color:' + clr">
+      :style="`clip-path: inset(0 ${-progress + 100}% 0 0);
+                border: 1px solid ${clr};
+                background-color: ${clr}`">
       <p class="desc" v-if="dsc">{{ dsc }}</p>
       <div class="country">
         <img
@@ -29,13 +23,6 @@
         />
         <h1>{{ countryShort(del.country) }}</h1>
       </div>
-      <span v-if="sec" class="time">
-        <p>{{ sec }}sec</p>
-        <span v-if="yieldTo">
-          <font-awesome-icon :icon="['fas', 'arrow-right']" size="s" />
-          <p>{{ yieldTo }}</p>
-        </span>
-      </span>
     </div>
   </div>
 </template>
@@ -54,6 +41,7 @@ export default {
       type: [String, Number],
     },
     color: String,
+    active: Boolean,
   },
   data() {
     return {
@@ -62,6 +50,7 @@ export default {
       dsc: null,
       clr: null,
       isActive: null,
+      int: null,
     };
   },
   methods: {
@@ -76,6 +65,12 @@ export default {
     defaults() {
       if (this.desc === 'presence') {
         this.dsc = this.del.status;
+      } else if (this.time) {
+        if (this.yieldTo) {
+          this.dsc = `${this.sec} sec → ${this.yieldTo}`;
+        } else {
+          this.dsc = `${this.sec} sec`;
+        }
       } else {
         this.dsc = this.desc;
       }
@@ -109,27 +104,37 @@ export default {
       const short = name.substring(0, 3).toUpperCase();
       return short;
     },
+    async timer() {
+      await this.$nextTick();
+      if (this.time && this.isActive && this.sec > 0 && this.active) {
+        if (!this.int) {
+          this.int = setInterval(() => {
+            this.sec -= 1;
+          }, 1000);
+        }
+      } else {
+        console.log(this.int);
+        clearInterval(this.int);
+        this.interval = null;
+      }
+    },
   },
   watch: {
     time() {
       this.pos();
     },
     sec() {
-      this.progress = (this.sec / this.time) * 100;
+      this.progress = Math.min(Math.max((this.sec / this.time) * 100, 0), 100);
     },
     del: {
       handler: 'defaults',
       deep: true,
     },
     isActive() {
-      let int;
-      if (this.time && this.isActive && this.sec > 0) {
-        int = setInterval(() => {
-          this.sec -= 1;
-        }, 1000);
-      } else {
-        clearInterval(int);
-      }
+      this.timer();
+    },
+    active() {
+      this.timer();
     },
   },
   mounted() {
@@ -138,16 +143,12 @@ export default {
     this.$nextTick(() => {
       this.isActive = this.$el.parentElement.classList.contains('active');
     });
+    this.timer();
   },
   created() {
     this.$nextTick(() => {
       this.defaults();
     });
-  },
-  computed: {
-    // cntry() {
-    //   return this.$store.state.delegates.find((obj) => obj.id === this.country);
-    // },
   },
 };
 </script>
