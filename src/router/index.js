@@ -18,6 +18,11 @@ const routes = [
     component: () => import('@/views/Overview'),
   },
   {
+    path: '/conferences',
+    name: 'Conferences',
+    component: () => import('@/views/Conferences'),
+  },
+  {
     path: '/delegates/:id',
     name: 'Delegates',
     component: () => import('@/views/Delegates'),

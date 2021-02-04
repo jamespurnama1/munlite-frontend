@@ -8,20 +8,6 @@
           <p>Not {{ name }}? <a @click="changeAcc()">Change Account</a></p>
         </div>
       </div>
-      <!-- <div class="ongoing" @click="$router.push('/overview')">
-        <p class="ongoing-title">Ongoing</p>
-        <div class="ongoing-conference">
-          <img class="conference-img" src="@/assets/img/home.png" />
-          <div class="conference-detail">
-            <p class="name">{{ ongoing.name }}</p>
-            <p class="started-time">
-              started {{ ongoing.timestamp }} mins ago
-              <span
-              :class="`flag-icon img flag-icon-squared flag-icon-${ongoing.flag.toLowerCase()}`" />
-            </p>
-          </div>
-        </div>
-      </div> -->
     </div>
     <div class="bottom">
       <div class="conferences">
@@ -57,7 +43,7 @@
 
 <script>
 import { getUserData } from '@/api/profile';
-import { getUserConference } from '@/api/conference';
+import { getAllConferences } from '@/api/conference';
 import { logout } from '@/api/user';
 
 export default {
@@ -77,7 +63,7 @@ export default {
     try {
       const profile = await getUserData();
       this.name = profile.data.data.first_name;
-      const conference = await getUserConference();
+      const conference = await getAllConferences();
       this.conferences = conference.data.data;
     } catch (err) {
       console.error(err);

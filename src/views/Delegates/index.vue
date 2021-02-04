@@ -117,7 +117,6 @@ export default {
       hoverable: null,
       showInput: false,
       newCountry: '',
-      warning: false,
       stage: 0,
       delegatesData: [],
       dr_vote: 0,
@@ -208,13 +207,6 @@ export default {
         document.querySelector('body').style.removeProperty('overflow');
       }
     },
-    // warning() {
-    //   if (this.warning === 'discard') {
-    //     this.stage = 0;
-    //     this.showOverlay = false;
-    //     this.warning = false;
-    //   }
-    // },
   },
   async created() {
     this.updateDelegatesData();
@@ -235,12 +227,6 @@ export default {
       }
       this.stage = i;
     });
-    // this.$on('no-modal-warn', () => {
-    //   this.warning = true;
-    // });
-    // this.$on('confirm', (i) => {
-    //   this.warning = i;
-    // });
   },
 };
 </script>
