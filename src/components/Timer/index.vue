@@ -24,6 +24,8 @@
       <font-awesome-icon v-if="active && timeLeft > 0" :icon="['fas', 'pause']" size="2x" />
       <font-awesome-icon v-else-if="!active" :icon="['fas', 'play']" size="2x" />
     </button>
+    <audio id="ding" :src="require('@/assets/ding.mp3')" />
+    <audio id="warn" :src="require('@/assets/warn.mp3')" />
   </div>
 </template>
 
@@ -137,10 +139,16 @@ export default {
         clearInterval(this.interval);
         this.interval = null;
         this.$emit('active');
+        if (this.muted === false) {
+          document.getElementById('ding').play();
+        }
       } else if (!this.interval) {
         this.interval = await setInterval(() => {
           this.timeLeft -= 1;
         }, 1000);
+      }
+      if (this.timeLeft === 5 && this.muted === false) {
+        document.getElementById('warn').play();
       }
     },
     async active() {

@@ -1,46 +1,48 @@
 <template>
-  <div class="gsl">
+  <div class="gsl" v-if="delegatesData.length > 0">
     <h1 v-if="$store.getters.getWidthWindow > 960" class="title">General Speakers List</h1>
     <h1 v-else-if="$store.getters.getWidthWindow < 960" class="title">GSL</h1>
     <div class="wrapper">
       <Timer
         v-if="$store.getters.getWidthWindow < 961"
         class="time"
-        :active="isActive"
+        :active="active"
         :time="90"
         :muted="muted"
         @active="active()"
         @sound="sound()" />
       <div class="cards">
+      <!-- gslData.current - 1 -->
       <CardStack
-        v-if="delegatesData.length > 0"
+        v-if="gslList.length > 0"
         :time="90"
-        yieldTo="USA"
-        :delegates="delegatesData"
-        :active="currentCountry"
-        :isActive="isActive"
-        @update="updateDelegatesData"
+        :delegates="gslList"
+        :active="active"
+        :isActive="0"
+        :display="currentCountry"
+        @context="context"
         @move="move" />
       </div>
       <div class="options">
         <div class="top" v-if="$store.getters.getWidthWindow > 960">
           <Timer
             class="time"
-            :active="isActive"
+            :active="active"
             :time="90"
             :muted="muted"
-            @active="active()"
+            @active="toggleActive()"
             @sound="sound()" />
           <Queue
+            v-if="countryList.length > 0"
             class="queue"
             :items="countryList"
-            @update="updateDelegatesData" />
+            @add="addQueue" />
         </div>
         <Queue
-          v-else-if="$store.getters.getWidthWindow < 961"
+          v-else-if="$store.getters.getWidthWindow <= 960 && countryList.length > 0"
           class="queue"
           :items="countryList"
-          @update="updateDelegatesData" />
+          @add="addQueue" />
         <div class="bottom">
           <h3>Yield To:</h3>
           <div class="choice">
@@ -50,17 +52,23 @@
             </span>
             <div class="yieldCountry" :class="{filled: selected === 3}">
               <Autocomplete
+                v-if="countryList.length > 0"
                 :items="countryList"
                 :class="{show: showInput == true}"
                 @onchangeCountry="yieldInput"
                 placeholder="Delegate"
               />
             </div>
+            <transition name="fade">
+              <div
+                class="selection"
+                :class="{two: selected === 2, three: selected === 3}"
+                v-show="selected" />
+            </transition>
           </div>
           <div class="yield">
-            <button :disabled="!selected">Yield</button>
+            <button @click="changeYield" :disabled="!selected">Yield</button>
           </div>
-          <div class="selection" />
         </div>
       </div>
     </div>
@@ -68,6 +76,9 @@
 </template>
 
 <script>
+import {
+  addTurn, getGSL, delTurn, yieldGSL,
+} from '@/api/gsl';
 import { getConference } from '@/api/conference';
 import { negara } from '@/const/country';
 import { getAllDelegates } from '@/api/delegates';
@@ -87,27 +98,107 @@ export default {
   data() {
     return {
       delegatesData: [],
-      countryList: negara,
-      currentCountry: 1,
+      gslData: null,
+      currentCountry: 0,
       selected: null,
       yieldDelegate: '',
       muted: false,
-      isActive: true,
+      active: true,
       showInput: false,
+      gslList: [],
+      gslCurrent: null,
     };
   },
   methods: {
+    async changeYield() {
+      try {
+        let y = '';
+        switch (this.selected) {
+          case 1:
+            y = 'Chair';
+            break;
+          case 2:
+            y = 'Questions';
+            break;
+          case 3:
+            y = this.yieldDelegate;
+            break;
+          default:
+            y = '';
+        }
+        const data = {
+          turn: this.currentCountry,
+          yield: y,
+        };
+        console.log(data);
+        await yieldGSL(this.$route.params.id, data);
+      } catch (err) {
+        console.error(err.response);
+      }
+    },
+    async context(i) {
+      try {
+        // eslint-disable-next-line no-underscore-dangle
+        await delTurn(this.$route.params.id, i + 1);
+        this.updateGSL();
+      } catch (err) {
+        console.error(err.response);
+      }
+    },
+    async addQueue(i) {
+      try {
+        const [id] = this.delegatesData.filter((obj) => obj.country === i);
+        const data = {
+          // eslint-disable-next-line no-underscore-dangle
+          delegate_id: id._id,
+          time_start: 90,
+          time_left: 90,
+          yield: '',
+        };
+        if (id) {
+          await addTurn(this.$route.params.id, data);
+          this.updateGSL();
+        }
+      } catch (err) {
+        console.error(err.response);
+      }
+    },
+    async updateGSL() {
+      try {
+        const list = await getGSL(this.$route.params.id);
+        if (list.data.data !== null) {
+          this.gslData = list.data.data;
+          this.gslList = await this.match(this.gslData.queue);
+        }
+        if (this.gslCurrent !== this.gslData.current) {
+          this.currentCountry = this.gslData.current;
+          this.gslCurrent = this.gslData.current;
+        }
+      } catch (err) {
+        console.error(err.response);
+      }
+    },
+    match(i) {
+      const newArr = [];
+      i.forEach((item) => {
+        // eslint-disable-next-line no-underscore-dangle
+        const data = this.delegatesData.filter((e) => e._id === item.delegate_id)[0];
+        data.yield = item.yield;
+        newArr.push(data);
+      });
+      return newArr;
+    },
     sound() {
       this.muted = !this.muted;
     },
-    active() {
-      this.isActive = !this.isActive;
+    toggleActive() {
+      this.active = !this.active;
     },
     select(i) {
       this.selected = i;
     },
     move(index) {
-      const j = Math.min(Math.max(parseInt(index, 10), 0), this.delegatesData.length - 1);
+      const j = Math.min(Math.max(parseInt(index, 10), 0), this.gslData.queue.length - 1);
       this.currentCountry = j;
     },
     yieldInput(country) {
@@ -146,12 +237,13 @@ export default {
           this.delegatesData = this.sortCountry(delegates.data.data);
         }
       } catch (err) {
-        console.error(err);
+        console.error(err.response);
       }
     },
   },
   async created() {
     this.updateDelegatesData();
+    this.updateGSL();
     try {
       const conference = await getConference(this.$route.params.id);
       this.rulesData = conference.data.data.rules;
@@ -162,7 +254,25 @@ export default {
       console.error(err);
     }
   },
-  mounted() {
+  computed: {
+    countryList() {
+      const list = [];
+      this.delegatesData.forEach((item) => {
+        let data = negara.filter((e) => e.name === item.country)[0];
+        if (data) {
+          list.push(data);
+        } else {
+          data = {
+            name: item.country,
+          };
+          list.push(data);
+        }
+      });
+      return list;
+    },
+    // gslList() {
+    //   return this.match(this.gslData.queue);
+    // },
   },
 };
 </script>

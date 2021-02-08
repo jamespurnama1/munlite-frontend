@@ -8,20 +8,6 @@
           <p>Not {{ name }}? <a @click="changeAcc()">Change Account</a></p>
         </div>
       </div>
-      <!-- <div class="ongoing" @click="$router.push('/overview')">
-        <p class="ongoing-title">Ongoing</p>
-        <div class="ongoing-conference">
-          <img class="conference-img" src="@/assets/img/home.png" />
-          <div class="conference-detail">
-            <p class="name">{{ ongoing.name }}</p>
-            <p class="started-time">
-              started {{ ongoing.timestamp }} mins ago
-              <span
-              :class="`flag-icon img flag-icon-squared flag-icon-${ongoing.flag.toLowerCase()}`" />
-            </p>
-          </div>
-        </div>
-      </div> -->
     </div>
     <div class="bottom">
       <div class="conferences">
@@ -34,8 +20,7 @@
             v-for="(data, index) in conferences"
             :key="index"
             class="conference-data"
-            @click="$router.push(`/overview/${data._id}`)"
-          >
+            @click="$router.push(`/overview/${data._id}`)" >
             <div class="img"></div>
             <div class="detail">
               <p class="name">{{ data.title }}</p>

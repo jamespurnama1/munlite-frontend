@@ -27,13 +27,13 @@ export default {
   props: {
     del: Object,
     time: Number,
-    yieldTo: String,
     desc: String,
     prgrs: {
       type: [String, Number],
     },
     color: String,
     active: Boolean,
+    isActive: Boolean,
   },
   data() {
     return {
@@ -41,7 +41,6 @@ export default {
       progress: this.prgrs,
       dsc: null,
       clr: null,
-      isActive: null,
       int: null,
     };
   },
@@ -58,8 +57,8 @@ export default {
       if (this.desc === 'presence') {
         this.dsc = this.del.status;
       } else if (this.time) {
-        if (this.yieldTo) {
-          this.dsc = `${this.sec} sec → ${this.yieldTo}`;
+        if (this.del.yield) {
+          this.dsc = `${this.sec} sec → ${this.del.yield}`;
         } else {
           this.dsc = `${this.sec} sec`;
         }
@@ -106,7 +105,7 @@ export default {
         }
       } else {
         clearInterval(this.int);
-        this.interval = null;
+        this.int = null;
       }
     },
   },
@@ -115,7 +114,7 @@ export default {
       this.pos();
     },
     sec() {
-      this.progress = Math.min(Math.max((this.sec / this.time) * 100, 0), 100);
+      this.progress = Math.min(Math.max((this.sec / this.time) * 100, 0), 125);
     },
     del: {
       handler: 'defaults',
@@ -131,9 +130,6 @@ export default {
   mounted() {
     this.pos();
     this.sec = this.time;
-    this.$nextTick(() => {
-      this.isActive = this.$el.parentElement.classList.contains('active');
-    });
     this.timer();
   },
   created() {
