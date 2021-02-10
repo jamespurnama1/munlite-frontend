@@ -57,6 +57,12 @@
         <span></span>
       </div>
     </div>
+    <transition name="slide">
+      <div class="indicator" v-if="state" :class="{blue: $store.state.Socket.isConnected}">
+        <p v-if="!$store.state.Socket.isConnected">You are offline. Reconnecting.</p>
+        <p v-else>Back Online!</p>
+      </div>
+    </transition>
     <transition name="fade" mode="out-in">
       <router-view :key="$route.fullPath" />
     </transition>
@@ -80,6 +86,7 @@ export default {
       open: false,
       conference: ['overview', 'delegates', 'gsl', 'motions', 'caucus', 'crisis'],
       general: ['home', 'conferences', 'connections', 'files', 'account'],
+      state: false,
     };
   },
   computed: {
@@ -101,6 +108,9 @@ export default {
       }
       return this.general.includes(this.$route.path.split('/')[1]);
     },
+    isConnected() {
+      return this.$store.state.Socket.isConnected;
+    },
   },
   created() {
     this.checkMobileView();
@@ -114,7 +124,23 @@ export default {
   beforeMount() {
     this.onTabClick();
   },
+  watch: {
+    isConnected() {
+      this.offline();
+    },
+  },
   methods: {
+    async offline() {
+      let timeout;
+      if (this.state !== !this.$store.state.Socket.isConnected) {
+        timeout = await setTimeout(() => {
+          this.state = !this.$store.state.Socket.isConnected;
+        }, 1000);
+      } else {
+        clearTimeout(timeout);
+      }
+      return this.state;
+    },
     onTabClick() {
       if (this.$route.path.split('/')[1] === '') {
         const styles = {

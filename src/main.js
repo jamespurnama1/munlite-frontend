@@ -8,6 +8,7 @@ import { Vue as VueIntegration } from '@sentry/integrations';
 import { Integrations } from '@sentry/tracing';
 import Vue2TouchEvents from 'vue2-touch-events';
 import VueDragscroll from 'vue-dragscroll';
+import VueNativeSock from 'vue-native-websocket';
 
 import './registerServiceWorker';
 import store from './store';
@@ -17,6 +18,11 @@ import App from './App.vue';
 Vue.use(Vue2TouchEvents)
   .use(require('vue-shortkey'))
   .use(VueDragscroll)
+  .use(VueNativeSock, 'wss://dev.api.munlite.co/ws/:conference_id', {
+    store,
+    reconnection: true,
+    // format: 'json',
+  })
   .component('font-awesome-icon', FontAwesomeIcon);
 
 library.add(fas);

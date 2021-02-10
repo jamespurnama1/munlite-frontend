@@ -3,17 +3,23 @@
   v-dragscroll.y="true"
   v-shortkey="{up: ['arrowup'], down: ['arrowdown']}"
   @shortkey="keymap">
-    <ul class="stack-cards js-stack-cards">
-      <li v-for="(delegate, i) in delegates" :key="i"
-      class="stack-cards__item js-stack-cards__item">
+    <ul class="stack-cards">
+      <li v-for="(delegate, i) in delegates"
+      :key="i"
+      @click="click(i)"
+      :class="{
+        active: i === display,
+        top: i < display,
+        bottom: i > display,
+        }"
+      v-on:contextmenu.prevent="rightClick(i)"
+      class="stack-cards__item">
         <Card
-        @click.native="click(i)"
-        @contextmenu.prevent.native="rightClick(i)"
         :del="delegate"
         :desc="desc"
         :color="color"
-        :time="time"
         :prgrs="progress"
+        :number='i'
         :active="active"
         :isActive="i === isActive" />
       </li>
@@ -22,10 +28,10 @@
 </template>
 
 <script>
-/* eslint-disable max-len */
 import { gsap } from 'gsap';
+import { mapState } from 'vuex';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-// import { debounce } from 'debounce';
+import { debounce } from 'debounce';
 import Card from '@/components/Card/index.vue';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -38,7 +44,6 @@ export default {
       type: [String, Number],
     },
     desc: String,
-    time: Number,
     delegates: {
       type: Array,
       required: true,
@@ -59,10 +64,9 @@ export default {
   },
   data() {
     return {
-      stacks: 3,
-      stackHeight: 75,
+      // stacks: 3,
+      // stackHeight: 75,
       cards: null,
-      iteration: 0,
       spacing: 0.1,
       snap: null,
       trigger: null,
@@ -84,7 +88,9 @@ export default {
       this.$emit('move', i);
     },
     move(i) {
-      this.scrubTo(this.rawSequence.labels[`label${i}`]);
+      if (this.current !== this.display) {
+        this.scrubTo(this.rawSequence.labels[`label${i}`]);
+      }
     },
     rightClick(del) {
       this.$emit('context', del);
@@ -147,6 +153,39 @@ export default {
       this.rawSequence.time(startTime);
       return this.rawSequence;
     },
+    addTween(items) {
+      console.log('adding new items', items);
+      let i = this.cards.length;
+      let time = 0;
+      let item;
+      let index;
+      const tl = gsap.timeline();
+      for (i; i < items.length; i += 1) {
+        index = i % items.length;
+        item = items[index];
+        time = i * this.spacing;
+        tl.fromTo(item, {
+          scale: 0.3,
+          yPercent: '+=150',
+        }, {
+          scale: 1,
+          zIndex: 100,
+          duration: 0.5,
+          yPercent: 0,
+          ease: 'none',
+        }, time)
+          .to(item, {
+            scale: 0.3,
+            yPercent: '-=150',
+            duration: 0.5,
+            ease: 'none',
+          }, time + 0.5);
+        if (i <= items.length) {
+          tl.addLabel(`label${i}`, time + 0.5);
+        }
+      }
+      return tl;
+    },
     addClass(item, str) {
       item.classList.add(str);
     },
@@ -172,7 +211,7 @@ export default {
     },
   },
   mounted() {
-    this.cards = gsap.utils.toArray('.stack-cards__item');
+    this.cards = document.querySelectorAll('.stack-cards__item');
     this.snap = gsap.utils.snap(this.spacing);
     this.scrub = gsap.to(this.buildSeamlessLoop(this.cards, this.spacing), {
       totalTime: 0,
@@ -180,7 +219,6 @@ export default {
       ease: 'power3',
       paused: true,
     });
-    this.tl = gsap.timeline();
     this.trigger = ScrollTrigger.create({
       scroller: '.stackOverflow',
       pin: '.stack-cards',
@@ -196,6 +234,17 @@ export default {
           timer.start().then(() => { [, self.scroller.scrollTop] = this.minMax; });
         } else {
           timer.abort();
+          try {
+            const v = (self.scroller.scrollTop * this.rawSequence.duration())
+          / (this.cards.length * 100);
+            const c = parseInt(Object.keys(this.rawSequence.labels)
+              .find((key) => this.rawSequence.labels[key].toString() === v.toFixed(1))
+              .replace(/\D/g, ''), 10);
+            debounce(this.$store.commit('changeCurrent', c), 200, true);
+            this.$emit('move', c);
+          } catch (err) {
+            // console.error(err); // ignore error as it is expected
+          }
         }
         this.scrub.vars.totalTime = this.snap(self.progress * this.rawSequence.duration());
         this.scrub.invalidate().restart();
@@ -203,32 +252,47 @@ export default {
         self.wrapping = false;
       }),
     });
-    this.click(this.display);
-    this.checkWidth();
-    this.sort();
   },
   computed: {
-    width() {
-      return this.$store.state.widthWindow;
-    },
+    ...mapState({
+      width: (state) => state.Global.widthWindow,
+      current: (state) => state.Global.current,
+    }),
     minMax() {
       return [
-        ((this.rawSequence.labels.label0 / this.rawSequence.duration()) * (this.cards.length * 100)),
+        ((this.rawSequence.labels.label0 / this.rawSequence.duration())
+        * (this.cards.length * 100)),
         ((this.rawSequence.labels[`label${this.cards.length - 1}`] / this.rawSequence.duration()) * (this.cards.length * 100)),
       ];
     },
   },
   watch: {
-    display() {
-      console.log(this.display);
-      this.move(this.display);
+    display: {
+      // eslint-disable-next-line object-shorthand, func-names
+      handler: function () {
+        this.move(this.display);
+      },
+      immediate: true,
     },
-    async delegates() {
-      await this.$nextTick();
-      this.scrub.invalidate().restart();
+    delegates() {
+      // console.log(this.delegates);
+      // if (this.delegates) {
+      //   const newItems = this.delegates;
+      //   newItems.length = this.delegates.length - this.card.length;
+      //   this.rawSequence.add(this.addTween(newItems));
+      // }
+      this.scrub.clear();
+      console.log(this.cards);
+      this.scrub = gsap.to(this.buildSeamlessLoop(this.cards, this.spacing), {
+        totalTime: 0,
+        duration: 0.5,
+        ease: 'power3',
+        paused: true,
+      });
     },
-    width() {
-      this.checkWidth();
+    width: {
+      handler: 'checkWidth',
+      immediate: true,
     },
   },
 };

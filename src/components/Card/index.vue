@@ -21,23 +21,30 @@
 
 <script>
 import { negara } from '@/const/country';
+import { mapState } from 'vuex';
 
 export default {
   name: 'card',
   props: {
     del: Object,
-    time: Number,
     desc: String,
     prgrs: {
       type: [String, Number],
+      default: 100,
     },
-    color: String,
+    color: {
+      type: String,
+      default: '#5F78FF',
+    },
     active: Boolean,
     isActive: Boolean,
+    number: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
-      sec: this.time,
       progress: this.prgrs,
       dsc: null,
       clr: null,
@@ -46,7 +53,7 @@ export default {
   },
   methods: {
     pos() {
-      if (!this.time) {
+      if (!this.time_left) {
         const country = document.querySelectorAll('.max.card .country');
         for (let i = 0; i < country.length; i += 1) {
           country[i].style.cssText = 'right: -35%; transform: translate(0, 0) scale(0.3)';
@@ -56,31 +63,26 @@ export default {
     defaults() {
       if (this.desc === 'presence') {
         this.dsc = this.del.status;
-      } else if (this.time) {
+      } else if (this.time_left) {
         if (this.del.yield) {
-          this.dsc = `${this.sec} sec → ${this.del.yield}`;
+          this.dsc = `${this.time_left} sec → ${this.delYield}`;
         } else {
-          this.dsc = `${this.sec} sec`;
+          this.dsc = `${this.time_left} sec`;
         }
       } else {
         this.dsc = this.desc;
       }
 
-      if (!this.color) {
-        this.clr = '#5F78FF';
-      } else {
-        this.clr = this.color;
-      }
+      this.clr = this.color;
+
       if (this.prgrs === 'presence' && this.del.status.toLowerCase() === 'n/a') {
         this.progress = 0;
       } else if (this.prgrs === 'presence' && this.del.status.toLowerCase() !== 'n/a') {
         this.progress = 100;
         if (this.del.status.toLowerCase() === 'not present' && !this.color) {
           this.clr = '#FF5F5F';
-        } else {
-          this.clr = '#5F78FF';
         }
-      } else if (!this.prgrs && !this.time) {
+      } else if (!this.prgrs && !this.time_left) {
         this.progress = 0;
       }
     },
@@ -95,42 +97,36 @@ export default {
       const short = name.substring(0, 3).toUpperCase();
       return short;
     },
-    async timer() {
-      await this.$nextTick();
-      if (this.time && this.isActive && this.sec > 0 && this.active) {
-        if (!this.int) {
-          this.int = setInterval(() => {
-            this.sec -= 1;
-          }, 1000);
-        }
-      } else {
-        clearInterval(this.int);
-        this.int = null;
-      }
-    },
   },
   watch: {
-    time() {
-      this.pos();
+    time_left: {
+      // eslint-disable-next-line object-shorthand
+      handler() {
+        this.progress = Math.min(Math.max((this.time_left / this.time_start) * 100, 0), 125);
+        this.pos();
+      },
+      immediate: true,
     },
-    sec() {
-      this.progress = Math.min(Math.max((this.sec / this.time) * 100, 0), 125);
+    delYield() {
+      this.dsc = `${this.time_left} sec → ${this.delYield}`;
     },
-    del: {
-      handler: 'defaults',
-      deep: true,
+  },
+  computed: {
+    ...mapState({
+      gslList: (state) => state.Delegates.gslList,
+    }),
+    time_start() {
+      return this.gslList[this.number].time_start;
     },
-    isActive() {
-      this.timer();
+    time_left() {
+      return this.gslList[this.number].time_left;
     },
-    active() {
-      this.timer();
+    delYield() {
+      return this.gslList[this.number].yield;
     },
   },
   mounted() {
     this.pos();
-    this.sec = this.time;
-    this.timer();
   },
   created() {
     this.$nextTick(() => {

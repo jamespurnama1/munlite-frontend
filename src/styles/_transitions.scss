@@ -4,3 +4,9 @@
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
+.slide.enter-active, .slide-leave-active {
+  transition: transform .5s ease-in-out;
+}
+.slide-enter, .slide-leave-to {
+  transform: translateY(-50vh);
+}
