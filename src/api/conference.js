@@ -40,3 +40,23 @@ export async function getUserConference() {
   const resp = await request.get('/api/conference/me');
   return resp;
 }
+
+export async function updateConference(id, data) {
+  const resp = await request.patch(`/api/conference/${id}`, data);
+  return resp;
+}
+
+export async function delConference(id) {
+  const resp = await request.delete(`/api/conference/${id}`);
+  return resp;
+}
+
+export async function addChairman(id, data) {
+  const resp = await request.pos(`/api/conference/${id}/chairman`, data);
+  return resp;
+}
+
+export async function delChairman(id, data) {
+  const resp = await request.pos(`/api/conference/${id}/chairman`, data);
+  return resp;
+}

@@ -20,8 +20,7 @@
             v-for="(data, index) in conferences"
             :key="index"
             class="conference-data"
-            @click="$router.push(`/overview/${data._id}`)"
-          >
+            @click="$router.push(`/overview/${data._id}`)" >
             <div class="img"></div>
             <div class="detail">
               <p class="name">{{ data.title }}</p>

@@ -35,15 +35,20 @@ export default {
       required: true,
       default: () => [],
     },
+    new: String,
     placeholder: {
       type: String,
-      required: true,
       default: () => 'Name',
     },
   },
   watch: {
     newCountry() {
       this.emitData();
+    },
+    new() {
+      if (this.new === '') {
+        this.newCountry = '';
+      }
     },
   },
   data() {

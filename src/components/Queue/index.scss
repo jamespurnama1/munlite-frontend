@@ -24,18 +24,9 @@
   .input {
     font-family: 'Montserrat', sans-serif;
     font-size: 15px;
-    border-bottom: 1px solid $light-grey;
     margin: auto;
-    padding: 10px 15px;
-    width: 80%;
-
-    @include max-media(tablet) {
-      padding: 10px;
-    }
-
-    input {
-      border-bottom: none;
-    }
+    // padding: 10px 15px;
+    width: 100%;
   }
 
   .container {

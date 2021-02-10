@@ -6,7 +6,8 @@
         <Autocomplete
           :items="items"
           :class="{show: showInput === true}"
-          @update="updateDelegatesData"
+          :new="newCountry"
+          @onchangeCountry="(n) => newCountry = n"
           placeholder="Delegate"
         />
       </div>
@@ -35,11 +36,9 @@ export default {
     items: Array,
   },
   methods: {
-    updateDelegatesData() {
-      this.$parent.emit('update');
-    },
     toggleInput() {
       this.showInput = !this.showInput;
+      this.$emit('add', this.newCountry);
       this.newCountry = '';
     },
   },

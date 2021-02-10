@@ -6,13 +6,15 @@
     <h2>Roll Call</h2>
     <p>Scroll to move up &amp; down</p>
     <div id='call'>
-      <CardStack
-      :progress="`presence`"
-      :desc="`presence`"
-      :delegates="delegatesData"
-      :active="currentCountry"
-      @move="move"
-      class="left" />
+      <div id="wrapper">
+        <CardStack
+        :progress="`presence`"
+        :desc="`presence`"
+        :delegates="delegatesData"
+        :display="currentCountry"
+        @move="move"
+        class="left" />
+      </div>
       <div id='selection'>
         <div id='select'>
           <button @click="presence('Present')">

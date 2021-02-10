@@ -19,6 +19,7 @@
       <div class="right">
         <label>Name</label>
         <Autocomplete :items="items" @onchangeCountry="onchangeCountry" class="country"/>
+        <p class="error" v-if="err">{{ err }}</p>
         <label>Short Name</label>
         <div class="inputtext">
           <input type="text" placeholder="Short Name" v-model="newCountry.short"/>
@@ -45,9 +46,10 @@ export default {
     return {
       imageDel: null,
       newCountry: {
-        name: null,
+        name: '',
         short: null,
       },
+      err: '',
     };
   },
   computed: {
@@ -77,7 +79,8 @@ export default {
           this.$emit('exit');
         }
       } catch (err) {
-        console.error(err);
+        this.err = err.response.data.error.message;
+        console.error(err.response);
       }
     },
   },

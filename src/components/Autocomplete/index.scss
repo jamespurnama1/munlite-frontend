@@ -6,13 +6,18 @@
   font-size: 15px;
 
   input {
-    border: none;
-    padding: 5px;
+    border: 1px solid $light-grey;
+    border-radius: 10px / 10px;
+    padding: 10px;
     color: $dark-grey;
     width: 100%;
 
     &::placeholder {
       color: $light-grey;
+    }
+
+    &:focus {
+      outline: none;
     }
   }
 
@@ -22,6 +27,7 @@
     left: 0;
     background-color: white;
     width: 100%;
+    z-index: 201;
 
     .autocomplete-results {
       padding: 0;
