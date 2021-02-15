@@ -22,9 +22,164 @@ $flag-icon-css-path: '~flag-icon-css/flags';
   transition: .5s ease-in-out;
 }
 
+button {
+  border: 1px solid $light-grey;
+  background-color: white;
+  padding: 10px 15px;
+  border-radius: 15px/15px;
+  cursor: pointer;
+  @include transition(.3s, ease);
+
+  &:hover {
+    -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+    border: 1px solid white;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.input {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &.disabled {
+    opacity: 50%;
+    cursor: not-allowed;
+  }
+
+  .err {
+    position: absolute;
+    font-size: 10px;
+    color: $red;
+    bottom: -30%;
+  }
+
+  input {
+    flex-grow: 1;
+    font-size: 1em;
+    padding: 10px;
+    display: block;
+    border-radius: 10px/10px;
+    border :1px solid $light-grey;
+    background-color: white;
+    font-family: 'Open Sans', sans-serif;
+
+    @include max-media(mobile) {
+      font-size: .75em;
+    }
+
+    &:-webkit-input-placeholder, &:placeholder, &:-webkit-datetime-edit {
+      color: transparent;
+    }
+    
+    &:focus, &.focus {
+      outline: none;
+      border :1px solid $blue;
+    }
+
+    &.error {
+      border :1px solid $red !important;
+
+      & ~ label {
+        color: $red !important;
+      }
+    }
+
+    &:not(:placeholder-shown) ~ label {
+      transform: translateY(-170%);
+      font-size: .75em;
+      color: black;
+    }
+    
+    &:focus ~ label, &.focus ~ label {
+      transform: translateY(-170%);
+      font-size: .75em;
+      color: $blue;
+    }
+  }
+
+  label {
+    color: $light-grey;
+    background-color: white;
+    padding: 0 3px;
+    font-size: 1em;
+    font-weight: normal;
+    position: absolute;
+    pointer-events: none;
+    left: 5px;
+    top: 50%;
+    transform: translate(0, -50%);
+    transition: 0.2s ease all; 
+    -moz-transition: 0.2s ease all; 
+    -webkit-transition: 0.2s ease all;
+
+    @include max-media(small-mobile) {
+      font-size: .75em;
+    }
+  }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 23px;
+  margin-right: 10px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $light-grey;
+  @include transition(0.3s, ease);
+  border-radius: 23px;
+
+  &:before {
+    position: absolute;
+    content: "";
+    height: 25px;
+    width: 25px;
+    left: -2px;
+    bottom: -2px;
+    border: 1px solid $light-grey;
+    background-color: white;
+    border-radius: 50%;
+    @include transition(0.3s, ease);
+  }
+}
+
+
+input:checked + .slider {
+  background-color: $blue;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px $blue;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
 // SCROLLBAR
 ::-webkit-scrollbar {
-  width: 7px;
+  display: none;
+  // width: 7px;
 }
 
 /* Track */
@@ -48,5 +203,4 @@ input[type="text"],
 input[type="button"],
 input[type="submit"]{
   -webkit-appearance: none;
-  border-radius: 0;
 }

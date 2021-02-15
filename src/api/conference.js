@@ -12,13 +12,8 @@ export async function getConference(id) {
 }
 
 export async function createConference(data) {
-  const res = await request.post('/api/conference', data);
-  return res;
-}
-
-export async function deleteConference(id) {
-  const res = await request.delete(`/api/conference/${id}`);
-  return res;
+  const resp = await request.post('/api/conference', data);
+  return resp;
 }
 
 export async function updateConference(id, data) {
@@ -31,32 +26,12 @@ export async function addChairman(id, data) {
   return res;
 }
 
-export async function removeChairman(id, data) {
-  const res = await request.delete(`/api/conference/${id}/chairman`, data);
-  return res;
-}
-
-export async function getUserConference() {
-  const resp = await request.get('/api/conference/me');
-  return resp;
-}
-
-export async function updateConference(id, data) {
-  const resp = await request.patch(`/api/conference/${id}`, data);
-  return resp;
-}
-
 export async function delConference(id) {
   const resp = await request.delete(`/api/conference/${id}`);
   return resp;
 }
 
-export async function addChairman(id, data) {
-  const resp = await request.pos(`/api/conference/${id}/chairman`, data);
-  return resp;
-}
-
 export async function delChairman(id, data) {
-  const resp = await request.pos(`/api/conference/${id}/chairman`, data);
+  const resp = await request.delete(`/api/conference/${id}/chairman`, { data });
   return resp;
 }

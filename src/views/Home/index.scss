@@ -1,8 +1,8 @@
 #Home {
-  margin: auto;
+  margin: 0 auto;
   width: 90%;
+  flex-grow: 1;
   padding: 3% 0;
-  margin-bottom: 4rem;
   
   .upper {
     display: flex;

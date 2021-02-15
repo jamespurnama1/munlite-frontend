@@ -19,6 +19,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  @include max-media(mobile) {
+    font-size: 1.5em;
+  }
 }
 
 .indicator {
@@ -29,7 +37,7 @@ body {
   right: 0;
   margin: auto;
   width: fit-content;
-  padding: 5px 10px;
+  padding: 10px 15px;
   border-radius: 10px/10px;
   color: white;
   background-color: $red;
@@ -79,7 +87,6 @@ body {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    margin-right: 1rem;
 
     @include max-media(tablet) {
 
@@ -119,6 +126,15 @@ body {
       padding: 3px 5px;
     }
 
+    div.disabled {
+      opacity: 50%;
+      cursor: not-allowed;
+      
+      a {
+        pointer-events: none;
+      }
+    }
+
     @include max-media(tablet) {
       margin-top: 80px;
       flex-direction: column;
@@ -142,6 +158,14 @@ body {
     a {
       font-size: 1rem;
       margin-right: 1rem;
+
+      &:last-child {
+        margin: 0;
+
+        @include max-media(tablet) {
+          margin-right: 2rem;
+        }
+      }
 
       img {
         width: 1.5rem;

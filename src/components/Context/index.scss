@@ -1,0 +1,61 @@
+.context {
+  position: absolute;
+  background-color: white;
+  border-radius: 15px/15px;
+  min-width: 150px;
+  -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
+  -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
+  z-index: 1000;
+
+  li {
+    list-style: none;
+    padding: 15px 10px;
+    color: black;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $light-grey;
+    }
+
+    &:last-child {
+      border-radius: 0 0 15px 15px;
+    }
+
+    &:first-child {
+      border-radius: 15px 15px 0 0;
+      cursor: initial;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid $light-grey;
+
+      &:hover {
+        background-color: white;
+      }
+    }
+    
+    &.red {
+      color: $red;
+      
+      &:hover {
+        background-color: rgba(255, 95, 95, 0.20);
+      }
+    }
+
+    &.disabled {
+      opacity: 50%;
+      cursor: not-allowed;
+
+      &:hover {
+        background-color: white;
+      }
+    }
+
+    .logo {
+      width: 2em;
+      height: 2em;
+      border-radius: 50% / 50%;
+      margin-right: 1em;
+    }
+  }
+}

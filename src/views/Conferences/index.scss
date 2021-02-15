@@ -1,11 +1,45 @@
 .conferences {
-  margin: auto;
+  position: relative;
+  display: grid;
+  height: calc(100vh - 4.6em);
+  grid-template-rows: 70px 1fr;
+  grid-template-columns: 1fr 2fr;
+  grid-template-areas: 'upper upper'
+                        'left right';
   width: 90%;
-  overflow: hidden;
+  margin: 0 auto;
+  @include transition(.3s, ease);
+
+  @include max-media(tablet) {
+    width: 200vw;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:  'upper right'
+                          'left right';
+  }
+
+  &.mobile {
+    @include max-media(tablet) {
+      transform: translateX(-100vw);
+    }
+
+    .overlay {
+      transform: translateY(-4.65em);
+    }
+  }
+
+  @include max-media(tablet) {
+    .confModal {
+      transform: translate(-105%, calc(-50% - 2.325em));
+
+      &.edit {
+        transform: translate(5%, calc(-50% - 2.325em));
+      }
+    }
+  }
 
   .overlay {
-    width: 100vw;
-    height: 100vh;
+    width: 200vw;
+    height: 200vh;
     z-index: 199;
     position: fixed;
     top: 0;
@@ -16,6 +50,7 @@
   }
 
   &-upper {
+    grid-area: upper;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -23,8 +58,7 @@
     margin-bottom: 1rem;
 
     @include max-media(tablet) {
-      flex-direction: column;
-      align-items: flex-start;
+      margin: 0 1em;
     }
 
     h1 {
@@ -34,48 +68,32 @@
       @include max-media(tablet) {
         font-size: 2.5rem;
       }
+      @include max-media(mobile) {
+        font-size: 1.5rem;
+      }
     }
 
     .conferences-button {
       display: flex;
       flex-direction: row;
     }
+
     .button {
-      font-family: 'Montserrat', sans-serif;
       border: 1px solid $light-grey;
       border-radius: 10px/10px;
       background-color: white;
-      padding: 5px 10px;
-      font-weight: bold;
-      font-size: 20px;
-      margin-left: 1rem;
+      padding: 10px;
       cursor: pointer;
-      height: auto;
+      height: 2em;
+      width: 2em;
       display: flex;
-      flex-direction: row;
       align-items: center;
-      transition: all .3s ease;
-
-      &.warning {
-        background-color: $red;
-        color: white;
-        border-color: transparent;
-
-        &:disabled {
-          opacity: 0.6;
-        }
-      }
+      justify-content: center;
+      @include transition(0.3s, ease);
 
       &:disabled {
         cursor: not-allowed;
-      }
-
-      @include max-media(tablet) {
-        margin: 1rem 1rem 1rem 0;
-      }
-
-      @include max-media(mobile) {
-        font-size: 14px;
+        opacity: 0.5;
       }
 
       &:hover {
@@ -84,309 +102,103 @@
         -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
         box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
       }
-
-    .input {
-      input {
-        margin-right: 0;
-        width: 0;
-        @include transition(linear, 0.3s);
-      }
-
-        &.show {
-          input {
-            width: 200px;
-            margin-right: 1rem;
-            padding-left: 5px;
-            font-size: 18px;
-
-            @include max-media(mobile) {
-              width: 100px;
-              font-size: 14px;
-            }
-
-            @include max-media(small-mobile) {
-              width: 60px;
-            }
-          }
-        }
-
-        &:focus {
-          outline: none;
-        }
-      }
-    }
-
-    .info {
-      display: flex;
-      flex-wrap: wrap;
-      margin: auto;
-      width: 45%;
-  
-      @include max-media(tablet) {
-        width: 100%;
-        margin-top: 1rem;
-        padding-top: 1rem;
-      }
-  
-      @include max-media(small-mobile) {
-        font-size: 12px;
-      }
-  
-      &-data {
-        width: 35%;
-        margin: auto;
-        display: flex;
-        flex-direction: column;
-        margin-bottom: .5rem;
-  
-        @include max-media(tablet) {
-          flex-direction: row;
-          width: 45%;
-        }
-  
-        @include max-media(mobile) {
-          flex-wrap: wrap;
-        }
-  
-        .emphasize {
-          font-size: 18px;
-  
-          @include max-media(small-mobile) {
-            font-size: 15px;
-          }  
-        }
-  
-        .title {
-          border-bottom: none;
-          margin-bottom: 0;
-          
-          @include max-media(tablet) {
-            margin-right: 1rem;
-            width: 45%;
-            font-weight: bold;
-          }
-  
-          @include max-media(mobile) {
-            flex-direction: row;
-            width: 100%;
-            margin-right: 0;
-          }
-  
-          @include max-media(small-mobile) {
-            font-size: 15px;
-          } 
-        }
-  
-        .data {
-          margin-bottom: 1.5rem;
-        }
-      }
     }
   }
 
-  &-table {
-    .content {
-      display: flex;
-      flex-direction: row;
+  // &-table {
+  //   display: flex;
+  //   min-height: 0;
+  //   flex-grow: 1;
+  //   border-top: 1px solid $light-grey;
+  //   flex-direction: row;
+  //   width: 100%;
+
+  //   @include max-media(tablet) {
+  //     // flex-direction: column;
+  //   }
+
+    .table-data {
+      grid-area: left;
       width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      border-right: 1px solid $light-grey;
       border-top: 1px solid $light-grey;
-
+      
       @include max-media(tablet) {
-        flex-direction: column;
+        border: 0;
+        width: 90%;
+        margin: 0 5%;
       }
 
-      .table-data {
-        width: 35%;
-        min-height: 100vh;
-        overflow-y: auto;
-        border-right: 1px solid $light-grey;
-        
-        @include max-media(tablet) {
-          width: 100%;
-        }
-
-        &.empty-data {
-          color: gray;
-        }
-  
-        .data {
-          display: flex;
-          flex-direction: row;
-          padding: 1em;
-          align-items: center;
-          border-radius: 20px 0 0 20px;
-          cursor: pointer;
-          @include transition(.3s, ease);
-
-          @include max-media(mobile) {
-            font-size: 14px;
-          }
-
-          @include max-media(small-mobile) {
-            font-size: 12px;
-            
-          }
-
-          &:hover {
-            background-color: rgba(95,120,255,0.20);
-          }
-
-          &.selected {
-            color: white;
-            background-color: $blue;
-          }
-  
-          .logoConf {
-            width: 3em;
-            height: 3em;
-            margin-right: 1em;
-          }
-    
-          .nameConf {
-            display: flex;
-            flex-direction: column;
-
-            // .name {
-            //   display: flex;
-            //   flex-direction: column;
-            //   align-items: center;
-            // }
-
-            span.hidden {
-              visibility: hidden;
-              margin-left: 1rem;
-              color: $red;
-              cursor: pointer;
-              @include transition(ease-out, 0.05s);
-
-              &.show {
-                visibility: visible;
-              }
-            }
-          }
-        }
+      .search {
+        margin-bottom: 15px;
       }
 
-      .info {
+      .data {
         display: flex;
-        flex-wrap: wrap;
-        margin: auto;
-        width: 45%;
-
-        @include max-media(tablet) {
-          width: 100%;
-          margin-top: 2rem;
-          border-top: 1px solid $light-grey;
-          padding-top: 1rem;
-        }
+        flex-direction: row;
+        padding: 1em;
+        align-items: center;
+        border-radius: 20px 0 0 20px;
+        cursor: pointer;
+        @include transition(.3s, ease);
 
         @include max-media(mobile) {
-          flex-direction: column;
+          font-size: 14px;
         }
 
         @include max-media(small-mobile) {
           font-size: 12px;
+          
         }
 
-        &-data {
-          width: 35%;
-          margin: auto;
+        &:hover {
+          background-color: rgba(95,120,255,0.20);
+        }
+
+        &.selected {
+          color: white;
+          background-color: $blue;
+
+          .nameConf span .badge {
+            color: white;
+            border: 1px solid white;
+          }
+        }
+
+        .logoConf {
+          width: 3em;
+          height: 3em;
+          margin-right: 1em;
+        }
+  
+        .nameConf {
           display: flex;
           flex-direction: column;
 
-          @include max-media(tablet) {
-            flex-direction: row;
-            width: 45%;
-          }
+          span {
+            display: flex;
+            white-space: nowrap;
+            align-items: center;
 
-          @include max-media(mobile) {
-            width: 90%;
-            justify-content: space-evenly;
-          }
-
-          .emphasize {
-            font-size: 18px;
-
-            @include max-media(tablet) {
-              font-size: 14px;
+            .badge {
+              margin-left: 1em;
+              border-radius: 10px/10px;
+              border: 1px solid $blue;
+              padding: 3px 5px;
+              color: $blue;
+              font-size: .5em;
             }
           }
+        }
 
-          .title {
-            border-bottom: none;
-            margin-bottom: 0;
-            
-            @include max-media(tablet) {
-              margin-right: 1.5rem;
-              width: 50%;
-            }
-
-            @include max-media(mobile) {
-              flex-direction: row;
-              width: 8rem;
-              margin-right: 0;
-            }
-          }
-
-          .data {
-            margin-bottom: 1.5rem;
-          }
+        svg {
+          margin-left: auto;
         }
       }
-    }
-
-    .table {
-      width: 100%;
-    }
-
-    .title {
-      font-family: 'Montserrat';
-      font-weight: bold;
-      border-bottom: 1px solid $light-grey;
-      display: flex;
-      flex-direction: row;    
-      margin-bottom: 10px;
-      padding-bottom: 5px;
-      font-size: 20px;
-
-      @include max-media(tablet) {
-        width: 100%;
-      }
-
-      @include max-media(small-mobile) {
-        font-size: 14px;
-      }
-
-      &-name {
-        width: 38%;
-
-        @include max-media(tablet) {
-          width: 69%;
-        }
-      }
-
-      &-presence{
-        width: 17%;
-
-        @include max-media(tablet) {
-          width: 30%;
-        }
-      }
-    }
-
-    // .name {
-    //   width: 70%;
-    // }
-
-    .presence {
-      width: 30%;
     }
   }
-
-  .overlay {
-    z-index: 199;
-  }
-}
 
 // PLACEHOLDER
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */

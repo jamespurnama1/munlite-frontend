@@ -3,7 +3,7 @@
     <h3>{{ content }}</h3>
     <div class="buttons">
       <button @click="exit()" class="cancel">Cancel</button>
-      <button @click="action(delegateId)">Yes</button>
+      <button @click="action(id)">Delete</button>
     </div>
   </div>
 </template>
@@ -14,7 +14,7 @@ export default {
   props: {
     action: Function,
     content: String,
-    delegateId: String,
+    id: String,
   },
   methods: {
     exit() {

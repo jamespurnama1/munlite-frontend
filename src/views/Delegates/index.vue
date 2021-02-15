@@ -2,7 +2,7 @@
   <div class="delegates">
     <div class="delegates-upper">
       <h1 class="title">Delegates</h1>
-      <div class="info" v-if="$store.getters.getWidthWindow <= 960">
+      <div class="info" v-if="width <= 960">
         <div class="info-data" v-for="(value, key) in info" :key="key">
           <p class="title emphasize">{{ key }}</p>
           <p class="data"><b class="emphasize">{{ value }}</b> Delegates</p>
@@ -62,7 +62,7 @@
             </div>
           </div>
           <div class="table-data empty-data" v-else>No Delegates in the list</div>
-          <div class="info" v-if="$store.getters.getWidthWindow > 960">
+          <div class="info" v-if="width> 960">
             <div class="info-data" v-for="(value, key) in info" :key="key">
               <p class="title emphasize">{{ key }}</p>
               <div class="data"><b class="emphasize">{{ value }}</b> Delegates</div>
@@ -97,6 +97,7 @@ import { getAllDelegates, deleteDelegates } from '@/api/delegates';
 import { getConference } from '@/api/conference';
 import { negara } from '@/const/country';
 import Confirmation from '@/components/Confirmation/index.vue';
+import { mapState } from 'vuex';
 import AddDelegates from './components/AddDelegates/index.vue';
 import RollCall from './components/RollCall/index.vue';
 import Vote from './components/Vote/index.vue';
@@ -126,6 +127,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      width: (state) => state.Global.widthWindow,
+    }),
     info() {
       const present = this.delegatesData.filter((obj) => obj.status.toLowerCase() === 'present');
       const pv = this.delegatesData.filter((obj) => obj.status.toLowerCase() === 'present & voting');

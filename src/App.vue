@@ -9,7 +9,10 @@
           class="navLeft"
           v-show="pathCheckConference"
         >
-          <div  v-for="(route, index) in conference" :key="index">
+          <div
+            v-for="(route, index) in conference"
+            :key="index"
+            :class="{disabled: route === 'crisis'}">
             <router-link
               :id="route"
               :to="`/${route}/${$route.params.id}`"
@@ -41,7 +44,7 @@
         <div
           class="border conff"
           id="border"
-          v-if="$store.getters.getWidthWindow > 960"
+          v-if="widthWindow > 960"
           :style="{
             left: `${borderStyles.left-1}px`,
             width: `${borderStyles.width}px`,
@@ -51,16 +54,26 @@
       <div class="burger"
       @click="toggleMenu"
       :class="{open: open}"
-      v-if="$store.getters.getWidthWindow <= 960">
+      v-if="widthWindow <= 960">
         <span></span>
         <span></span>
         <span></span>
       </div>
     </div>
     <transition name="slide">
-      <div class="indicator" v-if="state" :class="{blue: $store.state.Socket.isConnected}">
-        <p v-if="!$store.state.Socket.isConnected">You are offline. Reconnecting.</p>
+      <div class="indicator" v-if="state" :class="{blue: isConnected}">
+        <p v-if="!isConnected">You are offline. Reconnecting...</p>
         <p v-else>Back Online!</p>
+      </div>
+    </transition>
+    <transition name="slide">
+      <div class="indicator" v-if="noAuth">
+        <p>You don't have permission</p>
+      </div>
+    </transition>
+    <transition name="slide">
+      <div class="indicator" v-if="generic">
+        <p>Something went wrong</p>
       </div>
     </transition>
     <transition name="fade" mode="out-in">
@@ -72,6 +85,7 @@
 
 <script>
 import { logout } from '@/api/user';
+import { mapState } from 'vuex';
 
 export default {
   name: 'MUN',
@@ -90,11 +104,17 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      isConnected: (state) => state.Socket.isConnected,
+      noAuth: (state) => state.Global.notAuthorized,
+      generic: (state) => state.Global.genericError,
+      widthWindow: (state) => state.Global.widthWindow,
+    }),
     borderStyles() {
       return this.borderTemp == null ? this.border : this.borderTemp;
     },
     showNavBar() {
-      return this.$store.getters.getWidthWindow > 960 || this.open;
+      return this.widthWindow > 960 || this.open;
     },
     pathCheckConference() {
       if (this.$route.path === '/') {
@@ -107,9 +127,6 @@ export default {
         return true;
       }
       return this.general.includes(this.$route.path.split('/')[1]);
-    },
-    isConnected() {
-      return this.$store.state.Socket.isConnected;
     },
   },
   created() {
@@ -128,13 +145,33 @@ export default {
     isConnected() {
       this.offline();
     },
+    async noAuth() {
+      let timeout;
+      if (this.noAuth === true) {
+        timeout = await setTimeout(() => {
+          this.$store.commit('noAuth', false);
+        }, 3000);
+      } else {
+        clearTimeout(timeout);
+      }
+    },
+    async generic() {
+      let timeout;
+      if (this.generic === true) {
+        timeout = await setTimeout(() => {
+          this.$store.commit('error', false);
+        }, 3000);
+      } else {
+        clearTimeout(timeout);
+      }
+    },
   },
   methods: {
     async offline() {
       let timeout;
-      if (this.state !== !this.$store.state.Socket.isConnected) {
+      if (this.state !== !this.isConnected) {
         timeout = await setTimeout(() => {
-          this.state = !this.$store.state.Socket.isConnected;
+          this.state = !this.isConnected;
         }, 1000);
       } else {
         clearTimeout(timeout);
@@ -188,6 +225,7 @@ export default {
     },
     checkMobileView() {
       this.$store.commit('getWidth', window.innerWidth);
+      this.$store.commit('getHeight', window.innerHeight);
       this.onTabClick();
     },
     capitalize(string) {

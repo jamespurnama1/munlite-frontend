@@ -5,8 +5,8 @@
       </a>
       <h2>Roll Call</h2>
       <h3>Voting</h3>
-      <p v-if="$store.getters.getWidthWindow < 600">Swipe to view more</p>
-      <div class="info" v-if="$store.getters.getWidthWindow > 600">
+      <p v-if="width < 600">Swipe to view more</p>
+      <div class="info" v-if="width > 600">
         <PresenceInfo :info="info"/>
         <div class="line" />
         <OtherInfo :rulesData="rulesData"/>
@@ -51,6 +51,7 @@
 
 <script>
 import { gsap } from 'gsap';
+import { mapState } from 'vuex';
 import PresenceInfo from './components/PresenceInfo.vue';
 import OtherInfo from './components/OtherInfo.vue';
 
@@ -71,6 +72,9 @@ export default {
     rulesData: Object,
   },
   computed: {
+    ...mapState({
+      width: (state) => state.Global.widthWindow,
+    }),
     vote() {
       if (this.no > this.yes) {
         return true;

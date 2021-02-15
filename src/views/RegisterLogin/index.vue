@@ -18,16 +18,22 @@
       />
       <input
         type="email"
+        autocomplete="username"
         v-model="formData.email"
         placeholder="E-mail"
         required
       />
-      <input type="password" v-model="formData.password" placeholder="Password" required/>
+      <input type="password"
+        v-model="formData.password"
+        placeholder="Password"
+        :autocomplete="pass"
+        required/>
       <input
         type="password"
         v-if="$route.path != '/login' && $route.path !='signup'"
         v-model="formData.confirm"
         placeholder="Confirm Password"
+        autocomplete="new-password"
         required
       />
       <p class="errmsg">{{ errorMessage }}</p>
@@ -69,6 +75,20 @@ export default {
   computed: {
     loggedIn() {
       return this.$store.state.loggedIn;
+    },
+    pass() {
+      let p;
+      switch (this.$route.path) {
+        case '/login':
+          p = 'current-password';
+          break;
+        case '/signup':
+          p = 'new-password';
+          break;
+        default:
+          p = '';
+      }
+      return p;
     },
   },
   created() {

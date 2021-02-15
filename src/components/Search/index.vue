@@ -1,44 +1,58 @@
 <template>
-  <div>
+  <div class="search">
     <span>
-      <input placeholder="Search">
+      <div class="input">
+        <input placeholder=" " :class="{focus: filterD.length > 0}" v-model="search" type="text">
+        <label>Search</label>
+        <span class="containBadge">
+          <div class="badge" v-for="(filter, i) in filterD" :key="i">
+            <p>{{ filter }}</p>
+          </div>
+        </span>
+      </div>
       <font-awesome-icon
-        @click="showSort = true"
+        class ="exclude"
+        @click="showSort = true; showFilter = false;"
         v-if="sortDir === 'down'"
         :icon="['fas', 'sort-amount-down']" />
       <font-awesome-icon
-        @click="showSort = true"
+        class ="exclude"
+        @click="showSort = true; showFilter = false;"
         v-else
         :icon="['fas', 'sort-amount-up']" />
       <font-awesome-icon
-        @click="showFilter = true"
+        class ="excludeF"
+        @click="showFilter = true; showSort = false;"
         :icon="['fas', 'filter']" />
     </span>
-    <div>
-      <ul v-if="showFilter">
+    <transition name="scale">
+    <div v-if="showFilter" class="filter" v-click-outside="configF">
+      <ul>
         <li
-          @click="filterData('chair')"
-          :class="{sel: filterD.includes('chair')}">
+          @click="filterData('CHAIR')"
+          :class="{sel: filterD.includes('CHAIR')}">
           Chair
         </li>
         <li
-          @click="filterData('del')"
-          :class="{sel: filterD.includes('del')}">
+          @click="filterData('DELEGATE')"
+          :class="{sel: filterD.includes('DELEGATE')}">
           Delegate
         </li>
         <li
-          @click="filterData('bestDel')"
-          :class="{sel: filterD.includes('bestDel')}">
+          @click="filterData('BEST DELEGATE')"
+          :class="{sel: filterD.includes('BEST DELEGATE')}">
           Best Delegate
         </li>
         <li
-          @click="filterData('ongoing')"
-          :class="{sel: filterD.includes('ongoing')}">
+          @click="filterData('ONGOING')"
+          :class="{sel: filterD.includes('ONGOING')}">
           Ongoing
         </li>
       </ul>
     </div>
-    <div v-if="showSort">
+    </transition>
+    <transition name="scale">
+    <div v-if="showSort" class="sort" v-click-outside="config">
       <ul>
         <li
           @click="sortData('date')"
@@ -64,6 +78,7 @@
         </li>
       </ul>
     </div>
+    </transition>
   </div>
 </template>
 
@@ -77,9 +92,30 @@ export default {
       sortDir: 'down',
       sort: 'date',
       filterD: [],
+      config: {
+        handler: this.outside,
+        events: ['click'],
+      },
+      configF: {
+        handler: this.outsideF,
+        events: ['click'],
+      },
+      search: '',
     };
   },
   methods: {
+    outside(e) {
+      if (!e.target.classList.contains('excludeF')
+      && !e.target.parentElement.classList.contains('excludeF')) {
+        this.showSort = false;
+      }
+    },
+    outsideF(e) {
+      if (!e.target.classList.contains('excludeF')
+      && !e.target.parentElement.classList.contains('excludeF')) {
+        this.showFilter = false;
+      }
+    },
     filterData(i) {
       if (this.filterD.includes(i)) {
         this.filterD = this.filterD.filter((f) => f !== i);

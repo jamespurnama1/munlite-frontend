@@ -60,7 +60,7 @@
       &:before {
         content: '';
         background: linear-gradient(rgb(255, 255, 255), rgba(255, 255, 255, 0));
-        z-index: 4;
+        z-index: 6;
         position: absolute;
         top: 0;
         width: 100%;
@@ -71,7 +71,7 @@
       &:after {
         content: '';
         background: linear-gradient(rgba(255, 255, 255, 0), rgb(255, 255, 255));
-        z-index: 4;
+        z-index: 6;
         position: absolute;
         bottom: 0;
         width: 100%;
