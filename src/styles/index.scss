@@ -69,6 +69,7 @@ button {
     border :1px solid $light-grey;
     background-color: white;
     font-family: 'Open Sans', sans-serif;
+    -webkit-appearance: none;
 
     @include max-media(mobile) {
       font-size: .75em;
