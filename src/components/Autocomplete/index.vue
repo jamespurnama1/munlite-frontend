@@ -1,13 +1,19 @@
 <template>
   <div id="autocomplete">
-    <input
-      v-model="newCountry"
-      type="text"
-      :placeholder="placeholder"
-      @input="fillAutocomplete"
-      @change="emitData"
-    />
-    <div class="results" v-if="results.length > 0">
+    <div class="input">
+      <input
+        ref="input"
+        v-model="newCountry"
+        type="text"
+        @focusin="focus = true; fillAutocomplete(); $emit('focus')"
+        @input="fillAutocomplete"
+        v-shortkey="{up: ['arrowup'], down: ['arrowdown'], enter: ['enter']}"
+        @shortkey="keymap"
+        @change="emitData"
+        placeholder=" ">
+      <label>{{ placeholder }}</label>
+    </div>
+    <div class="results" v-if="focus">
       <ul
         v-show="isOpen"
         class="autocomplete-results"
@@ -16,7 +22,9 @@
           v-for="(result, i) in results"
           :key="i"
           class="autocomplete-result"
+          @mouseover="sel = i"
           @click="setResult(result)"
+          :class="{sel: sel === i}"
         >
           {{ result.name }}
         </li>
@@ -57,22 +65,46 @@ export default {
       results: [],
       isOpen: false,
       arrowCounter: 0,
+      focus: false,
+      sel: 0,
     };
   },
   methods: {
+    keymap(event) {
+      switch (event.srcKey) {
+        case 'up':
+          this.sel -= 1;
+          break;
+        case 'down':
+          this.sel += 1;
+          break;
+        case 'enter':
+          this.setResult(this.results[this.sel]);
+          break;
+        default:
+          console.error(event);
+          break;
+      }
+    },
     fillAutocomplete() {
       this.isOpen = true;
       this.filterResults();
     },
     filterResults() {
-      this.results = this.items.filter(
-        (item) => item.name.toLowerCase().indexOf(this.newCountry.toLowerCase()) > -1,
-      );
+      if (this.newCountry) {
+        this.results = this.items.filter(
+          (item) => item.name.toLowerCase().indexOf(this.newCountry.toLowerCase()) > -1,
+        );
+      } else {
+        this.results = this.items;
+      }
     },
     setResult(result) {
+      console.log(1, result);
       this.newCountry = result.name;
       this.$emit('onchangeCountry', this.newCountry);
-      this.isOpen = false;
+      this.focus = false;
+      // this.isOpen = false;
     },
     emitData() {
       this.$emit('onchangeCountry', this.newCountry);
@@ -80,6 +112,7 @@ export default {
     handleClickOutside(evt) {
       if (!this.$el.contains(evt.target)) {
         this.isOpen = false;
+        this.focus = false;
       }
     },
   },

@@ -65,12 +65,13 @@ export default {
   },
   methods: {
     async presence(j) {
-      const i = this.currentCountry;
+      const i = this.$store.state.Global.current;
       try {
         const data = {
           country: this.delegatesData[i].country,
           status: j,
         };
+        console.log(data);
         // eslint-disable-next-line no-underscore-dangle
         await editDelegates(this.$route.params.id, this.delegatesData[i]._id, data);
         this.$emit('update');

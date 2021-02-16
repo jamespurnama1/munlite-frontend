@@ -61,7 +61,7 @@
       </div>
     </div>
     <transition name="slide">
-      <div class="indicator" v-if="state" :class="{blue: isConnected}">
+      <div class="indicator" v-if="state && $route.params.id" :class="{blue: isConnected}">
         <p v-if="!isConnected">You are offline. Reconnecting...</p>
         <p v-else>Back Online!</p>
       </div>
@@ -80,15 +80,23 @@
       <router-view :key="$route.fullPath" />
     </transition>
     <div class="overlay-nav" @click="open = false" v-if="open"></div>
+    <transition name="slide-up">
+    <GlobalTimer
+      v-if="$route.params.id && $route.name !== 'GSL' && $route.name !== 'Caucus'"/>
+    </transition>
   </div>
 </template>
 
 <script>
 import { logout } from '@/api/user';
 import { mapState } from 'vuex';
+import GlobalTimer from '@/components/Global Timer/index.vue';
 
 export default {
   name: 'MUN',
+  components: {
+    GlobalTimer,
+  },
   data() {
     return {
       border: {

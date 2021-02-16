@@ -5,7 +5,7 @@
     </a>
     <h1>The Motion Passes!</h1>
     <h3>The debate is now open.</h3>
-    <router-link to="/gsl">
+    <router-link :to="`/gsl/${$route.params.id}`">
       <button>
         Speakers List ({{ countdown }})
       </button>
@@ -45,7 +45,7 @@ export default {
         document.querySelector('body').style.removeProperty('height');
         document.querySelector('body').style.removeProperty('width');
         document.querySelector('body').style.removeProperty('overflow');
-        this.$router.push('/gsl');
+        this.$router.push(`/gsl/${this.$route.params.id}`);
       }
     },
   },

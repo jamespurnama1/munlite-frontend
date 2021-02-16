@@ -5,12 +5,17 @@
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
-.slide-enter-active, .slide-leave-active {
+.slide-enter-active, .slide-leave-active,
+.slide-up-enter-active, .slide-up-leave-active {
   transition: transform .5s ease;
 }
 
 .slide-enter, .slide-leave-to {
   transform: translate(0, -50vh);
+}
+
+.slide-up-enter, .slide-up-leave-to {
+  transform: translate(0, 50vh);
 }
 
 .slide-right-enter-active, .slide-right-leave-active,

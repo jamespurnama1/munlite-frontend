@@ -7,6 +7,7 @@
       <li v-for="(delegate, i) in delegates"
       :key="i"
       @click="click(i)"
+      @contextmenu.prevent="showC(i, $event)"
       :class="{
         active: i === display,
         top: i < display,
@@ -22,6 +23,15 @@
         :number='i'
         :active="active"
         :isActive="i === isActive" />
+        <Context
+          :action="[...actions]"
+          :delegateName="delegate.country"
+          :delegateId="delegate._id"
+          :pos="contextPos"
+          v-if="showContext === i"
+          @context="(...args) => context(...args, i)"
+          v-click-outside="config"
+        />
       </li>
     </ul>
   </div>
@@ -33,6 +43,7 @@ import { mapState } from 'vuex';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { debounce } from 'debounce';
 import Card from '@/components/Card/index.vue';
+import Context from '@/components/Context/index.vue';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -58,9 +69,16 @@ export default {
       type: Number,
       required: true,
     },
+    actions: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
   components: {
     Card,
+    Context,
   },
   data() {
     return {
@@ -68,13 +86,53 @@ export default {
       // stackHeight: 75,
       cards: null,
       spacing: 0.1,
-      snap: null,
+      // snap: null,
       trigger: null,
       rawSequence: gsap.timeline({ paused: true }),
       scrub: null,
+      showContext: false,
+      contextPos: [0, 0],
+      config: {
+        handler: () => { this.showContext = false; },
+        events: ['click'],
+      },
+      mount: false,
     };
   },
   methods: {
+    showC(d, e) {
+      if (e) {
+        const r = e.target.getBoundingClientRect();
+        const x = Math.min(r.width - 165, e.clientX - r.left);
+        this.contextPos = [x, e.clientY - r.top];
+      }
+      this.showContext = d;
+    },
+    context(...args) {
+      this.$emit('context', ...args);
+      this.showContext = false;
+    },
+    // snap({ children, duration = 2000 }) {
+    //   const countTo = parseInt(children, 10);
+    //   const [count, setCount] = useState(0);
+
+    //   let frame = 0;
+    //   const totalFrames = Math.round(duration / frameDuration);
+    //   const counter = setInterval(() => {
+    //     frame += 1;
+    //     const progress = easeOutQuad(frame / totalFrames);
+    //     setCount(countTo * progress);
+
+    //     if (frame === totalFrames) {
+    //       clearInterval(counter);
+    //     }
+    //   }, frameDuration);
+
+    //   return Math.floor(count);
+    // },
+    snap(n) {
+      return gsap.utils.snap(this.spacing, n);
+    },
     checkWidth() {
       if (this.width < 600) {
         this.stacks = 2;
@@ -88,8 +146,14 @@ export default {
       this.$emit('move', i);
     },
     move(i) {
-      if (this.current !== this.display) {
-        this.scrubTo(this.rawSequence.labels[`label${i}`]);
+      this.scrubTo(this.rawSequence.labels[`label${i}`]);
+      const timer = this.timer(5000);
+      if (i !== this.isActive && this.active) {
+        timer.start().then(() => {
+          this.$emit('move', this.isActive);
+        });
+      } else {
+        timer.abort();
       }
     },
     rightClick(del) {
@@ -209,49 +273,59 @@ export default {
 
       return { start, abort };
     },
+    async init() {
+      this.trigger = await ScrollTrigger.create({
+        scroller: '.stackOverflow',
+        pin: '.stack-cards',
+        anticipatePin: 1,
+        // pinType: 'fixed',
+        start: 0,
+        end: `+=${this.cards.length * 100}`,
+        onUpdate: ((self) => {
+          const timer = this.timer(500);
+          if (self.scroller.scrollTop < this.minMax[0]) {
+            // eslint-disable-next-line no-param-reassign
+            timer.start().then(() => { [self.scroller.scrollTop] = this.minMax; });
+          } else if (self.scroller.scrollTop > this.minMax[1]) {
+            // eslint-disable-next-line no-param-reassign
+            timer.start().then(() => { [, self.scroller.scrollTop] = this.minMax; });
+          } else {
+            timer.abort();
+            try {
+              const v = (self.scroller.scrollTop * this.rawSequence.duration())
+            / (this.cards.length * 100);
+              const c = parseInt(Object.keys(this.rawSequence.labels)
+                .find((key) => this.rawSequence.labels[key].toString() === v.toFixed(1))
+                .replace(/\D/g, ''), 10);
+              debounce(this.$store.commit('changeCurrent', c), 100, true);
+              if (this.mount) {
+                this.$emit('move', c);
+              }
+            } catch (err) {
+              // console.error(err); // ignore error as it is expected
+            }
+          }
+          this.scrub.vars.totalTime = this.snap(self.progress * this.rawSequence.duration());
+          this.scrub.invalidate().restart();
+          // eslint-disable-next-line no-param-reassign
+          self.wrapping = false;
+        }),
+      });
+      await setTimeout(() => {
+        this.$emit('move', this.display);
+      }, 500);
+      this.mount = true;
+    },
   },
-  mounted() {
+  async mounted() {
     this.cards = document.querySelectorAll('.stack-cards__item');
-    this.snap = gsap.utils.snap(this.spacing);
     this.scrub = gsap.to(this.buildSeamlessLoop(this.cards, this.spacing), {
       totalTime: 0,
       duration: 0.5,
       ease: 'power3',
       paused: true,
     });
-    this.trigger = ScrollTrigger.create({
-      scroller: '.stackOverflow',
-      pin: '.stack-cards',
-      start: 0,
-      end: `+=${this.cards.length * 100}`,
-      onUpdate: ((self) => {
-        const timer = this.timer(500);
-        if (self.scroller.scrollTop < this.minMax[0]) {
-          // eslint-disable-next-line no-param-reassign
-          timer.start().then(() => { [self.scroller.scrollTop] = this.minMax; });
-        } else if (self.scroller.scrollTop > this.minMax[1]) {
-          // eslint-disable-next-line no-param-reassign
-          timer.start().then(() => { [, self.scroller.scrollTop] = this.minMax; });
-        } else {
-          timer.abort();
-          try {
-            const v = (self.scroller.scrollTop * this.rawSequence.duration())
-          / (this.cards.length * 100);
-            const c = parseInt(Object.keys(this.rawSequence.labels)
-              .find((key) => this.rawSequence.labels[key].toString() === v.toFixed(1))
-              .replace(/\D/g, ''), 10);
-            debounce(this.$store.commit('changeCurrent', c), 200, true);
-            this.$emit('move', c);
-          } catch (err) {
-            // console.error(err); // ignore error as it is expected
-          }
-        }
-        this.scrub.vars.totalTime = this.snap(self.progress * this.rawSequence.duration());
-        this.scrub.invalidate().restart();
-        // eslint-disable-next-line no-param-reassign
-        self.wrapping = false;
-      }),
-    });
+    this.init();
   },
   computed: {
     ...mapState({
@@ -267,12 +341,16 @@ export default {
     },
   },
   watch: {
+    active() {
+      if (this.active) {
+        this.$emit('move', this.isActive);
+      }
+    },
     display: {
       // eslint-disable-next-line object-shorthand, func-names
       handler: function () {
         this.move(this.display);
       },
-      immediate: true,
     },
     delegates() {
       // console.log(this.delegates);
@@ -281,14 +359,24 @@ export default {
       //   newItems.length = this.delegates.length - this.card.length;
       //   this.rawSequence.add(this.addTween(newItems));
       // }
-      this.scrub.clear();
-      console.log(this.cards);
-      this.scrub = gsap.to(this.buildSeamlessLoop(this.cards, this.spacing), {
-        totalTime: 0,
-        duration: 0.5,
-        ease: 'power3',
-        paused: true,
-      });
+      // // eslint-disable-next-line object-shorthand, func-names
+      // // console.log(this.scrub);
+      // this.$nextTick();
+      // this.rawSequence.clear();
+      // // this.scrub.invalidate().restart();
+      // console.log(this.rawSequence.getChildren());
+      // this.trigger.kill();
+      // this.scrub.kill();
+      // this.$nextTick();
+      // this.cards = gsap.utils.toArray('.stack-cards__item');
+      // this.scrub = gsap.to(this.buildSeamlessLoop(this.cards, this.spacing), {
+      //   totalTime: 0,
+      //   duration: 0.5,
+      //   ease: 'power3',
+      //   paused: true,
+      // });
+      // this.init();
+      // this.$forceUpdate();
     },
     width: {
       handler: 'checkWidth',

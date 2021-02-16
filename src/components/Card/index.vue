@@ -64,10 +64,16 @@ export default {
       if (this.desc === 'presence') {
         this.dsc = this.del.status;
       } else if (this.time_left) {
-        if (this.del.yield) {
-          this.dsc = `${this.time_left} sec → ${this.delYield}`;
+        let t;
+        if (this.isActive) {
+          t = this.timer;
         } else {
-          this.dsc = `${this.time_left} sec`;
+          t = this.time_left;
+        }
+        if (this.del.yield) {
+          this.dsc = `${t} sec → ${this.delYield}`;
+        } else {
+          this.dsc = `${t} sec`;
         }
       } else {
         this.dsc = this.desc;
@@ -79,7 +85,7 @@ export default {
         this.progress = 0;
       } else if (this.prgrs === 'presence' && this.del.status.toLowerCase() !== 'n/a') {
         this.progress = 100;
-        if (this.del.status.toLowerCase() === 'not present' && !this.color) {
+        if (this.del.status.toLowerCase() === 'not present') {
           this.clr = '#FF5F5F';
         }
       } else if (!this.prgrs && !this.time_left) {
@@ -99,21 +105,50 @@ export default {
     },
   },
   watch: {
-    time_left: {
+    timer: {
       // eslint-disable-next-line object-shorthand
       handler() {
-        this.progress = Math.min(Math.max((this.time_left / this.time_start) * 100, 0), 125);
+        let t;
+        if (this.isActive) {
+          t = this.timer;
+        } else {
+          t = this.time_left;
+        }
+        this.progress = Math.min(Math.max((t / this.time_start) * 100, 0), 125);
+        if (this.delYield) {
+          this.dsc = `${t} sec → ${this.delYield}`;
+        } else {
+          this.dsc = `${t} sec`;
+        }
         this.pos();
       },
       immediate: true,
     },
     delYield() {
-      this.dsc = `${this.time_left} sec → ${this.delYield}`;
+      let t;
+      if (this.isActive) {
+        t = this.timer;
+      } else {
+        t = this.time_left;
+      }
+      if (this.delYield) {
+        this.dsc = `${t} sec → ${this.delYield}`;
+      } else {
+        this.dsc = `${t} sec`;
+      }
+    },
+    del: {
+      handler() {
+        this.defaults();
+      },
+      deep: true,
     },
   },
   computed: {
     ...mapState({
       gslList: (state) => state.Delegates.gslList,
+      timer: (state) => state.Socket.message.time,
+      status: (state) => state.Socket.message.state,
     }),
     time_start() {
       return this.gslList[this.number].time_start;

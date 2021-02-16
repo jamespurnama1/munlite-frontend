@@ -1,17 +1,19 @@
 <template>
   <div class="time">
     <div class="module">
-      <h3 id="timer">Timer</h3>
       <h1 class="read">{{ timerReadable }}</h1>
+      <div class="progress" :style="`clip-path: inset(0 ${progress}% 0 0);`">
+        <h1 class="read">{{ timerReadable }}</h1>
+      </div>
       <div class="controls">
         <button :class="{blue: status !== 0}" @click="toggleActive()">
           <font-awesome-icon v-if="status === 0" :icon="['fas', 'pause']" />
           <font-awesome-icon v-else-if="status !== 0" :icon="['fas', 'play']" />
         </button>
-        <button @click="redo()">
+        <button @click="redo()" v-if="width > 960">
           <font-awesome-icon class="redo" :icon="['fas', 'redo']" />
         </button>
-        <button @click="skip()">
+        <button @click="skip()" v-if="width > 960">
           <font-awesome-icon class="skip" :icon="['fas', 'step-forward']" />
         </button>
         <button :class="{red: muted}" @click="toggleSound()">
@@ -37,12 +39,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 export default {
-  name: 'Timer',
+  name: 'GlobalTimer',
   computed: {
     ...mapState({
       timer: (state) => state.Socket.message.time,
       status: (state) => state.Socket.message.state,
       order: (state) => state.Socket.message.order,
+      width: (state) => state.Global.widthWindow,
       muted: (state) => state.Global.muted,
     }),
     timerReadable() {
@@ -60,7 +63,7 @@ export default {
   },
   watch: {
     timer() {
-      console.log(this.timer);
+      this.progress = 100 - (this.timer / 0.9);
       if (!this.muted && this.status === 0) {
         if (this.timer === 5) {
           document.getElementById('warn').play();
@@ -91,6 +94,7 @@ export default {
     return {
       interval: null,
       tl: null,
+      progress: 0,
     };
   },
   async mounted() {
@@ -141,54 +145,67 @@ export default {
       this.$socket.send(JSON.stringify(next));
     },
     scroll() {
-      ScrollTrigger.matchMedia({
-        '(max-width: 960px)': () => {
-          this.tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: '#app',
-              start: 0,
-              end: '+=100px',
-              id: 'trigger1',
-              scrub: true,
-              snap: {
-                snapTo: [0, 1],
-                duration: { min: 0.3, max: 0.5 },
-                delay: 0.3,
-              },
-            },
-          });
-          this.tl.fromTo('.module, .main', {
-            boxShadow: '0px 0px 20px 0px rgba(0,0,0,0.15)',
-            border: '1px solid white',
-          }, {
-            boxShadow: '0px 0px 20px 0px rgba(0,0,0,0)',
-            border: '1px solid #d1d1d1',
-          })
-            .to('#timer', {
-              autoAlpha: 0,
-            }, 0)
-            .fromTo('.module', {
-              width: '100%',
-            }, {
-              minHeight: '70px',
-              padding: '10px',
-              width: 'calc(100% - 80px)',
-            }, 0)
-            .to('.main', {
-              x: '-100px',
-              autoAlpha: 1,
-            }, 0)
-            .to('.controls button', {
-              autoAlpha: 0,
-            }, 0)
-            .to('.controls', {
-              display: 'none',
-            });
-        },
-      });
+      // ScrollTrigger.matchMedia({
+      //   '(max-width: 960px)': () => {
+      //     this.tl = gsap.timeline({
+      //       scrollTrigger: {
+      //         trigger: '#app',
+      //         start: 0,
+      //         end: '+=100px',
+      //         id: 'trigger1',
+      //         scrub: true,
+      //         snap: {
+      //           snapTo: [0, 1],
+      //           duration: { min: 0.3, max: 0.5 },
+      //           delay: 0.3,
+      //         },
+      //       },
+      //     });
+      //     this.tl.fromTo('.module, .main', {
+      //       boxShadow: '0px 0px 20px 0px rgba(0,0,0,0.15)',
+      //       border: '1px solid white',
+      //     }, {
+      //       boxShadow: '0px 0px 20px 0px rgba(0,0,0,0)',
+      //       border: '1px solid #d1d1d1',
+      //     })
+      //       .to('#timer', {
+      //         autoAlpha: 0,
+      //       }, 0)
+      //       .fromTo('.module', {
+      //         width: '100%',
+      //       }, {
+      //         minHeight: '70px',
+      //         padding: '10px',
+      //         width: 'calc(100% - 80px)',
+      //       }, 0)
+      //       .to('.main', {
+      //         x: '-100px',
+      //         autoAlpha: 1,
+      //       }, 0)
+      //       .to('.controls button', {
+      //         autoAlpha: 0,
+      //       }, 0)
+      //       .to('.controls', {
+      //         display: 'none',
+      //       });
+      //   },
+      // });
     },
     toggleActive() {
-      this.$emit('active');
+      const data = {
+        session: 'gsl',
+      };
+      if (this.status === 2) {
+        data.command = 'start';
+        data.time = 90;
+        data.order = 1;
+      } else if (this.status === 1) {
+        data.command = 'resume';
+      } else {
+        data.command = 'pause';
+      }
+      console.log('Send WebSocket Data!', JSON.stringify(data));
+      this.$socket.send(JSON.stringify(data));
     },
     toggleSound() {
       this.$store.commit('toggleMute');

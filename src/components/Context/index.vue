@@ -14,7 +14,7 @@
         @click="click(item)"
         :class="{
         disabled: disabled[i],
-        red: item === 'delete' }">
+        red: item === 'Delete' || item === 'Remove From Queue' }">
         <p>
           {{ item }}
         </p>

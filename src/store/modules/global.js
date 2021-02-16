@@ -5,9 +5,13 @@ const global = {
     current: 0,
     notAuthorized: false,
     genericError: false,
+    muted: false,
   },
 
   mutations: {
+    toggleMute(state) {
+      state.muted = !state.muted;
+    },
     getWidth(state, i) {
       state.widthWindow = i;
     },

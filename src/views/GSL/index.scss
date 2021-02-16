@@ -1,6 +1,6 @@
 .gsl {
   height: 90vh;
-  width: 90%;
+  width: calc(100% - 4rem);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -54,8 +54,13 @@
       min-width: 30vh;
       height: 50vh;
       align-items: center;
-      max-width: 550px;
+      max-width: 400px;
       min-height: 360px;
+      z-index: 6;
+
+      @include max-media(tablet) {
+        z-index: 4;
+      }
 
       &:before {
         content: '';
@@ -201,6 +206,7 @@
           width: 53%;
           height: 60%;
           pointer-events: none;
+          z-index: 202;
           @include transition(.5s, ease);
 
           &.two {
@@ -230,17 +236,25 @@
           }
 
           &:hover {
-            animation: pulse .5s ease infinite alternate;
+            animation: pulse 1s ease infinite alternate;
+            border: 1px solid white;
+            -webkit-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
+            -moz-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
+            box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
           }
 
           @keyframes pulse {
             from {
               color: black;
-              border: 1px solid $light-grey;
+              -webkit-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
+              -moz-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
+              box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
             }
             to {
               color: $blue;
-              border: 1px solid $blue;
+              -webkit-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.7);
+              -moz-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.7);
+              box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.7);
             }
           }
 
@@ -253,9 +267,14 @@
           color: $blue;
           font-weight: bold;
           border: 1px solid $blue;
+          cursor: initial;
 
           &:hover {
             animation: none;
+            border: 1px solid $blue;
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
           }
         }
 
@@ -264,10 +283,17 @@
           // padding: 5px;
 
           &.filled {
-            #autocomplete input {
-              border-color: $blue;
-              color: $blue;
-              font-weight: bold;
+            #autocomplete {
+              input {
+                background-color: rgba(255, 255, 255, 0);
+                border-color: $blue;
+                color: $blue;
+                font-weight: bold;
+              }
+
+              label {
+                color: $blue;
+              }
             }
           }
         }

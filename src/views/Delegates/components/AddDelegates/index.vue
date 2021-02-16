@@ -17,12 +17,13 @@
         </div>
       </div>
       <div class="right">
-        <label>Name</label>
         <Autocomplete :items="items" @onchangeCountry="onchangeCountry" class="country"/>
         <p class="error" v-if="err">{{ err }}</p>
-        <label>Short Name</label>
-        <div class="inputtext">
-          <input type="text" placeholder="Short Name" v-model="newCountry.short"/>
+        <div class="input">
+          <input
+            placeholder=" "
+            v-model="newCountry.short">
+          <label>Short Name</label>
         </div>
       </div>
     </div>

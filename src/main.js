@@ -20,9 +20,10 @@ Vue.use(Vue2TouchEvents)
   .use(require('vue-shortkey'))
   .use(VueDragscroll)
   .use(vClickOutside)
-  .use(VueNativeSock, 'wss://dev.api.munlite.co/ws/:conference_id', {
+  .use(VueNativeSock, 'wss://dev.api.munlite.co/ws/', {
     store,
     reconnection: true,
+    connectManually: true,
   })
   .component('font-awesome-icon', FontAwesomeIcon);
 
@@ -43,8 +44,19 @@ Sentry.init({
 
 Vue.config.productionTip = false;
 
-new Vue({
+const vm = new Vue({
   router,
   store,
   render: (h) => h(App),
-}).$mount('#app');
+});
+
+router.afterEach((to) => {
+  console.log(to.params.id);
+  if (to.params.id) {
+    vm.$connect(`wss://dev.api.munlite.co/ws/:${to.params.id}`);
+  } else {
+    vm.$disconnect();
+  }
+});
+
+vm.$mount('#app');

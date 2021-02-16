@@ -10,12 +10,12 @@
 
   li {
     list-style: none;
-    padding: 15px 10px;
+    padding: 7px 10px;
     color: black;
     cursor: pointer;
 
     &:hover {
-      background-color: $light-grey;
+      background-color: rgba(95, 120, 255, 0.2);
     }
 
     &:last-child {
@@ -55,6 +55,10 @@
       width: 2em;
       height: 2em;
       border-radius: 50% / 50%;
+      margin-right: 1em;
+    }
+
+    span {
       margin-right: 1em;
     }
   }

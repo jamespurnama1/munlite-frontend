@@ -8,6 +8,8 @@
   user-select: none;
   -ms-overflow-style: none;  /* Internet Explorer 10+ */
   scrollbar-width: none;  /* Firefox */
+  backface-visibility: hidden;
+  // clip: rect(auto, auto, auto, auto);
 
   &::-webkit-scrollbar { 
     display: none;  /* Safari and Chrome */
@@ -22,15 +24,17 @@
     aspect-ratio: 16 / 9;
     width: 100%;
     list-style-type: none;
+    backface-visibility: hidden;
   
     .stack-cards__item {
       position: absolute;
       aspect-ratio: 16 / 9;
-      width: 100%;
+      width: 99%;
       height: auto;
       // min-height: 3em;
       top: 0;
       left: 0;
+      backface-visibility: hidden;
       // transform: translate(-50%, -50%);
 
       @supports not (aspect-ratio: 16 / 9) { 

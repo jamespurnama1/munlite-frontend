@@ -46,6 +46,7 @@ button {
   position: relative;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 
   &.disabled {
     opacity: 50%;
@@ -61,7 +62,7 @@ button {
 
   input {
     flex-grow: 1;
-    font-size: 1em;
+    font-size: 15px;
     padding: 10px;
     display: block;
     border-radius: 10px/10px;
