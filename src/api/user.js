@@ -26,18 +26,6 @@ export async function getJWT() {
   return res;
 }
 
-export async function fetchJWT() {
-  return fetch(`${process.env.VUE_APP_BASE_API}/refresh`, {
-    method: 'POST',
-    credentials: 'include',
-  })
-    .then((response) => {
-      console.log(response);
-    }).catch((err) => {
-      console.log(err);
-    });
-}
-
 export async function logout() {
   const res = serviceCred.post('/logout');
   return res;

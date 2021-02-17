@@ -140,6 +140,7 @@ export default {
   created() {
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
+    window.addEventListener('storage', this.logout);
   },
   beforeUpdate() {
     if (!this.open) {
@@ -213,11 +214,12 @@ export default {
       document.body.style.overflow = 'visible';
       this.open = false;
     },
-    async logout() {
+    async logout(event) {
       this.open = false;
       try {
         await logout();
         this.$store.dispatch('logout');
+        if (!event) window.localStorage.setItem('logout', Date.now());
         this.$router.push('/login');
       } catch (err) {
         console.error(err);
@@ -252,6 +254,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.checkMobileView);
+    window.removeEventListener('storage', this.logout);
   },
 };
 </script>
