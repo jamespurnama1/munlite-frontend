@@ -2,40 +2,48 @@
   <div class="regist-login">
     <img src="@/assets/img/logo_alt@2x.png" />
     <form class="form-data" @submit.prevent="formSubmission()">
+      <div class="input" v-if="$route.path != '/login' && $route.path !='signup'">
       <input
-        type="text"
-        v-if="$route.path != '/login' && $route.path !='signup'"
         v-model="formData.first"
-        placeholder="First Name"
-        required
-      />
-      <input
         type="text"
-        v-if="$route.path != '/login' && $route.path !='signup'"
+        placeholder=" "
+        required>
+      <label>First Name</label>
+    </div>
+    <div class="input" v-if="$route.path != '/login' && $route.path !='signup'">
+      <input
         v-model="formData.last"
-        placeholder="Last Name"
-        required
-      />
+        type="text"
+        placeholder=" "
+        required>
+      <label>Last Name</label>
+    </div>
+    <div class="input">
       <input
-        type="email"
-        autocomplete="username"
         v-model="formData.email"
-        placeholder="E-mail"
-        required
-      />
-      <input type="password"
-        v-model="formData.password"
-        placeholder="Password"
-        :autocomplete="pass"
-        required/>
+        type="email"
+        placeholder=" "
+        required>
+      <label>E-mail</label>
+    </div>
+    <div class="input">
       <input
+        v-model="formData.password"
         type="password"
-        v-if="$route.path != '/login' && $route.path !='signup'"
+        placeholder=" "
+        :autocomplete="pass"
+        required>
+      <label>Password</label>
+    </div>
+    <div class="input" v-if="$route.path != '/login' && $route.path !='signup'">
+      <input
         v-model="formData.confirm"
-        placeholder="Confirm Password"
+        type="password"
+        placeholder=" "
         autocomplete="new-password"
-        required
-      />
+        required>
+      <label>Confirm Password</label>
+    </div>
       <p class="errmsg">{{ errorMessage }}</p>
       <div class="buttons">
         <input type="submit" v-if="$route.path =='/signup'" @click="signup()"
@@ -66,7 +74,6 @@ export default {
         password: '',
         confirm: '',
       },
-      checked: false,
       errorMessage: '',
       signupButton: 'Sign Up',
       loginButton: 'Log In',

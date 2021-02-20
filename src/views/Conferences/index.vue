@@ -1,9 +1,9 @@
 <template>
-  <div class="conferences" :class="{mobile: width <= 960 && sel !== null}">
+  <div>
     <transition name="fade">
       <add-conference
-        type="add"
-        v-if="showInput === 'add'"
+        v-if="showInput"
+        :conf="conferencesData[sel]"
         @exit="exit"
         @update="updateConferencesData"
         v-click-outside="config"
@@ -12,98 +12,103 @@
     <transition name="fade">
       <div class="overlay" v-if="showInput || showConfirm" />
     </transition>
-    <div class="conferences-upper">
-      <h1 class="title">Conferences</h1>
-      <div class="conferences-button">
-        <div class="button" @click="toggleInput('add')">
-          <font-awesome-icon :icon="['fas', 'plus']"/>
+    <transition-group
+      v-on:beforeEnter="() => {transEnd = false}"
+      v-on:afterLeave="() => {transEnd = true}"
+      class="conferences"
+      :class="{mobile: width <= 960 && sel !== null}"
+      tag="div"
+      :name="transName">
+      <div :key="3" class="conferences-upper" v-if="width > 960 || sel === null">
+        <span>
+          <h1 class="title">Conferences</h1>
+          <p v-if="width > 960">Right click for more options</p>
+          <p v-else>Press &amp; hold for more options</p>
+        </span>
+        <div class="conferences-button">
+          <div class="button" @click="toggleInput('add')">
+            <font-awesome-icon :icon="['fas', 'plus']"/>
+          </div>
         </div>
       </div>
-    </div>
-    <div
-      class="table-data"
-      :class="{mobile1: width <= 960 && sel === null}"
-      v-if="conferencesData.length > 0">
-      <Search
-        class="search"
-        @sortData="(...args) => {
-        this.conferencesData = sortData(this.conferencesData, ...args)}"
-        @filterData="filterData" />
-      <transition-group name="fade">
-        <div
-        v-for="(data, index) in conferencesData"
-        :key="data.title" class="data"
-        @click="select(index)"
-        @contextmenu.prevent="showC(data.title, $event)"
-        :class="{selected: sel === index}">
-          <img class="logoConf" :src="require('@/assets/img/home@2x.png')" />
-          <div class="nameConf">
-            <h3 class="name">
-              {{ data.title }}
-            </h3>
-            <span>
-              <p v-if="sel === index" class="date">
-                {{ readable(data.start_date, data.end_date) }}
-              </p>
-              <p v-else class="date">
-                {{ readable(data.start_date) }}
-              </p>
-              <div v-if="ongoing(index)" class="badge">
-                ONGOING
-              </div>
-            </span>
+      <div
+        :key="4"
+        class="table-data"
+        v-if="conferencesData.length > 0 && (width > 960 || sel === null)"
+      >
+        <Search
+          class="search"
+          :items="conferencesData"
+          :sortFunc="sortFunc"
+          :sortTypes="['name', 'date']"
+          :filterFunc="filterFunc"
+          :filterTypes="['Ongoing', ['Chair', 'Delegate', 'Best Delegate']]"
+          @sortedData="(data) => {
+            this.filteredData = data
+          }"
+        />
+        <transition-group name="fade">
+          <div
+            v-for="(data, index) in filteredData"
+            :key="data.title" class="data"
+            @click="select(index)"
+            @contextmenu.prevent="showC($event, data)"
+            v-touch:touchhold.prevent="showCon(data)"
+            :class="{selected: sel === index}">
+            <img class="logoConf" :src="require('@/assets/img/home@2x.png')" />
+            <div class="nameConf">
+              <h3 class="name">
+                {{ data.title }}
+              </h3>
+              <span>
+                <p v-if="sel === index || width <= 960" class="date">
+                  {{ readable(data.start_date, data.end_date) }}
+                </p>
+                <p v-else class="date">
+                  {{ readable(data.start_date) }}
+                </p>
+                <div v-if="ongoing([data]).length > 0" class="badge">
+                  ONGOING
+                </div>
+              </span>
+            </div>
+            <font-awesome-icon v-if="width <= 960" :icon="['fas', 'chevron-right']"/>
+            <Confirmation
+              :content="`Are you sure you want to delete ${data.title}?`"
+              :action="deleteConferenceData"
+              :id="data._id"
+              button="Delete"
+              :negative="true"
+              v-if="showConfirm === data.title"
+              v-click-outside="config"
+              @exit="exit"
+            />
           </div>
-          <font-awesome-icon v-if="width <= 960" :icon="['fas', 'chevron-right']"/>
-          <Context
-            :action="['edit', 'delete']"
-            :conferenceName="data.title"
-            :conferenceId="data._id"
-            :pos="contextPos"
-            v-if="showContext === data.title"
-            @context="(...args) => context(...args)"
-            v-click-outside="config"
-          />
-          <Confirmation
-            :content="`Are you sure you want to delete ${data.title}?`"
-            :action="deleteConferenceData"
-            :conferenceName="data.title"
-            :id="data._id"
-            v-if="showConfirm === data.title"
-            v-click-outside="config"
-            @exit="exit"
-          />
-          <add-conference
-            class="edit"
-            :conf="data"
-            type="edit"
-            v-if="showInput === data.title"
-            @exit="exit"
-            @update="updateConferencesData"
-            v-click-outside="config"
-          />
-        </div>
-      </transition-group>
-    </div>
-    <Details
-    :ongoing="ongoing"
-    :sel="sel"
-    @goBack="sel = null"
-    @edit="(...t) => toggleInput(...t)"
-    :confData="conferencesData" />
+        </transition-group>
+      </div>
+      <Details
+        key="5"
+        :ongoing="ongoing([filteredData[sel]]).length > 0"
+        :sel="sel"
+        @goBack="sel = null"
+        v-if="sel !== null"
+        @edit="(...t) => toggleInput(...t)"
+        :transEnd="transEnd"
+        :confData="filteredData[sel]" />
+    </transition-group>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+
 import {
-  getConference,
   getAllConferences,
   delConference,
   updateConference,
 } from '@/api/conference';
 import Search from '@/components/Search/index.vue';
 import Confirmation from '@/components/Confirmation/index.vue';
-import Context from '@/components/Context/index.vue';
 import AddConference from '@/components/AddConference/index.vue';
 import Details from './components/Details/index.vue';
 
@@ -114,73 +119,65 @@ export default {
     Details,
     Confirmation,
     AddConference,
-    Context,
   },
   data() {
     return {
       showConfirm: false,
       showInput: false,
-      showContext: false,
       conferencesData: [],
+      filteredData: [],
+      filter: '',
       conf: null,
       sortConf: 'down',
       sel: null,
+      transEnd: false,
       config: {
         handler: this.outside,
         events: ['click'],
       },
-      contextPos: [0, 0],
     };
   },
   methods: {
-    filterData() {
-      // console.log(f);
+    delegate(items) {
+      return items.filter((item) => item.chairman
+        .some((chair) => chair.email !== this.$store.state.Global.me.email));
     },
-    ongoing(i) {
-      const a = new Date(this.conferencesData[i].start_date);
-      const b = new Date(this.conferencesData[i].end_date);
+    chair(items) {
+      return items.filter((item) => item.chairman
+        .some((chair) => chair.email === this.$store.state.Global.me.email));
+    },
+    ongoing(items) {
       const dt = Date.now();
-
-      const c = new Date(b.getTime());
-      c.setDate(c.getDate() + 1);
-      return dt >= a && dt < c;
+      return items.filter((item) => {
+        const a = new Date(item.start_date);
+        const b = new Date(item.end_date);
+        const c = new Date(b.getTime());
+        c.setDate(c.getDate() + 1);
+        return dt >= a && dt < c;
+      });
     },
-    outside() {
-      this.showContext = false;
-      this.showInput = false;
-      this.showConfirm = false;
-    },
-    showC(d, e) {
-      if (e) {
-        this.contextPos = [e.clientX, e.clientY];
+    filterFunc(items, tags, search) {
+      let list = items;
+      if (search !== '') {
+        list = list.filter(
+          (item) => item.title.toLowerCase().indexOf(search.toLowerCase()) > -1,
+        );
       }
-      if (!this.showInput) {
-        this.showContext = d;
+      if (tags.includes('Delegate')) {
+        list = this.delegate(list);
       }
-    },
-    context([i, n]) {
-      this.showContext = false;
-      if (i === 'delete') {
-        this.showConfirm = n;
-      } else {
-        this.showInput = n;
+      if (tags.includes('Chair')) {
+        list = this.chair(list);
       }
-    },
-    select(i) {
-      this.sel = i;
-    },
-    toggleInput(t) {
-      this.showInput = t;
-    },
-    async updateOneConf(conf) {
-      try {
-        // eslint-disable-next-line no-underscore-dangle
-        this.conf = await getConference(conf._id);
-      } catch (err) {
-        console.error(err);
+      if (tags.includes('Ongoing')) {
+        list = this.ongoing(list);
       }
+      if (tags.includes('Best Delegate')) {
+        console.error('No backend support!'); // wait for backend
+      }
+      return list;
     },
-    sortData(items, type, dir) {
+    sortFunc(items, type, dir) {
       if (type === 'date') {
         items.sort((a, b) => {
           const dateA = Date.parse(a.start_date);
@@ -230,12 +227,60 @@ export default {
       }
       return items;
     },
+    outside() {
+      this.showInput = false;
+      this.showConfirm = false;
+    },
+    showC(event, data) {
+      if (!this.showInput) {
+        this.$store.dispatch('context', [
+        // eslint-disable-next-line no-underscore-dangle
+          [data.title, data._id],
+          {
+            Edit: true,
+            Delete: true,
+          },
+          [event.clientX, event.clientY],
+        ]);
+      }
+    },
+    showCon(data) {
+      return (event) => {
+        if (!this.showInput) {
+          this.$store.dispatch('context', [
+          // eslint-disable-next-line no-underscore-dangle
+            [data.title, data._id],
+            {
+              Edit: true,
+              Delete: true,
+            },
+            [event.touches[0].clientX, event.touches[0].clientY],
+          ]);
+        }
+      };
+    },
+    context([item, name, id]) {
+      if (item === 'delete') {
+        this.showConfirm = name;
+      } else {
+        this.showInput = true;
+        // eslint-disable-next-line no-underscore-dangle
+        this.sel = this.conferencesData.findIndex((i) => i._id === id);
+      }
+    },
+    select(i) {
+      this.sel = i;
+    },
+    toggleInput(t) {
+      this.showInput = t;
+    },
     async updateConferencesData() {
       try {
         const conferences = await getAllConferences();
         if (conferences.data.data !== null) {
-          this.conferencesData = this.sortData(conferences.data.data, 'date', 'down');
+          this.conferencesData = conferences.data.data;
         }
+        this.sel = null;
       } catch (err) {
         console.error(err);
       }
@@ -290,12 +335,18 @@ export default {
   },
   created() {
     this.updateConferencesData();
+    this.$root.$on('context', (...args) => this.context(...args));
   },
   computed: {
     ...mapState({
       width: (state) => state.Global.widthWindow,
       notAuthorized: (state) => state.Global.notAuthorized,
+      me: (state) => state.Global.me,
     }),
+    transName() {
+      if (this.sel === null) return 'slide-right';
+      return 'slide-left';
+    },
   },
 };
 </script>

@@ -6,7 +6,6 @@
         <Autocomplete
           :items="items"
           :class="{show: showInput === true}"
-          :new="newCountry"
           @onchangeCountry="(n) => newCountry = n"
           placeholder="Delegate"
         />

@@ -35,31 +35,15 @@
     margin-bottom: 1rem;
     max-width: 400px;
 
-    input {
-      border: 1px solid #D1D1D1;
-      padding: 10px;
+    .input {
       margin-bottom: 1rem;
-      font-family: 'Open Sans';
-      font-size: 12px;
 
-      &::placeholder {
-        color: #D1D1D1;
+      .errmsg {
+        text-align: center;
+        color: $red;
+        font-size: 12px;
+        margin-bottom: 10px;
       }
-
-      &.checked {
-        margin-right: 10px;
-      }
-
-      @include max-media(mobile) {
-        font-size: 10px;
-      }
-    }
-
-    .errmsg {
-      text-align: center;
-      color: $red;
-      font-size: 12px;
-      margin-bottom: 10px;
     }
   }
 

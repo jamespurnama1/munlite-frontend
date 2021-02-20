@@ -1,280 +1,322 @@
-.confModal {
-  color: black;
-  display: flex;
-  flex-direction: column;
-  width: fit-content;
-  height: fit-content;
-  padding: 20px;
+.addConf {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: white;
   border-radius: 20px / 20px;
   -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
   -moz-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
   z-index: 200;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   cursor: initial;
   box-sizing: border-box;
+  margin: auto;
+  overflow: hidden;
 
   @include max-media (mobile) {
     width: 90vw;
+    height: 80vh;
   }
 
-  h1 {
-    margin-bottom: 1em;
-
-    @include max-media(mobile) {
-      margin-bottom: .3em;
-    }
+  &:before {
+    content: '';
+    background: linear-gradient(rgb(255, 255, 255), rgba(255, 255, 255, 0));
+    z-index: 6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 100%;
+    height: 10%;
+    pointer-events: none;
   }
 
-  h3 {
-    @include max-media(mobile) {
-      font-size: 1em;
-    }
-
-    @include max-media(small-mobile) {
-      font-size: .75em;
-    }
+  &:after {
+    content: '';
+    background: linear-gradient(rgba(255, 255, 255, 0), rgb(255, 255, 255));
+    z-index: 6;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 100%;
+    height: 10%;
+    pointer-events: none;
+    margin-bottom: 65px;
   }
 
-  p {
-    @include max-media(small-mobile) {
-      font-size: .5em;
-    }
-  }
+  .confModal {
+    position: relative;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    max-height: calc(100% - 65px);
+    margin-bottom: 65px;
+    padding: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
 
-  .input {
-    margin: 1em;
-
-    @include max-media(mobile) {
-      margin: .3em;
-    }
-  }
-
-  .top {
-    display: grid;
-    grid-template-areas:  'info upload'
-                          'date upload';
-    margin: .5em 0 1em 0;
-
-    @include max-media(mobile) {
-      grid-template-columns: 70% 1fr;
-      grid-template-areas:  'info upload'
-                            'date date';
-    }
-
-    @include max-media(small-mobile) {
-      grid-template-columns: 1fr 1fr;
-      grid-template-areas:  'info upload'
-                            'date upload';
-      margin: 0 0 .5em 0;
-    }
-
-    .info {
-      margin-right: 1em;
-      grid-area: info;
-    }
-
-    .upload {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin-right: 1em;
-      grid-area: upload;
-
-      h3 {
-        align-self: flex-start;
-      }
-
-      p.caption {
-        color: $light-grey;
-        font-size: .5em;
-      }
-
-      .contain {
-        width: 5em;
-        height: 5em;
-        margin: .5em 0;
-        border-radius: 50% / 50%;
-        cursor: pointer;
-        overflow: hidden;
-        position: relative;
-
-        @include max-media(mobile) {
-          width: 3em;
-          height: 3em;
-          margin: .3em 0;
-        }
-
-        .over {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          background-color: rgba(0, 0, 0, 0.7);
-          font-weight: bold;
-          opacity: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          @include transition(.3s, ease);
-
-          &:hover {
-            opacity: 1;
-          }
-
-          p.caption {
-            color: white;
-          }
-        }
-  
-        .logo {
-          width: 100%;
-          height: 100%;
-        }
-      }
-    }
-  
-    .dates {
-      grid-area: date;
-      display: flex;
-      align-items: center;
-      margin-right: 1em;
-      justify-content: space-between;
-
-      @include max-media(small-mobile) {
-        flex-direction: column;
-      }
-  
-      hr {
-        width: 25px;
-        height: 0;
-        border: 0;
-        border-bottom: 1px solid $light-grey;
-
-        @include max-media(small-mobile) {
-          display: none;
-        }
-      }
-    }
-  }
-
-
-  .chair {
-    margin: .5em 0 1em 0;
-
-    @include max-media(small-mobile) {
-      margin: 0 0 .5em 0;
-    }
-
-      ul {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(100px, 1fr));
-      align-items: center;
-      margin: 0 1em;
+    h1 {
+      margin-bottom: 1em;
 
       @include max-media(mobile) {
-        grid-template-columns: 1fr;
+        margin-bottom: .3em;
+        font-size: 1.2em;
+      }
+    }
+
+    h3 {
+      @include max-media(mobile) {
+        font-size: 1em;
       }
 
-      li {
-        display: flex;
-        position: relative;
-        list-style-type: none;
-        align-items: center;
-        width: fit-content;
+      @include max-media(small-mobile) {
+        font-size: .75em;
+      }
+    }
 
-        .avatar {
-          width: 2em;
-          height: 2em;
-          border-radius: 50% / 50%;
-          margin-right: .5em;
+    p {
+      @include max-media(small-mobile) {
+        font-size: .75em;
+      }
+    }
+
+    .input {
+      margin: 1em;
+
+      @include max-media(mobile) {
+        margin: .3em;
+      }
+    }
+
+    .top {
+      display: grid;
+      grid-template-areas:  'info upload'
+                            'date upload';
+      margin: .5em 0 1em 0;
+
+      @include max-media(mobile) {
+        grid-template-columns: 70% 1fr;
+        grid-template-areas:  'info upload'
+                              'date date';
+      }
+
+      @include max-media(small-mobile) {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:  'info upload'
+                              'date upload';
+      }
+
+      .info {
+        margin-right: 1em;
+        grid-area: info;
+      }
+
+      .upload {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-right: 1em;
+        grid-area: upload;
+
+        h3 {
+          align-self: flex-start;
         }
 
-        span {
-          display: flex;
-          align-items: center;
+        p.caption {
+          color: $light-grey;
+          font-size: .5em;
+        }
 
-          .input {
-            margin: 1em .5em 1em 0;
+        .contain {
+          width: 5em;
+          height: 5em;
+          margin: .5em 0;
+          border-radius: 50% / 50%;
+          cursor: pointer;
+          overflow: hidden;
+          position: relative;
+
+          @include max-media(mobile) {
+            width: 3em;
+            height: 3em;
+            margin: .3em 0;
           }
 
-          button {
-            aspect-ratio: 1/1;
-            border-radius: 10px/10px;
-            margin: 1em 0;
-            width: auto;
+          .over {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.7);
+            font-weight: bold;
+            opacity: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            @include transition(.3s, ease);
+
+            &:hover {
+              opacity: 1;
+            }
+
+            p.caption {
+              color: white;
+            }
+          }
+    
+          .logo {
+            width: 100%;
             height: 100%;
           }
         }
       }
-    }
-  }
-
-  .rules {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(100px, 1fr));
-    align-items: center;
-    margin: .5em 0 1em 0;
-
-    @include max-media(small-mobile) {
-      margin: 0 0 .5em 0;
-    }
-
-    .round {
-      margin: 0 auto;
-
-      h3 {
-        text-align: center;
-        margin-bottom: .5em;
-      }
-
-      span {
+    
+      .dates {
+        grid-area: date;
         display: flex;
+        align-items: center;
+        margin-right: 1em;
+        justify-content: space-between;
 
-        .switch {
-          margin: 0 .5em;
+        @include max-media(small-mobile) {
+          flex-direction: column;
+          margin: 0 1em 0 .3em;
+
+          .input {
+            width: 100%;
+          }
+        }
+    
+        hr {
+          width: 25px;
+          height: 0;
+          border: 0;
+          border-bottom: 1px solid $light-grey;
+
+          @include max-media(small-mobile) {
+            display: none;
+          }
         }
       }
     }
-  }
 
-  .crisis {
-    display: flex;
-    margin-bottom: 1em;
-    align-items: center;
 
-    .switch {
-      margin: 0 1em;
+    .chair {
+      margin: .5em 0 1em 0;
+
+      ul {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(100px, 1fr));
+        align-items: center;
+        margin: 0 1em;
+
+        @include max-media(mobile) {
+          grid-template-columns: 1fr;
+          margin: 0;
+        }
+
+        li {
+          display: flex;
+          position: relative;
+          list-style-type: none;
+          align-items: center;
+          width: fit-content;
+
+          .avatar {
+            width: 2em;
+            height: 2em;
+            border-radius: 50% / 50%;
+            margin-right: .5em;
+          }
+
+          span {
+            display: flex;
+            align-items: center;
+
+            .input {
+              margin: 1em .5em 1em 0;
+            }
+
+            button {
+              aspect-ratio: 1/1;
+              border-radius: 10px/10px;
+              margin: 1em 0;
+              width: auto;
+              height: 100%;
+            }
+          }
+        }
+      }
+    }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(100px, 1fr));
+      align-items: center;
+      margin: .5em 0 1em 0;
+
+      .round {
+        margin: 0 auto;
+
+        h3 {
+          text-align: center;
+          margin-bottom: .5em;
+        }
+
+        span {
+          display: flex;
+
+          .switch {
+            margin: 0 .5em;
+          }
+        }
+      }
+    }
+
+    .crisis {
+      display: flex;
+      margin-bottom: 1em;
+      align-items: center;
+
+      .switch {
+        margin: 0 1em;
+      }
+    }
+
+    .disabled {
+      opacity: 50%;
+      cursor: not-allowed;
+      pointer-events: none;
     }
   }
-
   .buttons {
-    margin-left: auto;
+      position: absolute;
+      bottom: 15px;
+      right: 10px;
+      margin-left: auto;
+      margin-top: auto;
 
-    button {
-      margin: 0 .5em;
+      button {
+        margin: 0 .5em;
 
-      &.blue {
-        color: white;
-        background-color: $blue;
-        border: 1px solid $blue;
+        &.blue {
+          color: white;
+          background-color: $blue;
+          border: 1px solid $blue;
 
-        &:hover {
-          -webkit-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7);
-          -moz-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7);
-          box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7);
+          &:hover {
+            -webkit-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7);
+            -moz-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7);
+            box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7);
+          }
         }
       }
     }
-  }
-
-  .disabled {
-    opacity: 50%;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
 }

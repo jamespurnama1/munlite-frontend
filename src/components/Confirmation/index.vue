@@ -3,7 +3,10 @@
     <h3>{{ content }}</h3>
     <div class="buttons">
       <button @click="exit()" class="cancel">Cancel</button>
-      <button @click="action(id)">Delete</button>
+      <button @click="action(id)"
+        :class="{red: negative, blue: negative === false}">
+        {{ button }}
+      </button>
     </div>
   </div>
 </template>
@@ -13,8 +16,10 @@ export default {
   name: 'Confirmation',
   props: {
     action: Function,
+    button: String,
     content: String,
     id: String,
+    negative: Boolean,
   },
   methods: {
     exit() {

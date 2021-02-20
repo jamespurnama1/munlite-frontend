@@ -54,26 +54,38 @@ button {
   }
 
   .err {
-    position: absolute;
+    // position: absolute;
     font-size: 10px;
     color: $red;
-    bottom: -30%;
+    // bottom: -30%;
   }
 
   input {
     flex-grow: 1;
-    font-size: 15px;
+    font-size: 16px;
     padding: 10px;
+    min-height: 20px;
     display: block;
     border-radius: 10px/10px;
     border :1px solid $light-grey;
     background-color: white;
     font-family: 'Open Sans', sans-serif;
     -webkit-appearance: none;
+    user-select: initial !important;
 
     @include max-media(mobile) {
       font-size: .75em;
     }
+
+    // &:not([type="date"]) ~ label {
+    //   color: $light-grey;
+    //   content: attr(placeholder) !important;
+    //   margin-right: 0.5em;
+    // }
+
+    // &[type="date"]:focus:before {
+    //   content: '' !important;
+    // }
 
     &:-webkit-input-placeholder, &:placeholder, &:-webkit-datetime-edit {
       color: transparent;
@@ -86,17 +98,24 @@ button {
 
     &.error {
       border :1px solid $red !important;
+      margin-bottom: 10px;
 
       & ~ label {
         color: $red !important;
+        top: calc(50% - 10px) !important;
       }
     }
 
-    &:not(:placeholder-shown) ~ label {
+    &:not([data-value=""]) ~ label {
       transform: translateY(-170%);
       font-size: .75em;
       color: black;
     }
+
+    // &[type="date"] ~ label {
+    //   transform: translateY(0);
+    //   font-size: inherit;
+    // }
     
     &:focus ~ label, &.focus ~ label {
       transform: translateY(-170%);

@@ -12,8 +12,13 @@
       <div class="profile">
         <div class="img"></div>
         <div class="detail">
-          <h1>Hi, {{ name }}!</h1>
-          <p>Not {{ name }}? <a @click="changeAcc()">Change Account</a></p>
+          <h1>Hi, {{ $store.state.Global.me.first_name }}!
+          </h1>
+          <p>Not {{ $store.state.Global.me.first_name }}?
+            <a @click="changeAcc()">
+              Change Account
+            </a>
+          </p>
         </div>
       </div>
     </div>
@@ -51,7 +56,6 @@
 </template>
 
 <script>
-import { getUserData } from '@/api/profile';
 import { getAllConferences } from '@/api/conference';
 import { logout } from '@/api/user';
 import AddConference from '@/components/AddConference/index.vue';
@@ -63,7 +67,6 @@ export default {
   },
   data() {
     return {
-      name: '',
       ongoing: {
         name: 'Indonesia MUN',
         timestamp: 10,
@@ -77,14 +80,8 @@ export default {
       showConf: false,
     };
   },
-  async created() {
-    try {
-      const profile = await getUserData();
-      this.name = profile.data.data.first_name;
-      this.updateConferencesData();
-    } catch (err) {
-      console.error(err);
-    }
+  created() {
+    this.updateConferencesData();
   },
   methods: {
     async updateConferencesData() {

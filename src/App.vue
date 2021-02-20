@@ -76,6 +76,10 @@
         <p>Something went wrong</p>
       </div>
     </transition>
+    <Context
+      v-if="showContext"
+      v-click-outside="config"
+    />
     <transition name="fade" mode="out-in">
       <router-view :key="$route.fullPath" />
     </transition>
@@ -89,13 +93,16 @@
 
 <script>
 import { logout } from '@/api/user';
+import { getUserData } from '@/api/profile';
 import { mapState } from 'vuex';
+import Context from '@/components/Context/index.vue';
 import GlobalTimer from '@/components/Global Timer/index.vue';
 
 export default {
   name: 'MUN',
   components: {
     GlobalTimer,
+    Context,
   },
   data() {
     return {
@@ -109,6 +116,10 @@ export default {
       conference: ['overview', 'delegates', 'gsl', 'motions', 'caucus', 'crisis'],
       general: ['home', 'conferences', 'connections', 'files', 'account'],
       state: false,
+      config: {
+        handler: () => { this.$store.dispatch('resetContext'); },
+        events: ['click'],
+      },
     };
   },
   computed: {
@@ -117,6 +128,8 @@ export default {
       noAuth: (state) => state.Global.notAuthorized,
       generic: (state) => state.Global.genericError,
       widthWindow: (state) => state.Global.widthWindow,
+      showContext: (state) => state.Global.showContext,
+      contextPos: (state) => state.Global.contextPos,
     }),
     borderStyles() {
       return this.borderTemp == null ? this.border : this.borderTemp;
@@ -137,7 +150,13 @@ export default {
       return this.general.includes(this.$route.path.split('/')[1]);
     },
   },
-  created() {
+  async created() {
+    try {
+      const profile = await getUserData();
+      this.$store.commit('updateMe', profile.data.data);
+    } catch (err) {
+      console.error(err);
+    }
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
     window.addEventListener('storage', this.logout);

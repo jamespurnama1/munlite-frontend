@@ -15,6 +15,7 @@
     "@sentry/browser": "^5.24.2",
     "@sentry/integrations": "^5.24.2",
     "@sentry/tracing": "^5.24.2",
+    "@vue/devtools": "^6.0.0-beta.6",
     "axios": "^0.21.1",
     "core-js": "^3.8.3",
     "debounce": "^1.2.0",

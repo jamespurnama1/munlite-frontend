@@ -3,31 +3,41 @@
     grid-area: right;
     width: 100%;
     flex: 1 1 auto;
-    overflow: hidden;
-    border-top: 1px solid $light-grey;
+    // border-top: 1px solid $light-grey;
+    flex-direction: column;
 
     @include max-media(tablet) {
-      // width: 100%;
-      flex-direction: column;
+      grid-area: left;
       border: 0;
       height: calc(100vh - 4.6em);
     }
 
-    @include max-media(mobile) {
-      overflow-y: auto;
-      // width: 50%;
-    }
-
   .upper {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 90%;
-    margin: 0 auto;
+    box-sizing: border-box;
+    width: 100%;
+    height: 110px;
+
+    @include max-media(tablet) {
+      will-change: box-shadow transform;
+      position: absolute;
+      top: 0;
+      padding: 0 5%;
+      width: 100vw;
+      z-index: 2;
+      background-color: white;
+      transform-origin: top center;
+      border-radius: 0 0 15px 15px;
+    }
   
     .left {
+      will-change: transform;
       display: flex;
       align-items: center;
+      transform-origin: top left;
   
       img {
         height: 3em;
@@ -37,10 +47,25 @@
       }
     }
     .right {
+      will-change: opacity transform;
       margin: 10px;
       display: flex;
       justify-content: space-between;
       flex-direction: column;
+      transform-origin: top right;
+
+      &.take {
+        cursor: pointer;
+        position: absolute;
+        right: 5%;
+        flex-direction: row;
+        align-items: center;
+        transform-origin: bottom right;
+
+        svg {
+          margin-left: 5px;
+        }
+      }
 
       button:first-child {
         margin-bottom: .5em;
@@ -52,14 +77,17 @@
     position: relative;
     display: flex;
     width: 100%;
+    min-height: 100vh;
     flex-grow: 1;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    height: 100%;
+    overflow: hidden;
     
     @include max-media(mobile) {
       flex-direction: column;
       height: initial;
+    }
+
+    @include max-media(tablet) {
+      margin-top: 110px;
     }
 
     h4 {

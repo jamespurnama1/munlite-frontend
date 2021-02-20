@@ -2,7 +2,14 @@
   <div class="search">
     <span>
       <div class="input">
-        <input placeholder=" " :class="{focus: filterD.length > 0}" v-model="search" type="text">
+        <input
+          placeholder=" "
+          :class="{focus: filterD.length > 0}"
+          v-model="search"
+          :data-value="search ? search : ''"
+          type="text"
+          :style="`padding-left: ${extraPadding}px`"
+          @keyup.delete="del($event)">
         <label>Search</label>
         <span class="containBadge">
           <div class="badge" v-for="(filter, i) in filterD" :key="i">
@@ -12,23 +19,31 @@
       </div>
       <font-awesome-icon
         class ="exclude"
-        @click="showSort = true; showFilter = false;"
+        @click="showSort = !showSort; showFilter = false;"
         v-if="sortDir === 'down'"
         :icon="['fas', 'sort-amount-down']" />
       <font-awesome-icon
         class ="exclude"
-        @click="showSort = true; showFilter = false;"
+        @click="showSort = !showSort; showFilter = false;"
         v-else
         :icon="['fas', 'sort-amount-up']" />
       <font-awesome-icon
         class ="excludeF"
-        @click="showFilter = true; showSort = false;"
+        @click="showFilter = !showFilter; showSort = false;"
         :icon="['fas', 'filter']" />
     </span>
     <transition name="scale">
     <div v-if="showFilter" class="filter" v-click-outside="configF">
       <ul>
         <li
+          v-for="(filter, index) in filterTypes.flat()"
+          :key="index"
+          @click="filterData(filter)"
+          :class="{sel: filterD.includes(filter)}"
+        >
+          {{ filter }}
+        </li>
+        <!-- <li
           @click="filterData('CHAIR')"
           :class="{sel: filterD.includes('CHAIR')}">
           Chair
@@ -47,34 +62,27 @@
           @click="filterData('ONGOING')"
           :class="{sel: filterD.includes('ONGOING')}">
           Ongoing
-        </li>
+        </li> -->
       </ul>
     </div>
     </transition>
     <transition name="scale">
     <div v-if="showSort" class="sort" v-click-outside="config">
       <ul>
-        <li
-          @click="sortData('date')"
-          :class="{sel: sort === 'date'}">
-          Date
+        <li v-for="(type, index) in sortTypes"
+          :key="index"
+          @click="sortData(type)"
+          :class="{sel: sort === type}"
+        >
+          {{ type }}
           <font-awesome-icon
-            v-if="sortDir === 'up' && sort === 'date'"
-            :icon="['fas', 'arrow-up']" />
+            v-if="sortDir === 'up' && sort === type"
+            :icon="['fas', 'arrow-up']"
+          />
           <font-awesome-icon
-            v-else-if="sortDir === 'down' && sort === 'date'"
-            :icon="['fas', 'arrow-down']" />
-        </li>
-        <li
-          @click="sortData('name')"
-          :class="{sel: sort === 'name'}">
-          Name
-          <font-awesome-icon
-            v-if="sortDir === 'up' && sort === 'name'"
-            :icon="['fas', 'arrow-up']" />
-          <font-awesome-icon
-            v-else-if="sortDir === 'down' && sort === 'name'"
-            :icon="['fas', 'arrow-down']" />
+            v-else-if="sortDir === 'down' && sort === type"
+            :icon="['fas', 'arrow-down']"
+          />
         </li>
       </ul>
     </div>
@@ -101,12 +109,72 @@ export default {
         events: ['click'],
       },
       search: '',
+      prevSearch: '',
+      filteredData: this.items,
+      extraPadding: 10,
     };
   },
+  props: {
+    items: Array,
+    sortFunc: Function,
+    sortTypes: Array,
+    filterFunc: Function,
+    filterTypes: Array,
+  },
+  watch: {
+    search() {
+      let list = this.filterFunc(this.items, this.filterD, this.search);
+      list = this.sortFunc(list, this.sort, this.sortDir);
+      this.filteredData = list;
+      this.$emit('sortedData', this.filteredData);
+    },
+    filterD: {
+      handler() {
+        let list = this.filterFunc(this.items, this.filterD, this.search);
+        list = this.sortFunc(list, this.sort, this.sortDir);
+        this.filteredData = list;
+        this.extraPad();
+        this.$emit('sortedData', this.filteredData);
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    this.filteredData = this.sortFunc(this.items, 'date', 'down');
+    this.$emit('sortedData', this.filteredData);
+  },
+  computed: {
+  },
   methods: {
+    extraPad() {
+      let padding = 10 + (parseInt(this.em(), 10) * parseInt(this.filterD.length, 10));
+      if (this.filterD.includes('DELEGATE')) {
+        padding += 55.48; // 55.48px + 1em of .badge width
+      }
+      if (this.filterD.includes('CHAIR')) {
+        padding += 38.09; // 38.09px + 1em of .badge width
+      }
+      if (this.filterD.includes('ONGOING')) {
+        padding += 55.2; // 55.2px + 1em of .badge width
+      }
+      if (this.filterD.includes('BEST DELEGATE')) {
+        padding += 78.58; // 78.58px + 1em of .badge width
+      }
+      this.extraPadding = padding;
+    },
+    em() {
+      return parseFloat(getComputedStyle(document.querySelector('.badge')).fontSize);
+    },
+    del(event) {
+      if (this.filterD.length > 0
+      && (event.target.selectionStart === 0 && this.prevSearch.length !== 1)) {
+        this.filterD.pop();
+      }
+      this.prevSearch = this.search;
+    },
     outside(e) {
-      if (!e.target.classList.contains('excludeF')
-      && !e.target.parentElement.classList.contains('excludeF')) {
+      if (!e.target.classList.contains('exclude')
+      && !e.target.parentElement.classList.contains('exclude')) {
         this.showSort = false;
       }
     },
@@ -116,13 +184,30 @@ export default {
         this.showFilter = false;
       }
     },
-    filterData(i) {
-      if (this.filterD.includes(i)) {
-        this.filterD = this.filterD.filter((f) => f !== i);
+    filterData(tag) {
+      if (this.filterD.includes(tag)) {
+        this.filterD = this.filterD.filter((f) => f !== tag);
       } else {
-        this.filterD.push(i);
+        // eslint-disable-next-line no-restricted-syntax
+        for (const item of this.filterTypes) {
+          if (item === tag) {
+            this.filterD.push(item);
+            break;
+          }
+          if (typeof item === 'object') {
+            let noReplace = true;
+            this.filterD.forEach((f) => {
+              if (item.includes(tag) && item.includes(f)) {
+                this.filterD.splice(this.filterD.indexOf(f), 1, tag);
+                noReplace = false;
+              }
+            });
+            if (noReplace && item.includes(tag)) {
+              this.filterD.push(tag);
+            }
+          }
+        }
       }
-      this.$emit('filterData', i);
     },
     sortData(i) {
       if (this.sort === i && this.sortDir === 'down') {
@@ -132,7 +217,7 @@ export default {
       } else {
         this.sort = i;
       }
-      this.$emit('sortData', i, this.sortDir);
+      this.filteredData = this.sortFunc(this.filteredData, i, this.sortDir);
     },
   },
 };

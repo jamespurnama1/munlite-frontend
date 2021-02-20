@@ -4,6 +4,7 @@
       <input
         ref="input"
         v-model="newCountry"
+        :data-value="newCountry ? newCountry : ''"
         type="text"
         @focusin="focus = true; fillAutocomplete(); $emit('focus')"
         @input="fillAutocomplete"
@@ -43,7 +44,6 @@ export default {
       required: true,
       default: () => [],
     },
-    new: String,
     placeholder: {
       type: String,
       default: () => 'Name',
@@ -52,11 +52,6 @@ export default {
   watch: {
     newCountry() {
       this.emitData();
-    },
-    new() {
-      if (this.new === '') {
-        this.newCountry = '';
-      }
     },
   },
   data() {

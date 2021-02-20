@@ -26,20 +26,44 @@
     justify-content: space-evenly;
 
     button {
-      background-color: $red;
-      color: white;
+      background-color: white;
+      color: black;
       padding: 10px;
       width: 4.5rem;
-      border: 1px solid $red;
+      border: 1px solid $light-grey;
       border-radius: 10px;
       font-size: 14px;
       cursor: pointer;
       @include transition(ease, .5s);
 
       &:hover {
-        -webkit-box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
-        -moz-box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
-        box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
+        -webkit-box-shadow: 0 0 20px 0 rgba(0,0,0,0.15);
+        -moz-box-shadow: 0 0 20px 0 rgba(0,0,0,0.15);
+        box-shadow: 0 0 20px 0 rgba(0,0,0,0.15);
+      }
+
+      .red {
+        border: 1px solid $red;
+        background-color: $red;
+        color: white;
+
+        &:hover {
+          -webkit-box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
+          -moz-box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
+          box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
+        }
+      }
+
+      .blue {
+        border: 1px solid $blue;
+        background-color: $blue;
+        color: white;
+  
+        &:hover {
+          -webkit-box-shadow: 0 0 20px 0 rgba(95,120, 255,0.7);
+          -moz-box-shadow: 0 0 20px 0 rgba(95,120, 255,0.7);
+          box-shadow: 0 0 20px 0 rgba(95,120, 255,0.7);
+        }
       }
     }
 

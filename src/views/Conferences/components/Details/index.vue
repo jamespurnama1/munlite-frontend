@@ -1,41 +1,51 @@
 <template>
   <div class="wrap">
-    <div class="upper" v-if="width <= 960">
+    <div class="upper" id="pin" v-if="width <= 960">
       <span class="left">
-      <font-awesome-icon :icon="['fas', 'chevron-left']" @click="$emit('goBack')" />
+      <font-awesome-icon
+        :icon="['fas', 'chevron-left']"
+        @click="$emit('goBack')"
+      />
       <img :src="require('@/assets/img/home.png')">
-      <h1>{{ confData[sel].title }}</h1>
+      <h1>{{ confData.title }}</h1>
       </span>
+      <p
+        @click="$router.push(`/overview/${confData._id}`)"
+        class="right take"
+        v-if="ongoing">
+        Take me there
+        <font-awesome-icon :icon="['fas', 'chevron-right']" />
+      </p>
       <span class="right exportEdit">
         <button>
           Export
           <font-awesome-icon :icon="['fas', 'file-export']" />
         </button>
-        <button @click="$emit('edit', confData[sel].title)">
+        <button @click="$emit('edit', confData.title)">
           Edit
           <font-awesome-icon :icon="['fas', 'edit']" />
         </button>
       </span>
     </div>
-    <transition name="fade">
+    <transition name="fade" appear>
       <div class="details" v-if="sel !== null">
-        <transition name="slide">
-          <div v-show="ongoing(sel) && typeof sel === 'number'" class="ongoing">
+        <transition name="slide" appear>
+          <div v-show="ongoing" class="ongoing">
             <h3>This conference is ongoing</h3>
             <p
               class="take"
-              @click="$router.push(`/overview/${confData[sel]._id}`)">
+              @click="$router.push(`/overview/${confData._id}`)">
               Take me there
               <font-awesome-icon :icon="['fas', 'chevron-right']" />
             </p>
           </div>
         </transition>
-        <div class="left" :class="{offset: ongoing(sel)}">
+        <div class="left" :class="{offset: ongoing}">
 
           <div class="chair">
             <h3>Chair</h3>
             <ul>
-              <li v-for="(chair, i) in confData[sel].chairman" :key="i">
+              <li v-for="(chair, i) in confData.chairman" :key="i">
                 <img :src="require('@/assets/img/home.png')">
                 {{ chair.email }}
               </li>
@@ -64,14 +74,14 @@
             </div>
           </div>
         </div>
-        <div class="right" :class="{offset: ongoing(sel) && width > 600}">
+        <div class="right" :class="{offset: ongoing && width > 600}">
 
           <span class="exportEdit" v-if="width > 960">
             <button>
               Export
               <font-awesome-icon :icon="['fas', 'file-export']" />
             </button>
-            <button @click="$emit('edit', confData[sel].title)">
+            <button @click="$emit('edit', confData.title)">
               Edit
               <font-awesome-icon :icon="['fas', 'edit']" />
             </button>
@@ -107,19 +117,100 @@
 </template>
 
 <script>
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { mapState } from 'vuex';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default {
   name: 'confDetails',
   props: {
     sel: Number,
-    confData: Array,
-    ongoing: Function,
+    confData: Object,
+    ongoing: Boolean,
+    transEnd: Boolean,
+  },
+  data() {
+    return {
+      tl: null,
+    };
+  },
+  mounted() {
+    this.scroll();
+  },
+  methods: {
+    scroll() {
+      ScrollTrigger.matchMedia({
+        '(max-width: 960px)': () => {
+          ScrollTrigger.create({
+            trigger: '.nav',
+            start: 'bottom top',
+            endTrigger: '.details',
+            end: 'bottom top',
+            pinSpacing: false,
+            pin: '#pin',
+          });
+          this.tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: '.nav',
+              start: 'bottom top',
+              endTrigger: '.details',
+              end: 'top top',
+              scrub: true,
+            },
+          });
+          this.tl.fromTo('.upper .exportEdit', {
+            autoAlpha: 1,
+            scaleX: 1,
+          }, {
+            autoAlpha: 0,
+            scaleX: 0.5,
+          }, 0)
+            .fromTo('#pin', {
+              scaleY: 1,
+              boxShadow: '0 0 20px 0 rgba(0,0,0,0)',
+              borderRadius: '0',
+            }, {
+              scaleY: 0.5,
+              boxShadow: '0 0 20px 0 rgba(0,0,0,0.15)',
+              borderRadius: '0 0 15px 15px',
+            }, 0)
+            .fromTo('.upper .left', {
+              scaleX: 1,
+            }, {
+              scaleX: 0.5,
+            }, 0);
+          if (this.ongoing && typeof this.sel === 'number') {
+            this.tl.to('#pin', {
+              backgroundColor: '#5f78ff',
+              boxShadow: '0 0 20px 0 #5f78ff',
+              color: 'white',
+            }, 0)
+              .fromTo('.upper p.right', {
+                autoAlpha: 0,
+                scaleX: 1,
+                scaleY: 1,
+              }, {
+                autoAlpha: 1,
+                scaleY: 1.5,
+                scaleX: 0.75,
+              }, 0);
+          }
+        },
+      });
+    },
   },
   computed: {
     ...mapState({
       width: (state) => state.Global.widthWindow,
     }),
+  },
+  watch: {
+    transEnd() {
+      console.log('refresh');
+      ScrollTrigger.refresh(true);
+    },
   },
 };
 </script>

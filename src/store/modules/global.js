@@ -6,9 +6,16 @@ const global = {
     notAuthorized: false,
     genericError: false,
     muted: false,
+    showContext: null,
+    item: [],
+    contextPos: [0, 0],
+    me: {},
   },
 
   mutations: {
+    updateMe(state, i) {
+      state.me = i;
+    },
     toggleMute(state) {
       state.muted = !state.muted;
     },
@@ -26,6 +33,27 @@ const global = {
     },
     error(state, i) {
       state.genericError = i;
+    },
+    setContext(state, i) {
+      state.showContext = i;
+    },
+    setContextPos(state, i) {
+      state.contextPos = i;
+    },
+    setItem(state, i) {
+      state.item = i;
+    },
+  },
+  actions: {
+    context({ commit }, [data, actions, event]) {
+      commit('setContext', actions);
+      commit('setItem', data);
+      commit('setContextPos', event);
+    },
+    resetContext({ commit }) {
+      commit('setContext', null);
+      commit('setItem', []);
+      commit('setContextPos', [0, 0]);
     },
   },
 };

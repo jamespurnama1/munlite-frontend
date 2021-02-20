@@ -1,19 +1,19 @@
 <template>
-  <div class="context" :style="`left: ${position[0]}px; top: ${position[1]}px;`">
+  <div class="context" :style="`left: ${position.x}px; top: ${position.y}px;`">
     <ul>
       <li>
         <span
-          v-if="delegateName"
+          v-if="$route.name === 'GSL'"
           :class="`flag-icon img flag-icon-${getDelegatesID(delegateName).toLowerCase()}`" />
         <img v-else class="logo" :src="require('@/assets/img/home.png')">
         {{ nameItem }}
       </li>
       <li
-        v-for="(item, i) in action"
-        :key="i"
+        v-for="(disabled, item, index) in action"
+        :key="index"
         @click="click(item)"
         :class="{
-        disabled: disabled[i],
+        disabled: !disabled,
         red: item === 'Delete' || item === 'Remove From Queue' }">
         <p>
           {{ item }}
@@ -29,23 +29,20 @@ import { negara } from '@/const/country';
 
 export default {
   name: 'Context',
-  props: {
-    action: Array,
-    delegateName: String,
-    delegateId: String,
-    conferenceName: String,
-    conferenceId: String,
-    name: String,
-    id: String,
-    pos: Array,
-    disabled: {
-      type: Array,
-      default: () => [],
-    },
+  data() {
+    return {
+      position: {},
+    };
   },
   methods: {
+    posXY() {
+      const x = Math.min(Math.max(this.pos[0], 0), this.width - this.rect().width);
+      const y = Math.min(Math.max(this.pos[1], 0), this.height - this.rect().height);
+      this.position = { x, y };
+    },
     click(item) {
-      this.$emit('context', [item, this.nameItem]);
+      this.$root.$emit('context', [item, this.nameItem, this.idItem]);
+      this.$store.dispatch('resetContext');
     },
     getDelegatesID(name) {
       const data = negara.filter((obj) => obj.name === name);
@@ -54,34 +51,26 @@ export default {
       }
       return 'ad';
     },
+    rect() {
+      return document.querySelector('.context').getBoundingClientRect();
+    },
+  },
+  mounted() {
+    this.posXY();
   },
   computed: {
     ...mapState({
       width: (state) => state.Global.widthWindow,
       height: (state) => state.Global.heightWindow,
+      nameItem: (state) => state.Global.item[0],
+      idItem: (state) => state.Global.item[1],
+      pos: (state) => state.Global.contextPos,
+      action: (state) => state.Global.showContext,
     }),
-    position() {
-      const x = Math.min(Math.max(this.pos[0], 0), this.width - 175);
-      const y = Math.min(Math.max(this.pos[1], 0), this.height - 200);
-      return [x, y];
-    },
-    idItem() {
-      if (this.delegateId) {
-        return this.delegateId;
-      }
-      if (this.conferenceId) {
-        return this.conferenceId;
-      }
-      return this.id;
-    },
-    nameItem() {
-      if (this.delegateName) {
-        return this.delegateName;
-      }
-      if (this.conferenceName) {
-        return this.conferenceName;
-      }
-      return this.name;
+  },
+  watch: {
+    pos: {
+      handler: 'posXY',
     },
   },
 };

@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import * as Sentry from '@sentry/browser';
 import { Vue as VueIntegration } from '@sentry/integrations';
 import { Integrations } from '@sentry/tracing';
+// import devtools from '@vue/devtools';
 import Vue2TouchEvents from 'vue2-touch-events';
 import VueDragscroll from 'vue-dragscroll';
 import VueNativeSock from 'vue-native-websocket';
@@ -16,7 +17,9 @@ import store from './store';
 import router from './router';
 import App from './App.vue';
 
-Vue.use(Vue2TouchEvents)
+Vue.use(Vue2TouchEvents, {
+  disableClick: true,
+})
   .use(require('vue-shortkey'))
   .use(VueDragscroll)
   .use(vClickOutside)
@@ -43,6 +46,10 @@ Sentry.init({
 });
 
 Vue.config.productionTip = false;
+
+// if (process.env.NODE_ENV === 'development') {
+//   devtools.connect('https://3f80b6d49225.ngrok.io', null);
+// }
 
 const vm = new Vue({
   router,

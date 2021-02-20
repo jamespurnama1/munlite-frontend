@@ -1,6 +1,7 @@
 <template>
+  <div class="addConf">
   <div class="confModal">
-    <h1 v-if="type === 'add'">New Conference</h1>
+    <h1 v-if="!conf">New Conference</h1>
     <h1 v-else>Edit Conference</h1>
     <div class="top">
       <div class="info">
@@ -9,6 +10,7 @@
           <input
             :class="{error: warn.title}"
             placeholder=" "
+            :data-value="newConf.title ? newConf.title : ''"
             v-model="newConf.title">
           <label>Name</label>
         <p class="err" v-if="warn.title">Please enter a name</p>
@@ -34,8 +36,9 @@
         <div class="input">
           <input
             :class="{error: warn.start_date}"
-            placeholder=" "
+            placeholder="dd/mm/yyyy"
             type="date"
+            :data-value="dates.start ? dates.start : ''"
             v-model="dates.start">
           <label>Start Date</label>
           <p class="err" v-if="warn.start_date">Please enter a start date</p>
@@ -44,8 +47,9 @@
         <div class="input">
           <input
             :class="{error: warn.end_date}"
-            placeholder=" "
+            placeholder="dd/mm/yyyy"
             type="date"
+            :data-value="dates.end ? dates.end : ''"
             v-model="dates.end">
           <label>End Date</label>
           <p class="err" v-if="warn.end_date">Please enter an end date</p>
@@ -92,6 +96,7 @@
                   placeholder=" "
                   type="email"
                   v-model="email"
+                  :data-value="email ? email : ''"
                   @keyup.enter="addChair()">
                 <label>E-mail</label>
                 <p class="err" v-if="warn.email">{{ warn.email }}</p>
@@ -110,25 +115,28 @@
           <input
             :class="{error: warn.majority}"
             placeholder=" "
-            v-model="newConf.majority">
+            v-model="newConf.majority"
+            :data-value="newConf.majority ? newConf.majority : ''">
           <label>Majority</label>
-        <p class="err" v-if="warn.majority">Please enter a rule formula</p>
+        <p class="err" v-if="warn.majority">Please enter a formula</p>
       </div>
       <div class="input">
         <input
           :class="{error: warn.quorum}"
           placeholder=" "
-          v-model="newConf.quorum">
+          v-model="newConf.quorum"
+          :data-value="newConf.quorum ? newConf.quorum : ''">
         <label>Quorum</label>
-        <p class="err" v-if="warn.quorum">Please enter a rule formula</p>
+        <p class="err" v-if="warn.quorum">Please enter a formula</p>
       </div>
       <div class="input">
         <input
           :class="{error: warn.dr_vote}"
           placeholder=" "
+          :data-value="newConf.dr_vote ? newConf.dr_vote : ''"
           v-model="newConf.dr_vote">
         <label>DR Vote</label>
-        <p class="err" v-if="warn.dr_vote">Please enter a rule formula</p>
+        <p class="err" v-if="warn.dr_vote">Please enter a formula</p>
       </div>
       <div class="round">
         <h3>Rounding</h3>
@@ -149,9 +157,10 @@
             <span class="slider" />
       </label>
     </span>
+  </div>
     <span class="buttons">
     <button @click="exit()">Cancel</button>
-    <button class="blue" @click="addNewConf()" v-if="type === 'add'">Create</button>
+    <button class="blue" @click="addNewConf()" v-if="!conf">Create</button>
     <button class="blue" @click="editConf()" v-else>Save</button>
     </span>
   </div>
@@ -173,7 +182,6 @@ export default {
     Context,
   },
   props: {
-    type: String,
     conf: Object,
   },
   data() {
