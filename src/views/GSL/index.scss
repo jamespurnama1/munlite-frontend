@@ -1,16 +1,39 @@
 .gsl {
   height: 90vh;
-  width: calc(100% - 4rem);
+  width: 90%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
 
-  h1 {
-    font-size: 3.5rem;
-    font-family: 'Montserrat', sans-serif;
+  .upper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-    @include max-media(tablet) {
-      font-size: 2.5rem;
+    h1 {
+      font-size: 3.5rem;
+      font-family: 'Montserrat', sans-serif;
+
+      @include max-media(tablet) {
+        font-size: 2.5rem;
+      }
+      @include max-media(mobile) {
+        font-size: 1.5rem;
+      }
+    }
+
+    p {
+      @include max-media(mobile) {
+        font-size: .5rem;
+      }
+    }
+    button {
+      height: 2em;
+      width: 2em;
+      border-radius: 10px/10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 
@@ -112,14 +135,25 @@
     }
 
     .queue {
+      background-color: white;
+
       @include max-media(tablet) {
-        width: 50%;
-        z-index: 5;
+        // width: 50%;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        z-index: 200;
+        height: 135px;
+        width: 50vw;
+        min-width: 250px;
       }
-      @include max-media(mobile) {
-        width: 100%;
-        margin: 30px 0;
-      }
+      // @include max-media(mobile) {
+      //   width: 100%;
+      //   margin: 30px 0;
+      // }
     }
 
     .options {
@@ -146,6 +180,19 @@
         height: initial;
       }
 
+      .overlay {
+        width: 200vw;
+        height: 200vh;
+        z-index: 199;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.65);
+        pointer-events: none;
+      }
+
       .top {
         display: flex;
         justify-content: space-around;
@@ -169,15 +216,26 @@
         height: 50%;
         min-height: 200px;
         box-sizing: border-box;
+        background-color: white;
 
         @include max-media(tablet) {
-          margin: 0;
-          width: 50%;
-          height: 100%;
-        }
+          position: fixed;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          margin: auto;
+          z-index: 200;
+          height: 135px;
+          width: 50vw;
+          min-width: 250px;
+        //   margin: 0;
+        //   width: 50%;
+        //   height: 100%;
+        // }
 
-        @include max-media(mobile) {
-          width: 100%;
+        // @include max-media(mobile) {
+        //   width: 100%;
         }
 
       .choice {
@@ -358,4 +416,8 @@
       }
     }
   }
+}
+
+body {
+  overflow: hidden !important;
 }

@@ -13,14 +13,6 @@
   box-sizing: border-box;
   min-height: 120px;
 
-  @include max-media(tablet) {
-    width: 70%;
-  }
-
-  @include max-media(mobile) {
-    width: 100%;
-  }
-
   h3 {
     margin-bottom: 1em;
   }

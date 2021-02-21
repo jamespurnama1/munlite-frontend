@@ -9,7 +9,7 @@
   -ms-overflow-style: none;  /* Internet Explorer 10+ */
   scrollbar-width: none;  /* Firefox */
   backface-visibility: hidden;
-  // clip: rect(auto, auto, auto, auto);
+  clip: rect(auto, auto, auto, auto);
 
   &::-webkit-scrollbar { 
     display: none;  /* Safari and Chrome */

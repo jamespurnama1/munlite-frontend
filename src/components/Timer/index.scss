@@ -96,26 +96,26 @@
   }
 }
 
-  .main {
-    will-change: transform, box-shadow, color, border;
-    position: absolute;
-    top: 0;
-    right: -100px;
-    height: 70px;
-    width: 70px;
-    visibility: hidden;
-    border-radius: 15px / 15px;
+  // .main {
+  //   will-change: transform, box-shadow, color, border;
+  //   position: absolute;
+  //   top: 0;
+  //   right: -100px;
+  //   height: 70px;
+  //   width: 70px;
+  //   visibility: hidden;
+  //   border-radius: 15px / 15px;
 
-    &.blue {
-        color: $blue;
-        border: 1px solid white !important;
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7) !important;
-        -moz-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7) !important;
-        box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7) !important;
-      }
+  //   &.blue {
+  //       color: $blue;
+  //       border: 1px solid white !important;
+  //       -webkit-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7) !important;
+  //       -moz-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7) !important;
+  //       box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7) !important;
+  //     }
 
-    &:focus {
-      outline: none;
-    }
-  }
+  //   &:focus {
+  //     outline: none;
+  //   }
+  // }
 }

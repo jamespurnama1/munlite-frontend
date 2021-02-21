@@ -43,26 +43,6 @@
         >
           {{ filter }}
         </li>
-        <!-- <li
-          @click="filterData('CHAIR')"
-          :class="{sel: filterD.includes('CHAIR')}">
-          Chair
-        </li>
-        <li
-          @click="filterData('DELEGATE')"
-          :class="{sel: filterD.includes('DELEGATE')}">
-          Delegate
-        </li>
-        <li
-          @click="filterData('BEST DELEGATE')"
-          :class="{sel: filterD.includes('BEST DELEGATE')}">
-          Best Delegate
-        </li>
-        <li
-          @click="filterData('ONGOING')"
-          :class="{sel: filterD.includes('ONGOING')}">
-          Ongoing
-        </li> -->
       </ul>
     </div>
     </transition>
@@ -140,7 +120,7 @@ export default {
     },
   },
   mounted() {
-    this.filteredData = this.sortFunc(this.items, 'date', 'down');
+    this.filteredData = this.filterFunc(this.items, this.filterD, this.search);
     this.$emit('sortedData', this.filteredData);
   },
   computed: {

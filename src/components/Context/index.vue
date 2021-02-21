@@ -4,7 +4,7 @@
       <li>
         <span
           v-if="$route.name === 'GSL'"
-          :class="`flag-icon img flag-icon-${getDelegatesID(delegateName).toLowerCase()}`" />
+          :class="`flag-icon img flag-icon-${getDelegatesID(nameItem).toLowerCase()}`" />
         <img v-else class="logo" :src="require('@/assets/img/home.png')">
         {{ nameItem }}
       </li>
@@ -41,7 +41,7 @@ export default {
       this.position = { x, y };
     },
     click(item) {
-      this.$root.$emit('context', [item, this.nameItem, this.idItem]);
+      this.$root.$emit('context', [item, this.nameItem, this.idItem, this.index]);
       this.$store.dispatch('resetContext');
     },
     getDelegatesID(name) {
@@ -64,6 +64,7 @@ export default {
       height: (state) => state.Global.heightWindow,
       nameItem: (state) => state.Global.item[0],
       idItem: (state) => state.Global.item[1],
+      index: (state) => state.Global.item[2],
       pos: (state) => state.Global.contextPos,
       action: (state) => state.Global.showContext,
     }),

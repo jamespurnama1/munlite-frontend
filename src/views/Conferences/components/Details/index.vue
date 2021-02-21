@@ -21,7 +21,7 @@
           Export
           <font-awesome-icon :icon="['fas', 'file-export']" />
         </button>
-        <button @click="$emit('edit', confData.title)">
+        <button @click="$emit('edit', sel)">
           Edit
           <font-awesome-icon :icon="['fas', 'edit']" />
         </button>
@@ -81,7 +81,7 @@
               Export
               <font-awesome-icon :icon="['fas', 'file-export']" />
             </button>
-            <button @click="$emit('edit', confData.title)">
+            <button @click="$emit('edit', sel)">
               Edit
               <font-awesome-icon :icon="['fas', 'edit']" />
             </button>

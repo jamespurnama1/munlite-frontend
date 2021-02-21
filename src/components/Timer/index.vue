@@ -4,14 +4,14 @@
       <h3 id="timer">Timer</h3>
       <h1 class="read">{{ timerReadable }}</h1>
       <div class="controls">
-        <button :class="{blue: status !== 0}" @click="toggleActive()">
+        <button :class="{blue: status !== 0}" @click="debounce(toggleActive(), 1000, true)">
           <font-awesome-icon v-if="status === 0" :icon="['fas', 'pause']" />
           <font-awesome-icon v-else-if="status !== 0" :icon="['fas', 'play']" />
         </button>
-        <button @click="redo()">
+        <button @click="debounce(redo(), 1000, true)">
           <font-awesome-icon class="redo" :icon="['fas', 'redo']" />
         </button>
-        <button @click="skip()">
+        <button @click="debounce(skip(), 1000, true)">
           <font-awesome-icon class="skip" :icon="['fas', 'step-forward']" />
         </button>
         <button :class="{red: muted}" @click="toggleSound()">
@@ -20,10 +20,6 @@
         </button>
       </div>
     </div>
-    <button :class="{blue: status !== 0}" class="main" @click="toggleActive()">
-      <font-awesome-icon v-if="status === 0" :icon="['fas', 'pause']" size="2x" />
-      <font-awesome-icon v-else-if="status !== 0" :icon="['fas', 'play']" size="2x" />
-    </button>
     <audio id="ding" :src="require('@/assets/ding.mp3')" />
     <audio id="warn" :src="require('@/assets/warn.mp3')" />
   </div>
@@ -33,6 +29,8 @@
 import { mapState } from 'vuex';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+// eslint-disable-next-line no-unused-vars
+import { debounce } from 'debounce';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -44,6 +42,7 @@ export default {
       status: (state) => state.Socket.message.state,
       order: (state) => state.Socket.message.order,
       muted: (state) => state.Global.muted,
+      current: (state) => state.Global.current,
     }),
     timerReadable() {
       let mins;
@@ -97,6 +96,23 @@ export default {
     this.scroll();
   },
   methods: {
+    timeout(ms) {
+      let id;
+      const start = () => new Promise((resolve) => {
+        if (id === -1) {
+          throw new Error('Timer already aborted');
+        }
+        id = setTimeout(resolve, ms);
+      });
+      const abort = () => {
+        if (id !== -1 || id === undefined) {
+          clearTimeout(id);
+          id = -1;
+        }
+      };
+
+      return { start, abort };
+    },
     async redo() {
       gsap.to('.redo', {
         rotate: '-=360deg',
@@ -108,16 +124,20 @@ export default {
       const data = {
         session: 'gsl',
         command: 'stop',
+        order: this.current,
       };
       this.$socket.send(JSON.stringify(data));
-      await this.$nextTick();
-      const play = {
-        session: 'gsl',
-        command: 'play',
-        time: 90,
-        order: 1,
-      };
-      this.$socket.send(JSON.stringify(play));
+      const timeout = this.timeout(1000);
+      timeout.start()
+        .then(() => {
+          const play = {
+            session: 'gsl',
+            command: 'start',
+            time: 90,
+            order: this.current,
+          };
+          this.$socket.send(JSON.stringify(play));
+        });
     },
     async skip() {
       gsap.to('.skip', {
@@ -126,66 +146,13 @@ export default {
         yoyo: true,
         duration: 0.2,
       });
-      const data = {
-        session: 'gsl',
-        command: 'pause',
-        order: this.order,
-      };
-      this.$socket.send(JSON.stringify(data));
-      await this.$nextTick();
       const next = {
         session: 'gsl',
-        command: 'pause',
-        order: this.order + 1,
+        command: 'stop',
+        order: this.current,
       };
       this.$socket.send(JSON.stringify(next));
-    },
-    scroll() {
-      ScrollTrigger.matchMedia({
-        '(max-width: 960px)': () => {
-          this.tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: '#app',
-              start: 0,
-              end: '+=100px',
-              id: 'trigger1',
-              scrub: true,
-              snap: {
-                snapTo: [0, 1],
-                duration: { min: 0.3, max: 0.5 },
-                delay: 0.3,
-              },
-            },
-          });
-          this.tl.fromTo('.module, .main', {
-            boxShadow: '0px 0px 20px 0px rgba(0,0,0,0.15)',
-            border: '1px solid white',
-          }, {
-            boxShadow: '0px 0px 20px 0px rgba(0,0,0,0)',
-            border: '1px solid #d1d1d1',
-          })
-            .to('#timer', {
-              autoAlpha: 0,
-            }, 0)
-            .fromTo('.module', {
-              width: '100%',
-            }, {
-              minHeight: '70px',
-              padding: '10px',
-              width: 'calc(100% - 80px)',
-            }, 0)
-            .to('.main', {
-              x: '-100px',
-              autoAlpha: 1,
-            }, 0)
-            .to('.controls button', {
-              autoAlpha: 0,
-            }, 0)
-            .to('.controls', {
-              display: 'none',
-            });
-        },
-      });
+      this.$emit('next');
     },
     toggleActive() {
       this.$emit('active');

@@ -32,6 +32,45 @@ npm run lint
 
 ## Components
 
+### Context Menu
+
+#### Usage
+
+```html
+<div
+  v-for="(data, index) in Array"
+  @contextmenu.prevent="showC($event, data, index)"
+  v-touch:touchhold.prevent="showCon(data, index)"
+/>
+```
+
+```js
+showC(event, data, index) { // For pointer
+      if (!this.showInput) {
+        this.$store.dispatch('context', [
+          [data.title, data.id, index], // 1st param name, id, & index
+          { Edit: true, Delete: false }, // 2nd param all actions; false if disabled
+          [event.clientX, event.clientY], // 3nd param clientX & clientY of event
+        ]);
+      }
+    },
+    showCon(data, index) { // For touch
+      return (event) => {
+        if (!this.showInput) {
+          this.$store.dispatch('context', [
+            [data.title, data._id, index], // 1st param name, id, & index
+            { Edit: true, Delete: false }, // 2nd param all actions; false if disabled
+            [event.touches[0].clientX, event.touches[0].clientY], // 3nd param clientX & clientY of event
+          ]);
+        }
+      };
+    },
+```
+
+```js
+$root.on('context', (...args) => console.log(...args)); // [action, name, id, index]
+```
+
 ### Add Conference
 
 #### Usage
@@ -218,7 +257,10 @@ import CardStack from '@/components/CardStack/index.vue';
   :delegates="[{delegatesData}]"
   :active="0"
   :isActive="true"
-  :actions="['View Notes', 'Delete']"
+  :actions="{
+    'View Notes': true,
+    'Delete': false,
+  }"
   display="5"
   desc="presence"
   progress="45"
@@ -256,7 +298,7 @@ moveMethod(index) {
 | `delegates` | `null` | `Array` | The object array of delegates. | Yes |
 | `active` | `0` | `Number`  | Index number of `delegates` marking which delegate is on the timer. | No |
 | `isActive` | `false` | `Boolean`  | Indicate a timer is running | No |
-| `actions` | `[]` | `Array`  | Array of items for context menu. | Yes |
+| `actions` | `{}` | `Object`  | Object of actions for context menu; set key to false for disabled. | Yes |
 | `display` | `0` | `Number`  | Index number of `delegates` to show in the card stacks. | Yes |
 |`desc` | `''` | `String` | Set custom description. Use value `presence` to dynamically update with the country's presence. | No |
 | `progress` | `0` | `Number`/`String` | Set custom card progress. Use value `presence` to dynamically update with the country's presence. | No |

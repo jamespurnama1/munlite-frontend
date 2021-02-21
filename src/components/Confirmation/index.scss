@@ -42,7 +42,7 @@
         box-shadow: 0 0 20px 0 rgba(0,0,0,0.15);
       }
 
-      .red {
+      &.red {
         border: 1px solid $red;
         background-color: $red;
         color: white;
@@ -54,7 +54,7 @@
         }
       }
 
-      .blue {
+      &.blue {
         border: 1px solid $blue;
         background-color: $blue;
         color: white;

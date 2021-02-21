@@ -4,34 +4,25 @@
   v-shortkey="{up: ['arrowup'], down: ['arrowdown']}"
   @shortkey="keymap">
     <ul class="stack-cards">
-      <li v-for="(delegate, i) in delegates"
-      :key="i"
-      @click="click(i)"
-      @contextmenu.prevent="showC(i, $event)"
+      <li v-for="(delegate, index) in delegates"
+      :key="index"
+      @click="click(index)"
+      @contextmenu.prevent="showC($event, delegate, index)"
+      v-touch:touchhold.prevent="showCon(delegate, index)"
       :class="{
-        active: i === display,
-        top: i < display,
-        bottom: i > display,
+        active: index === display,
+        top: index < display,
+        bottom: index > display,
         }"
-      v-on:contextmenu.prevent="rightClick(i)"
       class="stack-cards__item">
         <Card
         :del="delegate"
         :desc="desc"
         :color="color"
         :prgrs="progress"
-        :number='i'
+        :number='index'
         :active="active"
-        :isActive="i === isActive" />
-        <Context
-          :action="[...actions]"
-          :delegateName="delegate.country"
-          :delegateId="delegate._id"
-          :pos="contextPos"
-          v-if="showContext === i"
-          @context="(...args) => context(...args, i)"
-          v-click-outside="config"
-        />
+        :isActive="index === isActive" />
       </li>
     </ul>
   </div>
@@ -41,9 +32,7 @@
 import { gsap } from 'gsap';
 import { mapState } from 'vuex';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { debounce } from 'debounce';
 import Card from '@/components/Card/index.vue';
-import Context from '@/components/Context/index.vue';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -70,15 +59,14 @@ export default {
       required: true,
     },
     actions: {
-      type: Array,
+      type: Object,
       default() {
-        return [];
+        return {};
       },
     },
   },
   components: {
     Card,
-    Context,
   },
   data() {
     return {
@@ -90,27 +78,31 @@ export default {
       trigger: null,
       rawSequence: gsap.timeline({ paused: true }),
       scrub: null,
-      showContext: false,
-      contextPos: [0, 0],
-      config: {
-        handler: () => { this.showContext = false; },
-        events: ['click'],
-      },
       mount: false,
     };
   },
   methods: {
-    showC(d, e) {
-      if (e) {
-        const r = e.target.getBoundingClientRect();
-        const x = Math.min(r.width - 165, e.clientX - r.left);
-        this.contextPos = [x, e.clientY - r.top];
+    showC(event, data, index) {
+      if (!this.showInput) {
+        this.$store.dispatch('context', [
+        // eslint-disable-next-line no-underscore-dangle
+          [data.country, data._id, index],
+          this.actions,
+          [event.clientX, event.clientY],
+        ]);
       }
-      this.showContext = d;
     },
-    context(...args) {
-      this.$emit('context', ...args);
-      this.showContext = false;
+    showCon(data, index) {
+      return (event) => {
+        if (!this.showInput) {
+          this.$store.dispatch('context', [
+          // eslint-disable-next-line no-underscore-dangle
+            [data.country, data._id, index],
+            this.actions,
+            [event.touches[0].clientX, event.touches[0].clientY],
+          ]);
+        }
+      };
     },
     // snap({ children, duration = 2000 }) {
     //   const countTo = parseInt(children, 10);
@@ -148,7 +140,7 @@ export default {
     move(i) {
       this.scrubTo(this.rawSequence.labels[`label${i}`]);
       const timer = this.timer(5000);
-      if (i !== this.isActive && this.active) {
+      if (i !== this.isActive && this.active) { // add user idle, yield input focus, & yield sel
         timer.start().then(() => {
           this.$emit('move', this.isActive);
         });
@@ -277,16 +269,17 @@ export default {
       this.trigger = await ScrollTrigger.create({
         scroller: '.stackOverflow',
         pin: '.stack-cards',
-        anticipatePin: 1,
-        // pinType: 'fixed',
+        // anticipatePin: 1,
+        pinType: 'fixed',
         start: 0,
         end: `+=${this.cards.length * 100}`,
         onUpdate: ((self) => {
+          console.time('test');
           const timer = this.timer(500);
-          if (self.scroller.scrollTop < this.minMax[0]) {
+          if (this.mount && self.scroller.scrollTop < this.minMax[0]) {
             // eslint-disable-next-line no-param-reassign
             timer.start().then(() => { [self.scroller.scrollTop] = this.minMax; });
-          } else if (self.scroller.scrollTop > this.minMax[1]) {
+          } else if (this.mount && self.scroller.scrollTop > this.minMax[1]) {
             // eslint-disable-next-line no-param-reassign
             timer.start().then(() => { [, self.scroller.scrollTop] = this.minMax; });
           } else {
@@ -297,10 +290,12 @@ export default {
               const c = parseInt(Object.keys(this.rawSequence.labels)
                 .find((key) => this.rawSequence.labels[key].toString() === v.toFixed(1))
                 .replace(/\D/g, ''), 10);
-              debounce(this.$store.commit('changeCurrent', c), 100, true);
               if (this.mount) {
+                this.$store.commit('changeCurrent', c);
                 this.$emit('move', c);
+                console.log('scrolltrigger', c);
               }
+              // }, 100, true);
             } catch (err) {
               // console.error(err); // ignore error as it is expected
             }
@@ -309,12 +304,14 @@ export default {
           this.scrub.invalidate().restart();
           // eslint-disable-next-line no-param-reassign
           self.wrapping = false;
+          console.timeEnd('test');
         }),
       });
       await setTimeout(() => {
-        this.$emit('move', this.display);
-      }, 500);
-      this.mount = true;
+        this.move(this.display);
+        console.log('init', this.display);
+        this.mount = true;
+      }, 1000);
     },
   },
   async mounted() {
@@ -330,7 +327,6 @@ export default {
   computed: {
     ...mapState({
       width: (state) => state.Global.widthWindow,
-      current: (state) => state.Global.current,
     }),
     minMax() {
       return [
@@ -344,12 +340,14 @@ export default {
     active() {
       if (this.active) {
         this.$emit('move', this.isActive);
+        console.log('isActive', this.isActive);
       }
     },
     display: {
       // eslint-disable-next-line object-shorthand, func-names
       handler: function () {
         this.move(this.display);
+        console.log('display', this.display);
       },
     },
     delegates() {

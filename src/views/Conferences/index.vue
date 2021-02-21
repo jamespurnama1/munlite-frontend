@@ -3,7 +3,7 @@
     <transition name="fade">
       <add-conference
         v-if="showInput"
-        :conf="conferencesData[sel]"
+        :conf="editData"
         @exit="exit"
         @update="updateConferencesData"
         v-click-outside="config"
@@ -42,6 +42,7 @@
           :sortFunc="sortFunc"
           :sortTypes="['name', 'date']"
           :filterFunc="filterFunc"
+          :key="conferencesData.length"
           :filterTypes="['Ongoing', ['Chair', 'Delegate', 'Best Delegate']]"
           @sortedData="(data) => {
             this.filteredData = data
@@ -52,8 +53,8 @@
             v-for="(data, index) in filteredData"
             :key="data.title" class="data"
             @click="select(index)"
-            @contextmenu.prevent="showC($event, data)"
-            v-touch:touchhold.prevent="showCon(data)"
+            @contextmenu.prevent="showC($event, data, index)"
+            v-touch:touchhold.prevent="showCon(data, index)"
             :class="{selected: sel === index}">
             <img class="logoConf" :src="require('@/assets/img/home@2x.png')" />
             <div class="nameConf">
@@ -125,6 +126,7 @@ export default {
       showConfirm: false,
       showInput: false,
       conferencesData: [],
+      editData: {},
       filteredData: [],
       filter: '',
       conf: null,
@@ -229,13 +231,14 @@ export default {
     },
     outside() {
       this.showInput = false;
+      this.editData = {};
       this.showConfirm = false;
     },
-    showC(event, data) {
+    showC(event, data, index) {
       if (!this.showInput) {
         this.$store.dispatch('context', [
         // eslint-disable-next-line no-underscore-dangle
-          [data.title, data._id],
+          [data.title, data._id, index],
           {
             Edit: true,
             Delete: true,
@@ -244,12 +247,12 @@ export default {
         ]);
       }
     },
-    showCon(data) {
+    showCon(data, index) {
       return (event) => {
         if (!this.showInput) {
           this.$store.dispatch('context', [
           // eslint-disable-next-line no-underscore-dangle
-            [data.title, data._id],
+            [data.title, data._id, index],
             {
               Edit: true,
               Delete: true,
@@ -259,11 +262,12 @@ export default {
         }
       };
     },
-    context([item, name, id]) {
-      if (item === 'delete') {
+    context([item, name, id, index]) {
+      if (item === 'Delete') {
         this.showConfirm = name;
       } else {
         this.showInput = true;
+        this.editData = this.filteredData[index];
         // eslint-disable-next-line no-underscore-dangle
         this.sel = this.conferencesData.findIndex((i) => i._id === id);
       }
@@ -272,7 +276,12 @@ export default {
       this.sel = i;
     },
     toggleInput(t) {
-      this.showInput = t;
+      if (t === 'add') {
+        this.editData = {};
+      } else {
+        this.editData = this.filteredData[t];
+      }
+      this.showInput = true;
     },
     async updateConferencesData() {
       try {
@@ -285,8 +294,9 @@ export default {
         console.error(err);
       }
     },
-    deleteConferenceData(conf) {
+    async deleteConferenceData(conf) {
       delConference(conf)
+        .then(() => this.updateConferencesData())
         .catch((err) => {
           if (err.response.status === 422) {
             this.$store.commit('noAuth', true);
@@ -296,10 +306,10 @@ export default {
           console.error(err);
         });
       this.exit();
-      this.updateConferencesData();
     },
     exit() {
       this.showInput = false;
+      this.editData = {};
       this.showConfirm = null;
     },
     async patchConferences(conf, data) {

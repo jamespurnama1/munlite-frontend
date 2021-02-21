@@ -1,75 +1,109 @@
 <template>
   <div class="gsl" v-if="delegatesData">
-    <h1 v-if="widthWindow > 960" class="title">General Speakers List</h1>
-    <h1 v-else-if="widthWindow <= 960" class="title">GSL</h1>
-    <!-- <p v-if="widthWindow > 960">Scroll or drag the cards to view the rest of the queue.</p>
-    <p v-else>Swipe the cards to view the rest of the queue.</p> -->
-    <p v-if="widthWindow > 960">Right click the cards for more options.</p>
-    <p v-else>Long press the cards for more options.</p>
+    <div class="upper">
+      <span>
+        <h1 v-if="widthWindow > 960" class="title">General Speakers List</h1>
+        <h1 v-else-if="widthWindow <= 960" class="title">GSL</h1>
+        <!-- <p v-if="widthWindow > 960">Scroll or drag the cards to view the rest of the queue.</p>
+        <p v-else>Swipe the cards to view the rest of the queue.</p> -->
+        <p v-if="widthWindow > 960">Right click the cards for more options.</p>
+        <p v-else>Long press the cards for more options.</p>
+      </span>
+      <button @click="showQueue = true" v-if="widthWindow <= 960">
+        <font-awesome-icon :icon="['fas', 'plus']"/>
+      </button>
+    </div>
     <div class="wrapper">
       <Timer
         v-if="widthWindow <= 960
         && socket"
         class="time"
-        @active="toggleActive()" />
+        @active="toggleActive()"
+        @update="updateGSL()"
+        @next="next"
+      />
       <div class="cards">
-      <CardStack
-        :key="gslList.length"
-        v-if="gslList.length > 0"
-        :delegates="gslList"
-        :active="socket.state === 0"
-        :isActive="socket.order"
-        :display="currentCountry"
-        :actions="['Clear Yield', 'Restart', 'View Notes', 'Remove From Queue']"
-        @context="context"
-        @move="move" />
+        <CardStack
+          :key="gslList.length"
+          v-if="gslList.length > 0"
+          :delegates="gslList"
+          :active="socket.state === 0"
+          :isActive="gslCurrent"
+          :display="currentCountry"
+          :actions="{
+            'Yield To': true,
+            'Restart': true,
+            'View Notes': true,
+            'Clear Yield': true,
+            'Remove From Queue': true,
+          }"
+          @move="move"
+        />
       </div>
       <div class="options">
-        <div class="top" v-if="widthWindow > 960">
-          <Timer
-            v-if="socket"
-            class="time"
-            @active="toggleActive()" />
+        <transition-group name="fade">
+          <div key="1" class="top" v-if="widthWindow > 960">
+            <Timer
+              v-if="socket"
+              class="time"
+              @active="toggleActive()"
+              @update="updateGSL()"
+              @next="next"
+            />
+            <Queue
+              v-if="countryList"
+              class="queue"
+              :items="countryList"
+              @add="addQueue"
+            />
+          </div>
           <Queue
-            v-if="countryList"
+            key="2"
+            v-else-if="widthWindow <= 960
+            && countryList && showQueue"
             class="queue"
             :items="countryList"
-            @add="addQueue" />
-        </div>
-        <Queue
-          v-else-if="widthWindow <= 960
-          && countryList"
-          class="queue"
-          :items="countryList"
-          @add="addQueue" />
-        <div class="bottom">
-          <h3>Yield To:</h3>
-          <div class="choice">
-            <span class="ChairQ">
-              <button :class="{ selected: selected === 1 }" @click="select(1)">Chair</button>
-              <button :class="{ selected: selected === 2 }" @click="select(2)">Questions</button>
-            </span>
-            <div class="yieldCountry" :class="{filled: selected === 3}">
-              <Autocomplete
-                v-if="countryList"
-                :items="countryList"
-                :class="{show: showInput == true}"
-                @onchangeCountry="yieldInput"
-                placeholder="Delegate"
-                @focus="selected = null"
-              />
+            @add="addQueue"
+            v-click-outside="config"
+          />
+          <div
+            key="3"
+            class="bottom"
+            v-if="widthWindow > 960 || showYield"
+            v-click-outside="config"
+          >
+            <h3>Yield To:</h3>
+            <div class="choice">
+              <span class="ChairQ">
+                <button :class="{ selected: selected === 1 }" @click="select(1)">Chair</button>
+                <button :class="{ selected: selected === 2 }" @click="select(2)">Questions</button>
+              </span>
+              <div class="yieldCountry" :class="{filled: selected === 3}">
+                <Autocomplete
+                  v-if="countryList"
+                  :items="countryList"
+                  :class="{show: showInput == true}"
+                  @onchangeCountry="yieldInput"
+                  placeholder="Delegate"
+                  @focus="selected = null"
+                />
+              </div>
+              <transition name="fade">
+                <div
+                  class="selection"
+                  :class="{two: selected === 2, three: selected === 3}"
+                  v-show="selected"
+                />
+              </transition>
             </div>
-            <transition name="fade">
-              <div
-                class="selection"
-                :class="{two: selected === 2, three: selected === 3}"
-                v-show="selected" />
-            </transition>
+            <div class="yield">
+              <button @click="changeYield()" :disabled="!selected">Yield</button>
+            </div>
           </div>
-          <div class="yield">
-            <button @click="changeYield()" :disabled="!selected">Yield</button>
-          </div>
-        </div>
+          <div key="4" class="overlay" v-if="widthWindow <= 960
+            && countryList && (showQueue || showYield)"
+          />
+        </transition-group>
       </div>
     </div>
   </div>
@@ -77,7 +111,7 @@
 
 <script>
 import {
-  addTurn, getGSL, delTurn, yieldGSL,
+  addTurn, getGSL, delTurn, yieldGSL, nextGSL,
 } from '@/api/gsl';
 import { mapState } from 'vuex';
 import { negara } from '@/const/country';
@@ -99,24 +133,46 @@ export default {
     return {
       delegatesData: [],
       gslData: null,
-      currentCountry: 0,
-      curr: 0,
+      currentCountry: 0, // cardstacks display
       selected: null,
       yieldDelegate: '',
       showInput: false,
-      gslCurrent: null,
+      gslCurrent: null, // current in GET gsl
       newArr: [],
+      showYield: false,
+      showQueue: false,
+      config: {
+        handler: this.outside,
+        events: ['click'],
+      },
     };
   },
   methods: {
-    context([i, d], index) {
-      console.log(i, d, index);
-      switch (i) {
+    outside() {
+      this.showYield = false;
+      this.showQueue = false;
+    },
+    context([action, , , index]) {
+      switch (action) {
         case 'Remove From Queue':
           this.deleteTurn(index);
           break;
         case 'Clear Yield':
-          this.changeYield(index);
+          this.changeYield();
+          break;
+        case 'View Notes':
+          // view notes
+          break;
+        case 'Restart':
+          // restart
+          break;
+        case 'Yield To':
+          if (this.widthWindow <= 960) {
+            this.currentCountry = index;
+            this.showYield = true;
+          } else {
+            // focus yield
+          }
           break;
         default:
       }
@@ -161,40 +217,64 @@ export default {
       this.$store.commit('gslList', this.newArr);
       this.currentCountry = this.current;
     },
-    async changeYield(r) {
-      let data;
+    async changeYield() {
       try {
-        let y = '';
-        let o = this.current;
-        console.log('test', r);
-        if (!r) {
-          switch (this.selected) {
-            case 1:
-              y = 'Chair';
-              break;
-            case 2:
-              y = 'Questions';
-              break;
-            case 3:
-              y = this.yieldDelegate;
-              break;
-            default:
-              y = '';
-          }
-        } else {
-          y = '';
-          o = r;
+        let data;
+        const order = this.gslCurrent + 1;
+        console.log(this.socket.order, order);
+        // if (this.socket.order === order) {
+        switch (this.selected) {
+          case 1:
+            data = {
+              order,
+              yield: 'Chair',
+              time_left: this.socket.time,
+            };
+            break;
+          case 2:
+            data = {
+              order,
+              yield: 'Questions',
+              time_left: this.socket.time,
+            };
+            break;
+          case 3:
+            data = {
+              order,
+              yield: this.yieldDelegate,
+              time_left: this.socket.time,
+            };
+            break;
+          default:
         }
-        data = {
-          order: o + 1,
-          yield: y,
-        };
+        this.$socket.send(JSON.stringify({
+          session: 'gsl',
+          command: 'stop',
+          order,
+        }));
+        console.log('Stop!', order);
         await yieldGSL(this.$route.params.id, data);
+        console.log('Yield!', data);
+        await nextGSL(this.$route.params.id);
+        console.log('Next!');
+        // } else {
+        //   await yieldGSL(this.$route.params.id, data);
+        //   console.log('Yield!', data);
+        // }
         this.updateGSL();
       } catch (err) {
         console.error(err.response);
       }
-      console.log('Yield!', data);
+      this.showYield = false;
+    },
+    async next() {
+      try {
+        console.log('next!');
+        await nextGSL(this.$route.params.id);
+        this.updateGSL();
+      } catch (err) {
+        console.error(err);
+      }
     },
     async deleteTurn(i) {
       try {
@@ -221,6 +301,7 @@ export default {
           console.log('Added to Queue', data);
           this.updateGSL();
         }
+        this.showQueue = false;
       } catch (err) {
         console.error(err.response);
       }
@@ -252,8 +333,10 @@ export default {
         data.order = 1;
       } else if (this.socket.state === 1) {
         data.command = 'resume';
+        data.order = this.gslCurrent;
       } else {
         data.command = 'pause';
+        data.order = this.gslCurrent;
       }
       console.log('Send WebSocket Data!', JSON.stringify(data));
       this.$socket.send(JSON.stringify(data));
@@ -310,6 +393,7 @@ export default {
     },
   },
   async created() {
+    this.$root.$on('context', (...args) => this.context(...args));
     try {
       await this.updateDelegatesData();
       this.updateGSL();
@@ -329,7 +413,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '@/styles/index.scss';
 @import './index.scss';
 </style>

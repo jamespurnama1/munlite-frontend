@@ -25,3 +25,8 @@ export async function delTurn(id, turn) {
   const resp = await request.delete(`/api/conference/${id}/gsl/${turn}`);
   return resp;
 }
+
+export async function nextGSL(id) {
+  const res = await request.patch(`/api/conference/${id}/gsl/next`);
+  return res;
+}

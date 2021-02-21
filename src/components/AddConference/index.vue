@@ -1,7 +1,7 @@
 <template>
   <div class="addConf">
   <div class="confModal">
-    <h1 v-if="!conf">New Conference</h1>
+    <h1 v-if="!conf || Object.keys(conf).length === 0">New Conference</h1>
     <h1 v-else>Edit Conference</h1>
     <div class="top">
       <div class="info">
@@ -160,7 +160,7 @@
   </div>
     <span class="buttons">
     <button @click="exit()">Cancel</button>
-    <button class="blue" @click="addNewConf()" v-if="!conf">Create</button>
+    <button class="blue" @click="addNewConf()" v-if="Object.keys(conf).length === 0">Create</button>
     <button class="blue" @click="editConf()" v-else>Save</button>
     </span>
   </div>
@@ -360,7 +360,7 @@ export default {
   created() {
     this.getMe()
       .then(() => {
-        if (this.conf) {
+        if (this.conf && Object.keys(this.conf).length > 0) {
           this.newConf = { ...this.conf.rules };
           this.newConf.title = this.conf.title;
           const c = this.conf.chairman;
