@@ -237,7 +237,6 @@ export default {
     showC(event, data, index) {
       if (!this.showInput) {
         this.$store.dispatch('context', [
-        // eslint-disable-next-line no-underscore-dangle
           [data.title, data._id, index],
           {
             Edit: true,
@@ -251,7 +250,6 @@ export default {
       return (event) => {
         if (!this.showInput) {
           this.$store.dispatch('context', [
-          // eslint-disable-next-line no-underscore-dangle
             [data.title, data._id, index],
             {
               Edit: true,
@@ -268,7 +266,6 @@ export default {
       } else {
         this.showInput = true;
         this.editData = this.filteredData[index];
-        // eslint-disable-next-line no-underscore-dangle
         this.sel = this.conferencesData.findIndex((i) => i._id === id);
       }
     },
@@ -315,7 +312,6 @@ export default {
     async patchConferences(conf, data) {
       try {
         const responses = new Promise((resolve) => {
-          // eslint-disable-next-line no-underscore-dangle
           resolve(updateConference(conf._id, data));
         });
         responses.then(() => {

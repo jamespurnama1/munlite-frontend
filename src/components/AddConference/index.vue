@@ -159,9 +159,23 @@
     </span>
   </div>
     <span class="buttons">
-    <button @click="exit()">Cancel</button>
-    <button class="blue" @click="addNewConf()" v-if="Object.keys(conf).length === 0">Create</button>
-    <button class="blue" @click="editConf()" v-else>Save</button>
+      <button @click="exit()">
+        Cancel
+      </button>
+      <button
+        class="blue"
+        @click="addNewConf()"
+        v-if="Object.keys(conf).length === 0"
+      >
+        Create
+      </button>
+      <button
+        class="blue"
+        @click="editConf()"
+        v-else
+      >
+        Save
+      </button>
     </span>
   </div>
 </template>
@@ -277,7 +291,6 @@ export default {
             const data = {
               email: difference[i],
             };
-            // eslint-disable-next-line no-underscore-dangle
             addChairman(this.conf._id, JSON.stringify(data));
           }
         } catch (err) {
@@ -296,7 +309,6 @@ export default {
             const data = {
               email: diff[i].email,
             };
-            // eslint-disable-next-line no-underscore-dangle
             delChairman(this.conf._id, JSON.stringify(data));
           }
         } catch (err) {
@@ -309,7 +321,6 @@ export default {
 
       const data = this.newConf;
       delete data.chairman;
-      // eslint-disable-next-line no-underscore-dangle
       updateConference(this.conf._id, JSON.stringify(data))
         .then(() => {
           this.$emit('update');

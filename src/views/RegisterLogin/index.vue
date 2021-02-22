@@ -6,7 +6,9 @@
       <input
         v-model="formData.first"
         type="text"
+        :data-value="formData.first ? formData.first : ''"
         placeholder=" "
+        autocomplete="given-name"
         required>
       <label>First Name</label>
     </div>
@@ -14,7 +16,9 @@
       <input
         v-model="formData.last"
         type="text"
+        :data-value="formData.last ? formData.last : ''"
         placeholder=" "
+        autocomplete="family-name"
         required>
       <label>Last Name</label>
     </div>
@@ -22,7 +26,9 @@
       <input
         v-model="formData.email"
         type="email"
+        :data-value="formData.email ? formData.email : ''"
         placeholder=" "
+        autocomplete="email"
         required>
       <label>E-mail</label>
     </div>

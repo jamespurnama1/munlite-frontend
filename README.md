@@ -114,6 +114,7 @@ import Search from '@/components/Search/index.vue';
 ```html
 <Search
   :items="array"
+  :key="array"
   :sortFunc="sortMethod"
   :sortTypes="['type']"
   :filterFunc="filterMethod"

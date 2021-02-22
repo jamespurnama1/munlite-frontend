@@ -3,7 +3,7 @@
     <h3>{{ content }}</h3>
     <div class="buttons">
       <button @click="exit()" class="cancel">Cancel</button>
-      <button @click="action(id)"
+      <button @click="action(id); exit()"
         :class="{red: negative, blue: negative === false}">
         {{ button }}
       </button>

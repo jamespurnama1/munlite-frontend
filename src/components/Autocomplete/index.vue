@@ -20,12 +20,12 @@
         class="autocomplete-results"
       >
         <li
-          v-for="(result, i) in results"
-          :key="i"
+          v-for="(result, index) in results"
+          :key="index"
           class="autocomplete-result"
-          @mouseover="sel = i"
+          @mouseover="sel = index"
           @click="setResult(result)"
-          :class="{sel: sel === i}"
+          :class="{sel: sel === index}"
         >
           {{ result.name }}
         </li>
@@ -42,11 +42,14 @@ export default {
     items: {
       type: Array,
       required: true,
-      default: () => [],
     },
     placeholder: {
       type: String,
       default: () => 'Name',
+    },
+    prefilled: {
+      type: String,
+      default: () => '',
     },
   },
   watch: {
@@ -68,10 +71,10 @@ export default {
     keymap(event) {
       switch (event.srcKey) {
         case 'up':
-          this.sel -= 1;
+          this.sel = Math.max(this.sel - 1, 0);
           break;
         case 'down':
-          this.sel += 1;
+          this.sel = Math.min(this.sel + 1, this.items.length - 1);
           break;
         case 'enter':
           this.setResult(this.results[this.sel]);
@@ -110,6 +113,9 @@ export default {
         this.focus = false;
       }
     },
+  },
+  created() {
+    this.newCountry = this.prefilled;
   },
   mounted() {
     document.addEventListener('click', this.handleClickOutside);

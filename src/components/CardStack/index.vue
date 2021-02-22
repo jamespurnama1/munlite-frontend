@@ -85,7 +85,6 @@ export default {
     showC(event, data, index) {
       if (!this.showInput) {
         this.$store.dispatch('context', [
-        // eslint-disable-next-line no-underscore-dangle
           [data.country, data._id, index],
           this.actions,
           [event.clientX, event.clientY],
@@ -96,7 +95,6 @@ export default {
       return (event) => {
         if (!this.showInput) {
           this.$store.dispatch('context', [
-          // eslint-disable-next-line no-underscore-dangle
             [data.country, data._id, index],
             this.actions,
             [event.touches[0].clientX, event.touches[0].clientY],

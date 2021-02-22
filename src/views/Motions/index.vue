@@ -1,156 +1,220 @@
 <template>
   <div class="delegates">
     <div class="delegates-upper">
-      <h1 class="title">Delegates</h1>
-      <div class="info" v-if="width <= 960">
-        <div class="info-data" v-for="(value, key) in info" :key="key">
-          <p class="title emphasize">{{ key }}</p>
-          <p class="data"><b class="emphasize">{{ value }}</b> Delegates</p>
-        </div>
-      </div>
-      <div class="delegates-button">
-        <button
-          class="button press"
-          @click="showModal"
-          :disabled="delegatesData.length < 1"
-        >
-          Roll Call
-        </button>
-        <div class="button">
-          <transition name="fade">
-            <add-delegates
-              v-if="showInput"
-              :items="countryList"
-              @exit="exit"
-              @update="updateDelegatesData"
-            />
-          </transition>
-          <font-awesome-icon :icon="['fas', 'plus']" @click="toggleInput"/>
-        </div>
+      <h1 class="title">Motions</h1>
+      <div class="button" @click="showModal = true">
+        <font-awesome-icon :icon="['fas', 'plus']" />
       </div>
     </div>
     <div class="delegates-table">
       <div class="table">
         <div class="title">
           <p class="title-name">Name</p>
-          <p class="title-presence">Presence</p>
+          <p>Proposer</p>
+          <p class="title-time" v-if="width > 960">Time</p>
+          <p class="title-vote" v-if="width > 960">Yes Vote</p>
+          <p class="title-vote" v-if="width > 960">No Vote</p>
         </div>
         <div class="content">
-          <div class="table-data" v-if="delegatesData.length > 0">
-            <div v-for="(data, index) in delegatesData" :key="index" class="data">
-              <p class="name" @mouseover="hoverable = index" @mouseleave="hoverable = null">
+          <div class="table-data" v-if="motionsData.length > 0">
+            <transition-group name="fade">
+            <div
+              v-for="(motion, index) in motionsData"
+              :key="motion._id"
+              class="data"
+              @contextmenu.prevent="showC($event, motion, index)"
+              v-touch:touchhold.prevent="showCon(motion, index)"
+            >
+              <span>
+                <p class="name" v-if="motion.name !== ''">
+                  <b>{{ motion.name }}</b>
+                </p>
+                <p class="caption">
+                  {{ motion.type }}
+                </p>
+              </span>
+              <p>
                 <span
-                :class="`flag-icon img flag-icon-${getDelegatesID(data.country).toLowerCase()}`" />
-                {{ data.country }}
-                <span
-                  class="hidden"
-                  :class="{show: hoverable == index}"
-                  @click="showConfirm = data.country"
-                >
-                  <font-awesome-icon :icon="['fas', 'trash-alt']" />
+                  :class="`flag-icon img flag-icon-${getDelegatesID(motion.proposer)
+                    .toLowerCase()}`"
+                />
+                {{ motion.proposer }}
+              </p>
+              <font-awesome-icon
+                :class="{rotate: expand === index}"
+                v-if="width <= 960"
+                :icon="['fas', 'chevron-down']"
+                @click="expand === index ? expand = null : expand = index" />
+              <span class="extra" v-if="width > 960 || expand === index">
+              <p class="time">
+                <b>{{ motion.total_time / 60 }}</b>
+                <span class="caption"> minutes</span>
+                <span v-if="motion.speaking_time !== 0">
+                  <br>
+                  <b>{{ motion.speaking_time }}</b>
+                  <span class="caption"> seconds / individual</span>
                 </span>
               </p>
+              <div class="input vote">
+                <input
+                  @change="editMotion(motion)"
+                  min="0"
+                  :max="delegatesData.length"
+                  type="number"
+                  placeholder=" "
+                  :data-value="typeof motion.yes_vote === 'number' ? motion.yes_vote : ''"
+                  v-model.number="motion.yes_vote"
+                >
+                <label v-if="width <= 960">Yes Vote</label>
+              </div>
+              <div class="input vote">
+                <input
+                  @change="editMotion(motion)"
+                  min="0"
+                  :max="delegatesData.length"
+                  type="number"
+                  placeholder=" "
+                  :data-value="typeof motion.no_vote === 'number' ? motion.no_vote : ''"
+                  v-model.number="motion.no_vote"
+                >
+                <label v-if="width <= 960">No Vote</label>
+              </div>
+              <button
+                @click="showConfirm = index"
+                :class="{
+                  red: motion.no_vote > motion.yes_vote,
+                  blue: motion.no_vote < motion.yes_vote
+                  && motion.no_vote + motion.yes_vote === delegatesData.length
+                }">
+                <p v-if="motion.no_vote > motion.yes_vote">Voting Failed</p>
+                <p v-else>Start Caucus</p>
+                <font-awesome-icon :icon="['fas', 'chevron-right']" />
+              </button>
+              </span>
               <Confirmation
-                content="Are you sure you want to delete?"
-                :action="deleteDelegatesData"
-                :delegateName="data.country"
-                :delegateId="data._id"
-                v-if="showConfirm === data.country"
+                :content="`Are you sure you want to delete ${motion.name
+                ? motion.name : motion.type.toLowerCase()}?`"
+                :action="deleteMotionsData"
+                :negative="true"
+                :id="motion._id"
+                button="Delete"
+                v-if="showConfirm !== null && showConfirm === `del ${index}`"
+                v-click-outside="config"
                 @exit="exit"
               />
-              <p class="presence">{{ data.status }}</p>
+              <Confirmation
+              :content="`Start the ${motion.name
+              ? motion.name : motion.type.toLowerCase()}?`"
+              :action="startMotion"
+              :negative="false"
+              :id="motion._id"
+              button="Start"
+              v-else-if="showConfirm !== null && typeof showConfirm === 'number'"
+              v-click-outside="config"
+              @exit="exit"
+            />
             </div>
+            </transition-group>
           </div>
-          <div class="table-data empty-data" v-else>No Delegates in the list</div>
-          <div class="info" v-if="width> 960">
-            <div class="info-data" v-for="(value, key) in info" :key="key">
-              <p class="title emphasize">{{ key }}</p>
-              <div class="data"><b class="emphasize">{{ value }}</b> Delegates</div>
-            </div>
-          </div>
+          <div class="table-data empty-data" v-else>No Motions in the list</div>
         </div>
       </div>
     </div>
     <transition name="fade">
-      <div class="rollcall" v-if="showOverlay">
-        <RollCall
-          :key="1"
-          :delegatesData="delegatesData"
-          @update="updateDelegatesData"
-          v-if="stage === 1"
-        />
-        <Vote
-          :key="2" v-else-if="stage === 2"
-          :delegatesData="delegatesData"
-          :info="info"
-          :rulesData="rulesData"
-        />
-        <Pass :key="3" v-else-if='stage === 3' />
-      </div>
+      <add-motion
+        :editMotion="editMotion"
+        v-if="showModal"
+        :data="edit"
+        @exit="exit"
+        @update="updateMotionsData"
+        v-click-outside="config"
+      />
     </transition>
-    <div class="overlay" v-if="showOverlay || showInput || showConfirm != null" />
+    <div class="overlay" v-if="showModal|| showConfirm != null" />
   </div>
 </template>
 
 <script>
-import { getAllDelegates, deleteDelegates } from '@/api/delegates';
-import { getConference } from '@/api/conference';
 import { negara } from '@/const/country';
+import {
+  getMotions,
+  deleteMotion,
+  updateMotion,
+  startCaucus,
+} from '@/api/motions';
+import { getAllDelegates } from '@/api/delegates';
 import Confirmation from '@/components/Confirmation/index.vue';
 import { mapState } from 'vuex';
-import AddDelegates from './components/AddDelegates/index.vue';
-import RollCall from './components/RollCall/index.vue';
-import Vote from './components/Vote/index.vue';
-import Pass from './components/Pass/index.vue';
+import AddMotion from './components/AddMotion/index.vue';
 
 export default {
-  name: 'Delegates',
+  name: 'Motions',
   components: {
-    RollCall,
-    Vote,
-    Pass,
     Confirmation,
-    AddDelegates,
+    AddMotion,
   },
   data() {
     return {
-      showOverlay: false,
-      hoverable: null,
-      showInput: false,
-      newCountry: '',
-      stage: 0,
-      delegatesData: [],
-      dr_vote: 0,
-      rulesData: [],
-      countryList: negara,
+      showModal: false,
       showConfirm: null,
+      newCountry: '',
+      motionsData: [],
+      config: {
+        handler: this.exit,
+        events: ['click'],
+      },
+      edit: null,
+      delegatesData: [],
+      expand: null,
     };
   },
   computed: {
     ...mapState({
       width: (state) => state.Global.widthWindow,
+      countryList: (state) => state.Delegates.countryList,
     }),
-    info() {
-      const present = this.delegatesData.filter((obj) => obj.status.toLowerCase() === 'present');
-      const pv = this.delegatesData.filter((obj) => obj.status.toLowerCase() === 'present & voting');
-      const total = present.length + pv.length;
-      const data = {
-        Present: present.length,
-        'Present & Voting': pv.length,
-        'Total Present': total,
-        'DR Sponsors': Math.floor(this.dr_vote * (total)),
-      };
-      return data;
-    },
   },
   methods: {
-    showModal() {
-      this.showOverlay = true;
-      this.stage = 1;
+    context([action, , , index]) {
+      switch (action) {
+        case 'Start Caucus':
+          this.showConfirm = index;
+          console.log(typeof this.showConfirm);
+          break;
+        case 'Edit':
+          this.edit = this.motionsData[index];
+          this.showModal = true;
+          break;
+        case 'Delete':
+          this.showConfirm = `del ${index}`;
+          break;
+        default:
+      }
     },
-    toggleInput() {
-      this.showInput = !this.showInput;
-      this.newCountry = '';
+    showC(event, data, index) {
+      if (!this.showModal) {
+        const name = data.name ? data.name : data.type;
+        this.$store.dispatch('context', [
+          [name, data._id, index],
+          { Edit: true, 'Start Caucus': true, Delete: true },
+          [event.clientX, event.clientY],
+        ]);
+      }
+    },
+    showCon(data, index) {
+      return (event) => {
+        if (!this.showModal) {
+          const name = data.name ? data.name : data.type;
+          this.$store.dispatch('context', [
+            [name, data._id, index],
+            { Edit: true, 'Start Caucus': true, Delete: true },
+            [event.touches[0].clientX, event.touches[0].clientY],
+          ]);
+        }
+      };
+    },
+    toggleModal() {
+      this.showModal = !this.showModal;
     },
     getDelegatesID(name) {
       const data = negara.filter((obj) => obj.name === name);
@@ -159,10 +223,10 @@ export default {
       }
       return 'ad';
     },
-    sortCountry(items) {
+    sortMotions(items) {
       items.sort((a, b) => {
-        const nameA = a.country.toUpperCase();
-        const nameB = b.country.toUpperCase();
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
         if (nameA < nameB) {
           return -1;
         }
@@ -173,64 +237,93 @@ export default {
       });
       return items;
     },
-    async updateDelegatesData() {
+    async editMotion(data) {
       try {
-        const delegates = await getAllDelegates(this.$route.params.id);
-        if (delegates.data.data !== null) {
-          this.delegatesData = this.sortCountry(delegates.data.data);
+        await updateMotion(this.$route.params.id, JSON.stringify(data));
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async updateMotionsData() {
+      try {
+        const motions = await getMotions(this.$route.params.id);
+        if (motions.data.data !== null) {
+          this.motionsData = this.sortMotions(motions.data.data);
         }
       } catch (err) {
         console.error(err);
       }
     },
-    async deleteDelegatesData(country) {
+    async updateDelegatesData() {
       try {
+        const delegates = await getAllDelegates(this.$route.params.id);
+        if (delegates.data.data !== null) {
+          this.delegatesData = delegates.data.data;
+          this.newCountryList();
+        }
+        console.log('Got new Delegates', delegates.data.data);
+      } catch (err) {
+        console.error(err.response);
+      }
+    },
+    async deleteMotionsData(motion) {
+      try {
+        console.log('deleting', motion);
         const responses = new Promise((resolve) => {
-          resolve(deleteDelegates(this.$route.params.id, country));
+          resolve(deleteMotion(this.$route.params.id, motion));
         });
         responses.then(() => {
           this.exit();
-          this.updateDelegatesData();
+          this.updateMotionsData();
         });
       } catch (err) {
         console.error(err);
       }
     },
-    exit() {
-      this.showInput = false;
+    async startMotion(id) {
+      const [motion] = this.motionsData.filter((m) => m._id === id);
+      if (motion.no_vote < motion.yes_vote
+        && motion.no_vote + motion.yes_vote === this.delegatesData.length) {
+        try {
+          const data = {
+            motion_id: id,
+          };
+          startCaucus(this.$route.params.id, JSON.stringify(data));
+          this.$router.push(`/caucus/${this.$route.params.id}`);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    },
+    newCountryList() {
+      const list = [];
+      this.delegatesData.forEach((item) => {
+        let data = negara.filter((e) => e.name === item.country)[0];
+        if (data) {
+          list.push(data);
+        } else {
+          data = {
+            name: item.country,
+          };
+          list.push(data);
+        }
+      });
+      console.log('Matched Delegates with Country List', list);
+      this.$store.commit('countryList', list);
+    },
+    async exit() {
+      this.edit = null;
+      this.showModal = false;
       this.showConfirm = null;
+      await setTimeout(() => {
+        this.updateMotionsData();
+      }, 500);
     },
   },
-  watch: {
-    stage() {
-      if (this.stage > 0) {
-        document.querySelector('body').style.cssText = 'height: 100vh; width: 100vw; overflow: hidden;';
-      } else {
-        document.querySelector('body').style.removeProperty('height');
-        document.querySelector('body').style.removeProperty('width');
-        document.querySelector('body').style.removeProperty('overflow');
-      }
-    },
-  },
-  async created() {
+  created() {
+    this.$root.$on('context', (...args) => this.context(...args));
+    this.updateMotionsData();
     this.updateDelegatesData();
-    try {
-      const conference = await getConference(this.$route.params.id);
-      this.rulesData = conference.data.data.rules;
-      const [parse] = (conference.data.data.rules.dr_vote).split(' ');
-      const num = parse.split('/');
-      this.dr_vote = (num[0] / num[1]).toFixed(2);
-    } catch (err) {
-      console.error(err);
-    }
-  },
-  mounted() {
-    this.$on('stage', (i) => {
-      if (i === 0) {
-        this.showOverlay = false;
-      }
-      this.stage = i;
-    });
   },
 };
 </script>

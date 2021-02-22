@@ -5,7 +5,10 @@
         <span
           v-if="$route.name === 'GSL'"
           :class="`flag-icon img flag-icon-${getDelegatesID(nameItem).toLowerCase()}`" />
-        <img v-else class="logo" :src="require('@/assets/img/home.png')">
+        <img
+          v-else-if="$route.name !== 'Motions'"
+          class="logo" :src="require('@/assets/img/home.png')"
+        >
         {{ nameItem }}
       </li>
       <li

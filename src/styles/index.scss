@@ -77,16 +77,6 @@ button {
       font-size: .75em;
     }
 
-    // &:not([type="date"]) ~ label {
-    //   color: $light-grey;
-    //   content: attr(placeholder) !important;
-    //   margin-right: 0.5em;
-    // }
-
-    // &[type="date"]:focus:before {
-    //   content: '' !important;
-    // }
-
     &:-webkit-input-placeholder, &:placeholder, &:-webkit-datetime-edit {
       color: transparent;
     }
@@ -106,16 +96,12 @@ button {
       }
     }
 
-    &:not([data-value=""]) ~ label {
+    &:not([data-value=""]):not([type="password"]) ~ label,
+    &[type="password"]:not(:placeholder-shown) ~ label {
       transform: translateY(-170%);
       font-size: .75em;
       color: black;
     }
-
-    // &[type="date"] ~ label {
-    //   transform: translateY(0);
-    //   font-size: inherit;
-    // }
     
     &:focus ~ label, &.focus ~ label {
       transform: translateY(-170%);

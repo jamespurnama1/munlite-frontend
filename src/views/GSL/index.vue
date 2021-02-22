@@ -197,7 +197,6 @@ export default {
       this.newArr.length = 0;
       let data;
       for (let i = 0; i < l.queue.length; i += 1) {
-        // eslint-disable-next-line no-underscore-dangle
         [data] = this.delegatesData.filter((e) => e._id === l.queue[i].delegate_id);
         data.time_start = l.queue[i].time_start;
         data.time_left = l.queue[i].time_left;
@@ -207,7 +206,6 @@ export default {
         } else if (l.queue[i].yield.toLowerCase() === 'questions' || l.queue[i].yield.toLowerCase() === 'chair') {
           y = { yield: l.queue[i].yield };
         } else if (l.queue[i].yield) {
-          // eslint-disable-next-line no-underscore-dangle
           const [delY] = this.delegatesData.filter((e) => e._id === l.queue[i].yield);
           y = { yield: delY.country };
         }
@@ -278,7 +276,6 @@ export default {
     },
     async deleteTurn(i) {
       try {
-        // eslint-disable-next-line no-underscore-dangle
         await delTurn(this.$route.params.id, i + 1);
         console.log('Deleted Turn', i + 1);
         this.updateGSL();
@@ -290,7 +287,6 @@ export default {
       try {
         const [id] = this.delegatesData.filter((obj) => obj.country === i);
         const data = {
-          // eslint-disable-next-line no-underscore-dangle
           delegate_id: id._id,
           time_start: 90,
           time_left: 90,
@@ -309,7 +305,6 @@ export default {
     async updateGSL() {
       try {
         const list = await getGSL(this.$route.params.id);
-        // eslint-disable-next-line no-underscore-dangle
         console.log('Got new GSL', list.data.data.queue[0].yield, list.data.data.queue[0].delegate_id);
         if (list.data.data !== null) {
           this.gslData = list.data.data;
@@ -355,7 +350,6 @@ export default {
         this.selected = 0;
       }
       const [del] = this.delegatesData.filter((obj) => obj.country === country);
-      // eslint-disable-next-line no-underscore-dangle
       this.yieldDelegate = del._id;
     },
     getDelegatesID(name) {

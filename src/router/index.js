@@ -13,19 +13,54 @@ const routes = [
     component: () => import('@/views/Home'),
   },
   {
-    path: '/overview/:id',
-    name: 'Overview',
-    component: () => import('@/views/Overview'),
-  },
-  {
     path: '/conferences',
     name: 'Conferences',
     component: () => import('@/views/Conferences'),
   },
   {
+    path: '/connections',
+    name: 'Connections',
+    redirect: '/',
+  },
+  {
+    path: '/files',
+    name: 'Files',
+    redirect: '/',
+  },
+  {
+    path: '/account',
+    name: 'Account',
+    redirect: '/',
+  },
+  {
+    path: '/overview/:id',
+    name: 'Overview',
+    component: () => import('@/views/Overview'),
+  },
+  {
     path: '/delegates/:id',
     name: 'Delegates',
     component: () => import('@/views/Delegates'),
+  },
+  {
+    path: '/gsl/:id',
+    name: 'GSL',
+    component: () => import('@/views/GSL'),
+  },
+  {
+    path: '/motions/:id',
+    name: 'Motions',
+    component: () => import('@/views/Motions'),
+  },
+  {
+    path: '/caucus/:id',
+    name: 'Caucus',
+    redirect: '/',
+  },
+  {
+    path: '/crisis/:id',
+    name: 'Crisis',
+    redirect: '/',
   },
   {
     path: '/signup',
@@ -36,11 +71,6 @@ const routes = [
     path: '/login',
     name: 'Log In',
     component: () => import('@/views/RegisterLogin'),
-  },
-  {
-    path: '/gsl/:id',
-    name: 'GSL',
-    component: () => import('@/views/GSL'),
   },
 ];
 
