@@ -88,6 +88,7 @@
 
     @include max-media(tablet) {
       margin-top: 110px;
+      overflow: initial;
     }
 
     h4 {

@@ -442,3 +442,9 @@ export default {
 @import '@/styles/index.scss';
 @import './index.scss';
 </style>
+
+<style lang="scss">
+body {
+  overflow: hidden !important;
+}
+</style>

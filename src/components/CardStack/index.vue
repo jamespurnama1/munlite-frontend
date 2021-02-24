@@ -303,7 +303,7 @@ export default {
           this.scrub.invalidate().restart();
           // eslint-disable-next-line no-param-reassign
           self.wrapping = false;
-          console.timeEnd('teanimation scriptst');
+          console.timeEnd('animation script');
         }),
       });
       await setTimeout(() => {
