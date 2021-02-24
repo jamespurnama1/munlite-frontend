@@ -1,6 +1,6 @@
 #Home {
   margin: 0 auto;
-  width: 90%;
+  width: calc(100% - 4rem);
   flex-grow: 1;
   padding: 3% 0;
   
@@ -177,10 +177,14 @@
     }
 
     .conferences {
-      width: 40%;
+      width: 30%;
+      border: 1px solid $light-grey;
+      border-radius: 20px/20px;
+      padding: 15px;
       
       @include max-media(tablet) {
         width: 100%;
+        box-sizing: border-box;
       }
 
       .sub-title {
@@ -188,6 +192,7 @@
         flex-direction: row;
         align-content: center;
         margin-bottom: 1rem;
+        justify-content: space-between;
 
         button {
           margin-left: 1rem;
@@ -199,6 +204,7 @@
 
           @include max-media(mobile) {
             font-size: 14px;
+            border-radius: 10px/10px;
           }
         }
       }

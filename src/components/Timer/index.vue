@@ -29,7 +29,6 @@
 import { mapState } from 'vuex';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-// eslint-disable-next-line no-unused-vars
 import { debounce } from 'debounce';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -59,7 +58,7 @@ export default {
   },
   watch: {
     timer() {
-      console.log(this.timer);
+      // console.log(this.timer);
       if (!this.muted && this.status === 0) {
         if (this.timer === 5) {
           document.getElementById('warn').play();
@@ -90,30 +89,31 @@ export default {
     return {
       interval: null,
       tl: null,
+      debounce,
     };
   },
   async mounted() {
     this.scroll();
   },
   methods: {
-    timeout(ms) {
-      let id;
-      const start = () => new Promise((resolve) => {
-        if (id === -1) {
-          throw new Error('Timer already aborted');
-        }
-        id = setTimeout(resolve, ms);
-      });
-      const abort = () => {
-        if (id !== -1 || id === undefined) {
-          clearTimeout(id);
-          id = -1;
-        }
-      };
+    // timeout(ms) {
+    //   let id;
+    //   const start = () => new Promise((resolve) => {
+    //     if (id === -1) {
+    //       throw new Error('Timer already aborted');
+    //     }
+    //     id = setTimeout(resolve, ms);
+    //   });
+    //   const abort = () => {
+    //     if (id !== -1 || id === undefined) {
+    //       clearTimeout(id);
+    //       id = -1;
+    //     }
+    //   };
 
-      return { start, abort };
-    },
-    async redo() {
+    //   return { start, abort };
+    // },
+    redo() {
       gsap.to('.redo', {
         rotate: '-=360deg',
         color: '#5f78ff',
@@ -121,23 +121,7 @@ export default {
         yoyo: true,
         ease: 'power2',
       });
-      const data = {
-        session: 'gsl',
-        command: 'stop',
-        order: this.current,
-      };
-      this.$socket.send(JSON.stringify(data));
-      const timeout = this.timeout(1000);
-      timeout.start()
-        .then(() => {
-          const play = {
-            session: 'gsl',
-            command: 'start',
-            time: 90,
-            order: this.current,
-          };
-          this.$socket.send(JSON.stringify(play));
-        });
+      this.$emit('restart');
     },
     async skip() {
       gsap.to('.skip', {
@@ -146,12 +130,6 @@ export default {
         yoyo: true,
         duration: 0.2,
       });
-      const next = {
-        session: 'gsl',
-        command: 'stop',
-        order: this.current,
-      };
-      this.$socket.send(JSON.stringify(next));
       this.$emit('next');
     },
     toggleActive() {

@@ -36,4 +36,28 @@ service.interceptors.request.use(
   },
 );
 
+// response interceptor to refresh token on receiving token expired error
+service.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const originalRequest = error.config;
+    // let refreshToken = localStorage.getItem("refreshToken");
+    if (error.response.status === 401 && !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+      return store.dispatch('fetchJWT')
+        .then((res) => {
+          if (res.status === 200) {
+            // localStorage.setItem('accessToken', res.data.accessToken);
+            console.log('Access token refreshed!');
+          }
+          return service(originalRequest);
+        });
+    }
+    console.log(error); // for debug
+    router.push('/login');
+    return Promise.reject(error);
+  },
+);
+
 export default service;

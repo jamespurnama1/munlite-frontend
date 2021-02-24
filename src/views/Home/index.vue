@@ -1,7 +1,6 @@
 <template>
   <div id="Home">
     <add-conference
-      type="add"
       v-if="showConf"
       @exit="outside"
       @update="updateConferencesData"
@@ -35,19 +34,19 @@
             v-for="(data, index) in conferences"
             :key="index"
             class="conference-data"
-            @click="$router.push(`/overview/${data._id}`)" >
+            @click="$router.push(`/overview/${data._id}`).catch(() => {})" >
             <div class="img"></div>
             <div class="detail">
               <p class="name">{{ data.title }}</p>
               <div class="info">
                 <span class="started-time">
-                  2020
+                  {{ data.start_date.split("-").shift() }}
                 </span>
               </div>
             </div>
           </div>
         </div>
-        <button class="viewall button" @click="$router.push('/conferences')">
+        <button class="viewall button" @click="$router.push('/conferences').catch(() => {})">
           View All <font-awesome-icon :icon="['fas', 'chevron-right']"/>
         </button>
       </div>

@@ -120,14 +120,25 @@
         </div>
       </div>
     </div>
+    <Confirmation
+      content="Discard adding motion?"
+      :action="exitAdd"
+      :negative="true"
+      button="Discard"
+      whiteButton="Save Changes"
+      v-if="showConfirm === 'add'"
+      v-click-outside="showconfirm = null"
+      @exit="exit"
+    />
     <transition name="fade">
       <add-motion
         :editMotion="editMotion"
         v-if="showModal"
         :data="edit"
-        @exit="exit"
+        @exit="showConfirm = 'add'"
+        @exitSafe="exit(); showModal = false"
         @update="updateMotionsData"
-        v-click-outside="config"
+        v-click-outside="configAdd"
       />
     </transition>
     <div class="overlay" v-if="showModal|| showConfirm != null" />
@@ -157,10 +168,16 @@ export default {
     return {
       showModal: false,
       showConfirm: null,
-      newCountry: '',
       motionsData: [],
       config: {
         handler: this.exit,
+        events: ['click'],
+      },
+      configAdd: {
+        handler: () => {
+          this.showConfirm = 'add';
+        },
+        middleware: (event) => event.target.className !== 'cancel',
         events: ['click'],
       },
       edit: null,
@@ -179,7 +196,6 @@ export default {
       switch (action) {
         case 'Start Caucus':
           this.showConfirm = index;
-          console.log(typeof this.showConfirm);
           break;
         case 'Edit':
           this.edit = this.motionsData[index];
@@ -268,7 +284,7 @@ export default {
     },
     async deleteMotionsData(motion) {
       try {
-        console.log('deleting', motion);
+        console.log('Deleting', motion);
         const responses = new Promise((resolve) => {
           resolve(deleteMotion(this.$route.params.id, motion));
         });
@@ -289,7 +305,7 @@ export default {
             motion_id: id,
           };
           startCaucus(this.$route.params.id, JSON.stringify(data));
-          this.$router.push(`/caucus/${this.$route.params.id}`);
+          this.$router.push(`/caucus/${this.$route.params.id}`).catch(() => {});
         } catch (err) {
           console.error(err);
         }
@@ -313,11 +329,15 @@ export default {
     },
     async exit() {
       this.edit = null;
-      this.showModal = false;
+      // this.showModal = false;
       this.showConfirm = null;
       await setTimeout(() => {
         this.updateMotionsData();
       }, 500);
+    },
+    exitAdd() {
+      this.confirm = null;
+      this.showModal = false;
     },
   },
   created() {

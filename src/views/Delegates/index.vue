@@ -1,5 +1,13 @@
 <template>
   <div class="delegates">
+    <transition name="fade">
+      <add-delegates
+        v-if="showInput"
+        :items="countryList"
+        @exit="exit"
+        @update="updateDelegatesData"
+      />
+    </transition>
     <div class="delegates-upper">
       <h1 class="title">Delegates</h1>
       <div class="info" v-if="width <= 960">
@@ -16,17 +24,9 @@
         >
           Roll Call
         </button>
-        <div class="button">
-          <transition name="fade">
-            <add-delegates
-              v-if="showInput"
-              :items="countryList"
-              @exit="exit"
-              @update="updateDelegatesData"
-            />
-          </transition>
-          <font-awesome-icon :icon="['fas', 'plus']" @click="toggleInput"/>
-        </div>
+        <button class="button" @click="toggleInput">
+          <font-awesome-icon :icon="['fas', 'plus']"/>
+        </button>
       </div>
     </div>
     <div class="delegates-table">

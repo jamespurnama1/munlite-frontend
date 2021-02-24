@@ -20,6 +20,7 @@
         class="time"
         @active="toggleActive()"
         @update="updateGSL()"
+        @restart="restart()"
         @next="next"
       />
       <div class="cards">
@@ -37,6 +38,7 @@
             'Clear Yield': true,
             'Remove From Queue': true,
           }"
+          :prevent="prevent && selected"
           @move="move"
         />
       </div>
@@ -48,6 +50,7 @@
               class="time"
               @active="toggleActive()"
               @update="updateGSL()"
+              @restart="restart()"
               @next="next"
             />
             <Queue
@@ -85,7 +88,8 @@
                   :class="{show: showInput == true}"
                   @onchangeCountry="yieldInput"
                   placeholder="Delegate"
-                  @focus="selected = null"
+                  @focus="selected = null; prevent = true"
+                  :country="yieldCountry"
                 />
               </div>
               <transition name="fade">
@@ -97,7 +101,7 @@
               </transition>
             </div>
             <div class="yield">
-              <button @click="changeYield()" :disabled="!selected">Yield</button>
+              <button @click="changeYield(); prevent = false" :disabled="!selected">Yield</button>
             </div>
           </div>
           <div key="4" class="overlay" v-if="widthWindow <= 960
@@ -136,11 +140,13 @@ export default {
       currentCountry: 0, // cardstacks display
       selected: null,
       yieldDelegate: '',
+      yieldCountry: '',
       showInput: false,
       gslCurrent: null, // current in GET gsl
       newArr: [],
       showYield: false,
       showQueue: false,
+      prevent: false,
       config: {
         handler: this.outside,
         events: ['click'],
@@ -213,7 +219,7 @@ export default {
         this.newArr.push(data);
       }
       this.$store.commit('gslList', this.newArr);
-      this.currentCountry = this.current;
+      this.currentCountry = this.gslCurrent;
     },
     async changeYield() {
       try {
@@ -242,6 +248,7 @@ export default {
               yield: this.yieldDelegate,
               time_left: this.socket.time,
             };
+            this.yieldCountry = '';
             break;
           default:
         }
@@ -267,12 +274,35 @@ export default {
     },
     async next() {
       try {
-        console.log('next!');
+        const next = {
+          session: 'gsl',
+          command: 'stop',
+          order: this.gslCurrent,
+        };
+        this.$socket.send(JSON.stringify(next));
         await nextGSL(this.$route.params.id);
         this.updateGSL();
+        console.log('next!');
       } catch (err) {
         console.error(err);
       }
+    },
+    async restart() {
+      const data = {
+        session: 'gsl',
+        command: 'stop',
+        order: this.gslCurrent,
+      };
+      this.$socket.send(JSON.stringify(data));
+      await setTimeout(() => {
+        const play = {
+          session: 'gsl',
+          command: 'start',
+          time: this.gslList[this.gslCurrent].time_start,
+          order: this.gslCurrent,
+        };
+        this.$socket.send(JSON.stringify(play));
+      }, 1000);
     },
     async deleteTurn(i) {
       try {
@@ -324,7 +354,7 @@ export default {
       };
       if (this.socket.state === 2) {
         data.command = 'start';
-        data.time = 90;
+        data.time = this.gslList[this.gslCurrent].time_left;
         data.order = 1;
       } else if (this.socket.state === 1) {
         data.command = 'resume';
@@ -351,6 +381,7 @@ export default {
       }
       const [del] = this.delegatesData.filter((obj) => obj.country === country);
       this.yieldDelegate = del._id;
+      this.yieldCountry = country;
     },
     getDelegatesID(name) {
       const data = negara.filter((obj) => obj.name === name);

@@ -64,6 +64,7 @@ export default {
         return {};
       },
     },
+    prevent: Boolean,
   },
   components: {
     Card,
@@ -138,11 +139,11 @@ export default {
     move(i) {
       this.scrubTo(this.rawSequence.labels[`label${i}`]);
       const timer = this.timer(5000);
-      if (i !== this.isActive && this.active) { // add user idle, yield input focus, & yield sel
-        timer.start().then(() => {
-          this.$emit('move', this.isActive);
-        });
-      } else {
+      // TODO: fix & add user idle
+      timer.start().then(() => {
+        this.$emit('move', this.isActive);
+      });
+      if (i === this.isActive || !this.active || this.prevent) {
         timer.abort();
       }
     },
@@ -272,7 +273,7 @@ export default {
         start: 0,
         end: `+=${this.cards.length * 100}`,
         onUpdate: ((self) => {
-          console.time('test');
+          console.time('animation script');
           const timer = this.timer(500);
           if (this.mount && self.scroller.scrollTop < this.minMax[0]) {
             // eslint-disable-next-line no-param-reassign
@@ -291,7 +292,7 @@ export default {
               if (this.mount) {
                 this.$store.commit('changeCurrent', c);
                 this.$emit('move', c);
-                console.log('scrolltrigger', c);
+                // console.log('scrolltrigger', c);
               }
               // }, 100, true);
             } catch (err) {
@@ -302,12 +303,12 @@ export default {
           this.scrub.invalidate().restart();
           // eslint-disable-next-line no-param-reassign
           self.wrapping = false;
-          console.timeEnd('test');
+          console.timeEnd('teanimation scriptst');
         }),
       });
       await setTimeout(() => {
         this.move(this.display);
-        console.log('init', this.display);
+        // console.log('init', this.display);
         this.mount = true;
       }, 1000);
     },
@@ -338,14 +339,14 @@ export default {
     active() {
       if (this.active) {
         this.$emit('move', this.isActive);
-        console.log('isActive', this.isActive);
+        // console.log('isActive', this.isActive);
       }
     },
     display: {
       // eslint-disable-next-line object-shorthand, func-names
       handler: function () {
         this.move(this.display);
-        console.log('display', this.display);
+        // console.log('display', this.display);
       },
     },
     delegates() {

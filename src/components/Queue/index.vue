@@ -8,6 +8,7 @@
           :class="{show: showInput === true}"
           @onchangeCountry="(n) => newCountry = n"
           placeholder="Delegate"
+          :country="newCountry"
         />
       </div>
       <span class="container">

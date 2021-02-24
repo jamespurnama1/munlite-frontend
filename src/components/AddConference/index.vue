@@ -143,7 +143,7 @@
         <span>
           <p>Down</p>
           <label class="switch">
-            <input type="checkbox">
+            <input v-model="round" type="checkbox">
             <span class="slider" />
           </label>
           <p>Up</p>
@@ -196,11 +196,16 @@ export default {
     Context,
   },
   props: {
-    conf: Object,
+    conf: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
   },
   data() {
     return {
-      round: null,
+      round: false,
       email: null,
       dates: {
         start: null,
@@ -229,7 +234,7 @@ export default {
         majority: null,
         dr_vote: null,
         quorum: null,
-        rounding: 'down',
+        rounding: 'Round Down',
         chairman: [],
       },
     };
@@ -380,6 +385,7 @@ export default {
             if (c[i].email !== this.me.email) {
               arr.push(c[i].email);
             }
+            if (this.conf.rules.rounding === 'Round Up') this.round = true;
           }
           this.newConf.chairman = [...arr];
           this.dates.end = this.dateFormat(this.conf.end_date);
@@ -390,17 +396,19 @@ export default {
   computed: {
   },
   watch: {
-    round() {
-      switch (this.round) {
-        case true:
-          this.newConf.rounding = 'up';
-          break;
-        case false:
-          this.newConf.rounding = 'down';
-          break;
-        default:
-          this.newConf.rounding = null;
-      }
+    round: {
+      handler() {
+        switch (this.round) {
+          case true:
+            this.newConf.rounding = 'Round Up';
+            break;
+          case false:
+            this.newConf.rounding = 'Round Down';
+            break;
+          default:
+        }
+      },
+      immediate: true,
     },
     email() {
       if (this.email) {

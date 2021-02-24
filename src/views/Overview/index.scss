@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: row;
   padding: 3%;
-  min-height: 75vh;
+  min-height: calc(100vh - 15rem);
   font-family: 'Montserrat', sans-serif;
   margin-bottom: 4rem;
 
@@ -64,7 +64,7 @@
     flex-direction: column;
     justify-content: center;
     padding-left: 3.5rem;
-    width: 50%;
+    width: 35%;
 
     @include max-media(tablet){
       width: 45%;
@@ -78,6 +78,10 @@
 
     .chair,
     .rules {
+      border: 1px solid $light-grey;
+      border-radius: 20px/20px;
+      padding: 15px;
+
       &-sub-header {
         font-size: 3.5rem;
         font-weight: bold;

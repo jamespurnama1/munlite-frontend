@@ -45,7 +45,7 @@ export default {
         document.querySelector('body').style.removeProperty('height');
         document.querySelector('body').style.removeProperty('width');
         document.querySelector('body').style.removeProperty('overflow');
-        this.$router.push(`/gsl/${this.$route.params.id}`);
+        this.$router.push(`/gsl/${this.$route.params.id}`).catch(() => {});
       }
     },
   },

@@ -13,7 +13,7 @@
         <label>Search</label>
         <span class="containBadge">
           <div class="badge" v-for="(filter, i) in filterD" :key="i">
-            <p>{{ filter }}</p>
+            <p>{{ filter.toUpperCase() }}</p>
           </div>
         </span>
       </div>

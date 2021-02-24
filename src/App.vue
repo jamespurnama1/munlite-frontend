@@ -267,7 +267,7 @@ export default {
       return string === 'home' ? '' : string;
     },
     goToHome() {
-      this.$router.push('/');
+      this.$router.push('/').catch(() => {});
       this.onTabClick();
     },
   },

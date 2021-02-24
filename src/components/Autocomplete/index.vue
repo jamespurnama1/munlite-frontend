@@ -51,10 +51,14 @@ export default {
       type: String,
       default: () => '',
     },
+    country: String,
   },
   watch: {
     newCountry() {
       this.emitData();
+    },
+    country() {
+      this.newCountry = this.country;
     },
   },
   data() {
@@ -98,11 +102,9 @@ export default {
       }
     },
     setResult(result) {
-      console.log(1, result);
       this.newCountry = result.name;
       this.$emit('onchangeCountry', this.newCountry);
       this.focus = false;
-      // this.isOpen = false;
     },
     emitData() {
       this.$emit('onchangeCountry', this.newCountry);

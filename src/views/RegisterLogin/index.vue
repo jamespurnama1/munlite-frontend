@@ -136,7 +136,7 @@ export default {
             this.$router.push('/login');
           },
           (error) => {
-            console.log(error);
+            console.error(error);
             this.signupButton = 'Sign Up';
             this.errorMessage = 'Failed to Register';
           },

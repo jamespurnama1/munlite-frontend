@@ -96,14 +96,14 @@
       </button>
       <button
         class="blue"
-        @click="addMotion(motionData); exit()" v-if="!data
+        @click="addMotion(motionData); $emit('exitSafe')" v-if="!data
         || Object.keys(data).length === 0"
       >
         Create
       </button>
       <button
         class="blue"
-        @click="editMotion(motionData); exit()"
+        @click="editMotion(motionData); $emit('exitSafe')"
         v-else
       >
         Save

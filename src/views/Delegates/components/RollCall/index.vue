@@ -71,7 +71,6 @@ export default {
           country: this.delegatesData[i].country,
           status: j,
         };
-        console.log(data);
         // eslint-disable-next-line no-underscore-dangle
         await editDelegates(this.$route.params.id, this.delegatesData[i]._id, data);
         this.$emit('update');

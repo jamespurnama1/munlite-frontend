@@ -16,10 +16,11 @@
       v-on:beforeEnter="() => {transEnd = false}"
       v-on:afterLeave="() => {transEnd = true}"
       class="conferences"
-      :class="{mobile: width <= 960 && sel !== null}"
+      :class="{mobile: width <= 960 && (sel !== null || motions !== null || delegates !== null)}"
       tag="div"
       :name="transName">
-      <div :key="3" class="conferences-upper" v-if="width > 960 || sel === null">
+      <div key="3upper" class="conferences-upper" v-if="width > 960
+        || (sel === null && motions === null && delegates === null)">
         <span>
           <h1 class="title">Conferences</h1>
           <p v-if="width > 960">Right click for more options</p>
@@ -32,9 +33,10 @@
         </div>
       </div>
       <div
-        :key="4"
+        key="4table"
         class="table-data"
-        v-if="conferencesData.length > 0 && (width > 960 || sel === null)"
+        v-if="conferencesData.length > 0
+        && (width > 960 || (sel === null && motions === null && delegates === null))"
       >
         <Search
           class="search"
@@ -42,17 +44,17 @@
           :sortFunc="sortFunc"
           :sortTypes="['name', 'date']"
           :filterFunc="filterFunc"
-          :key="conferencesData.length"
+          :key="key"
           :filterTypes="['Ongoing', ['Chair', 'Delegate', 'Best Delegate']]"
           @sortedData="(data) => {
-            this.filteredData = data
+            filteredData = data
           }"
         />
         <transition-group name="fade">
           <div
             v-for="(data, index) in filteredData"
             :key="data.title" class="data"
-            @click="select(index)"
+            @click="select(index); motions = null; delegates = null"
             @contextmenu.prevent="showC($event, data, index)"
             v-touch:touchhold.prevent="showCon(data, index)"
             :class="{selected: sel === index}">
@@ -88,21 +90,47 @@
         </transition-group>
       </div>
       <Details
-        key="5"
+        :key="sel"
         :ongoing="ongoing([filteredData[sel]]).length > 0"
         :sel="sel"
         @goBack="sel = null"
-        v-if="sel !== null"
+        v-if="sel !== null && (motions === null && delegates === null)"
         @edit="(...t) => toggleInput(...t)"
+        @motions="motions = sel"
+        @delegates="delegates = sel"
         :transEnd="transEnd"
-        :confData="filteredData[sel]" />
+        :confData="filteredData[sel]"
+      />
+      <Motions
+        :key="`${motions}motions`"
+        v-else-if="motions  !== null"
+        @goBack="motions = null"
+        :confData="filteredData[motions]"
+      />
+      <Delegates
+        :key="`${delegates}delegates`"
+        v-else-if="delegates  !== null"
+        @goBack="delegates = null"
+        :confData="filteredData[delegates]"
+      />
+      <div key="8" v-else-if="!conferencesData && error" class="confError">
+        <h3>Something went wrong. 😥</h3>
+        <p>Try refreshing the page.</p>
+      </div>
+      <div key="6" v-else-if="conferencesData && conferencesData.length === 0" class="noConf">
+        <h3>Create your first MUN Conference</h3>
+        <p>Pick one conference from the left tab to view its details.</p>
+      </div>
+      <div key="7" v-else-if="width > 960 && sel === null" class="notSelected">
+        <h3>Select a MUN Conference</h3>
+        <p>Pick one conference from the left tab to view its details.</p>
+      </div>
     </transition-group>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-
 import {
   getAllConferences,
   delConference,
@@ -112,6 +140,8 @@ import Search from '@/components/Search/index.vue';
 import Confirmation from '@/components/Confirmation/index.vue';
 import AddConference from '@/components/AddConference/index.vue';
 import Details from './components/Details/index.vue';
+import Motions from './components/Motions/index.vue';
+import Delegates from './components/Delegates/index.vue';
 
 export default {
   name: 'Conference',
@@ -120,6 +150,8 @@ export default {
     Details,
     Confirmation,
     AddConference,
+    Motions,
+    Delegates,
   },
   data() {
     return {
@@ -132,11 +164,15 @@ export default {
       conf: null,
       sortConf: 'down',
       sel: null,
+      key: 0,
       transEnd: false,
       config: {
         handler: this.outside,
         events: ['click'],
       },
+      motions: null,
+      error: null,
+      delegates: null,
     };
   },
   methods: {
@@ -285,15 +321,19 @@ export default {
         const conferences = await getAllConferences();
         if (conferences.data.data !== null) {
           this.conferencesData = conferences.data.data;
+          this.key += 1;
         }
-        this.sel = null;
       } catch (err) {
+        this.error = err;
         console.error(err);
       }
     },
     async deleteConferenceData(conf) {
       delConference(conf)
-        .then(() => this.updateConferencesData())
+        .then(() => {
+          this.sel = null;
+          this.updateConferencesData();
+        })
         .catch((err) => {
           if (err.response.status === 422) {
             this.$store.commit('noAuth', true);
@@ -350,6 +390,7 @@ export default {
       me: (state) => state.Global.me,
     }),
     transName() {
+      if (this.width > 960) return 'fade';
       if (this.sel === null) return 'slide-right';
       return 'slide-left';
     },
