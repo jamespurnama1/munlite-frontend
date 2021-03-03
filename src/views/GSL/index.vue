@@ -199,6 +199,7 @@ export default {
     newGSLList(l) {
       this.newArr.length = 0;
       let data;
+      console.log(l, this.newArr);
       for (let i = 0; i < l.queue.length; i += 1) {
         [data] = this.delegatesData.filter((e) => e._id === l.queue[i].delegate_id);
         data.time_start = l.queue[i].time_start;

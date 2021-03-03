@@ -239,7 +239,7 @@
               button {
                 display: flex;
                 align-items: center;
-                opacity: 20%;
+                opacity: 0.2;
                 cursor: not-allowed;
 
                 p {
@@ -250,7 +250,7 @@
                   color: white;
                   background-color: $blue;
                   border: 1px solid $blue;
-                  opacity: 100%;
+                  opacity: 1;
                   cursor: pointer;
 
                   &:hover {
