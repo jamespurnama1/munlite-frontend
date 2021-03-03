@@ -106,7 +106,6 @@ export default {
   },
   watch: {
     timer: {
-      // eslint-disable-next-line object-shorthand
       handler() {
         let t;
         if (this.isActive) {
@@ -131,7 +130,7 @@ export default {
       } else {
         t = this.time_left;
       }
-      if (this.delYield) {
+      if (this.delYield && this.$route.name === 'GSL') {
         this.dsc = `${t} sec → ${this.delYield}`;
       } else {
         this.dsc = `${t} sec`;
@@ -147,14 +146,18 @@ export default {
   computed: {
     ...mapState({
       gslList: (state) => state.Delegates.gslList,
+      caucusList: (state) => state.Delegates.caucusList,
       timer: (state) => state.Socket.message.time,
       status: (state) => state.Socket.message.state,
+      order: (state) => state.Socket.message.order,
     }),
     time_start() {
-      return this.gslList[this.number].time_start;
+      if (this.$route.name === 'GSL') return this.gslList[this.number].time_start;
+      return this.caucusList[this.number].time_start;
     },
     time_left() {
-      return this.gslList[this.number].time_left;
+      if (this.$route.name === 'GSL') return this.gslList[this.number].time_left;
+      return this.caucusList[this.number].time_left;
     },
     delYield() {
       return this.gslList[this.number].yield;

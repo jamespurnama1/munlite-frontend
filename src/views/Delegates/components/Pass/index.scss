@@ -7,8 +7,6 @@
     padding: 3%;
     background-color: white;
     border-radius: 20px;
-    -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-    -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
     box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
 
     @include max-media (mobile) {
@@ -49,8 +47,6 @@
         color: white;
         background-color: $blue;
         border: 1px solid $blue;
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-        -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
         box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
         cursor: pointer;
 

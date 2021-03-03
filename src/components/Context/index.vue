@@ -3,7 +3,7 @@
     <ul>
       <li>
         <span
-          v-if="$route.name === 'GSL'"
+          v-if="$route.name === 'GSL' || $route.name === 'Delegates'"
           :class="`flag-icon img flag-icon-${getDelegatesID(nameItem).toLowerCase()}`" />
         <img
           v-else-if="$route.name !== 'Motions'"

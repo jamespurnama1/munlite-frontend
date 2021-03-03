@@ -25,11 +25,11 @@
               @contextmenu.prevent="showC($event, motion, index)"
               v-touch:touchhold.prevent="showCon(motion, index)"
             >
-              <span>
-                <p class="name" v-if="motion.name !== ''">
-                  <b>{{ motion.name }}</b>
+              <span class="name">
+                <p v-if="motion.name !== ''">
+                  {{ motion.name }}
                 </p>
-                <p class="caption">
+                <p :class="{caption: motion.name}">
                   {{ motion.type }}
                 </p>
               </span>
@@ -47,7 +47,7 @@
                 @click="expand === index ? expand = null : expand = index" />
               <span class="extra" v-if="width > 960 || expand === index">
               <p class="time">
-                <b>{{ motion.total_time / 60 }}</b>
+                <b>{{ parseFloat((motion.total_time / 60).toFixed(1)) }}</b>
                 <span class="caption"> minutes</span>
                 <span v-if="motion.speaking_time !== 0">
                   <br>
@@ -59,10 +59,9 @@
                 <input
                   @change="editMotion(motion)"
                   min="0"
-                  :max="delegatesData.length"
+                  :max="delegatesData.length - motion.no_vote"
                   type="number"
                   placeholder=" "
-                  :data-value="typeof motion.yes_vote === 'number' ? motion.yes_vote : ''"
                   v-model.number="motion.yes_vote"
                 >
                 <label v-if="width <= 960">Yes Vote</label>
@@ -71,10 +70,9 @@
                 <input
                   @change="editMotion(motion)"
                   min="0"
-                  :max="delegatesData.length"
+                  :max="delegatesData.length - motion.yes_vote"
                   type="number"
                   placeholder=" "
-                  :data-value="typeof motion.no_vote === 'number' ? motion.no_vote : ''"
                   v-model.number="motion.no_vote"
                 >
                 <label v-if="width <= 960">No Vote</label>
@@ -84,7 +82,7 @@
                 :class="{
                   red: motion.no_vote > motion.yes_vote,
                   blue: motion.no_vote < motion.yes_vote
-                  && motion.no_vote + motion.yes_vote === delegatesData.length
+                  && motion.no_vote + motion.yes_vote >= majority
                 }">
                 <p v-if="motion.no_vote > motion.yes_vote">Voting Failed</p>
                 <p v-else>Start Caucus</p>
@@ -109,7 +107,7 @@
               :negative="false"
               :id="motion._id"
               button="Start"
-              v-else-if="showConfirm !== null && typeof showConfirm === 'number'"
+              v-else-if="showConfirm !== null && showConfirm === index"
               v-click-outside="config"
               @exit="exit"
             />
@@ -120,17 +118,18 @@
         </div>
       </div>
     </div>
+    <transition-group name="fade">
     <Confirmation
       content="Discard adding motion?"
       :action="exitAdd"
       :negative="true"
       button="Discard"
-      whiteButton="Save Changes"
+      whiteButton="Keep Editing"
       v-if="showConfirm === 'add'"
-      v-click-outside="showconfirm = null"
       @exit="exit"
+      :key="`${showConfirm}Modal`"
     />
-    <transition name="fade">
+    <div class="overlay modal" :key="showConfirm" v-if="showConfirm === 'add'" />
       <add-motion
         :editMotion="editMotion"
         v-if="showModal"
@@ -139,9 +138,10 @@
         @exitSafe="exit(); showModal = false"
         @update="updateMotionsData"
         v-click-outside="configAdd"
+        key="3"
       />
-    </transition>
-    <div class="overlay" v-if="showModal|| showConfirm != null" />
+    <div class="overlay" key="4" v-if="showModal|| showConfirm != null" />
+    </transition-group>
   </div>
 </template>
 
@@ -154,8 +154,10 @@ import {
   startCaucus,
 } from '@/api/motions';
 import { getAllDelegates } from '@/api/delegates';
+import { getConference } from '@/api/conference';
 import Confirmation from '@/components/Confirmation/index.vue';
 import { mapState } from 'vuex';
+import { evaluate } from 'mathjs';
 import AddMotion from './components/AddMotion/index.vue';
 
 export default {
@@ -183,6 +185,8 @@ export default {
       edit: null,
       delegatesData: [],
       expand: null,
+      rules: {},
+      majority: 0,
     };
   },
   computed: {
@@ -192,6 +196,29 @@ export default {
     }),
   },
   methods: {
+    voteLogic() {
+      let { majority } = this.rules;
+      if (majority.match(/(\*|\+|-|\/)\s*(del)/i)) {
+        majority = majority.replace(/delegates/i, `(${this.delegatesData.length})`); // replace suffix with actual number
+      } else {
+        majority = majority.replace(/delegates/i, `* (${this.delegatesData.length})`); // if there was no operator, assume multiplication
+      }
+      majority = majority.replace(/\s/gi, ''); // remove whitespace
+      if (majority.match(/((?:[-\d)(]*)(?:\d)(?:[-\d)(+/*]*))/i)) { // safety check before math eval
+        // eslint-disable-next-line no-eval
+        try {
+          majority = evaluate(majority);
+        } catch (err) {
+          console.error(err);
+          this.$store.commit('error', true);
+        }
+      } else {
+        console.error('Unsupported rule formula');
+        this.$store.commit('error', true);
+      }
+      if (this.rules.rounding.match(/up/i)) this.majority = Math.ceil(evaluate(majority));
+      else this.majority = Math.floor(evaluate(majority));
+    },
     context([action, , , index]) {
       switch (action) {
         case 'Start Caucus':
@@ -243,10 +270,28 @@ export default {
       items.sort((a, b) => {
         const nameA = a.name.toUpperCase();
         const nameB = b.name.toUpperCase();
-        if (nameA < nameB) {
+        if (a.type.toLowerCase() === 'unmoderated caucus' && b.type.toLowerCase() !== 'unmoderated caucus') {
           return -1;
         }
-        if (nameA > nameB) {
+        if (a.type.toLowerCase() !== 'unmoderated caucus' && b.type.toLowerCase() === 'unmoderated caucus') {
+          return 1;
+        }
+        if (a.type.toLowerCase() === 'consultation of the whole' && b.type.toLowerCase() !== 'consultation of the whole') {
+          return -1;
+        }
+        if (a.type.toLowerCase() !== 'consultation of the whole' && b.type.toLowerCase() === 'consultation of the whole') {
+          return 1;
+        }
+        if (a.type.toLowerCase() === 'moderated caucus' && b.type.toLowerCase() !== 'moderated caucus') {
+          return -1;
+        }
+        if (a.type.toLowerCase() !== 'moderated caucus' && b.type.toLowerCase() === 'moderated caucus') {
+          return 1;
+        }
+        if (a.type === b.type && b.type === 'moderated caucus' && nameA < nameB) {
+          return -1;
+        }
+        if (a.type === b.type && b.type === 'moderated caucus' && nameA > nameB) {
           return 1;
         }
         return 0;
@@ -274,17 +319,16 @@ export default {
       try {
         const delegates = await getAllDelegates(this.$route.params.id);
         if (delegates.data.data !== null) {
-          this.delegatesData = delegates.data.data;
+          this.delegatesData = delegates.data.data.filter((del) => del.status.toLowerCase() === 'present' || del.status.toLowerCase() === 'present & voting');
           this.newCountryList();
+          if (this.rules.majortiy) this.voteLogic();
         }
-        console.log('Got new Delegates', delegates.data.data);
       } catch (err) {
         console.error(err.response);
       }
     },
     async deleteMotionsData(motion) {
       try {
-        console.log('Deleting', motion);
         const responses = new Promise((resolve) => {
           resolve(deleteMotion(this.$route.params.id, motion));
         });
@@ -292,6 +336,17 @@ export default {
           this.exit();
           this.updateMotionsData();
         });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async updateConferenceData() {
+      try {
+        const conf = await getConference(this.$route.params.id);
+        if (conf.data.data !== null) {
+          this.rules = conf.data.data.rules;
+          if (this.delegatesData.length > 0) this.voteLogic();
+        }
       } catch (err) {
         console.error(err);
       }
@@ -305,6 +360,12 @@ export default {
             motion_id: id,
           };
           startCaucus(this.$route.params.id, JSON.stringify(data));
+          const ws = {
+            session: 'caucus',
+            command: 'stop',
+            order: 0,
+          };
+          this.$socket.send(JSON.stringify(ws));
           this.$router.push(`/caucus/${this.$route.params.id}`).catch(() => {});
         } catch (err) {
           console.error(err);
@@ -324,7 +385,6 @@ export default {
           list.push(data);
         }
       });
-      console.log('Matched Delegates with Country List', list);
       this.$store.commit('countryList', list);
     },
     async exit() {
@@ -344,6 +404,7 @@ export default {
     this.$root.$on('context', (...args) => this.context(...args));
     this.updateMotionsData();
     this.updateDelegatesData();
+    this.updateConferenceData();
   },
 };
 </script>

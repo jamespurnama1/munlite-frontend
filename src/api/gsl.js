@@ -30,3 +30,8 @@ export async function nextGSL(id) {
   const res = await request.patch(`/api/conference/${id}/gsl/next`);
   return res;
 }
+
+export async function timeLeft(id, time) {
+  const res = await request.patch(`/api/conference/${id}/gsl/time`, time);
+  return res;
+}

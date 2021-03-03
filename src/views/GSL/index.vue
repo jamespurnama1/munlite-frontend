@@ -9,9 +9,14 @@
         <p v-if="widthWindow > 960">Right click the cards for more options.</p>
         <p v-else>Long press the cards for more options.</p>
       </span>
-      <button @click="showQueue = true" v-if="widthWindow <= 960">
-        <font-awesome-icon :icon="['fas', 'plus']"/>
-      </button>
+      <div class="button" v-if="widthWindow <= 960">
+        <button @click="showYield = true" >
+          <h3>Yield To</h3>
+        </button>
+        <button @click="showQueue = true">
+          <font-awesome-icon :icon="['fas', 'plus']"/>
+        </button>
+      </div>
     </div>
     <div class="wrapper">
       <Timer
@@ -31,16 +36,15 @@
           :active="socket.state === 0"
           :isActive="gslCurrent"
           :display="currentCountry"
-          :actions="{
-            'Yield To': true,
-            'Restart': true,
-            'View Notes': true,
-            'Clear Yield': true,
-            'Remove From Queue': true,
-          }"
-          :prevent="prevent && selected"
+          :actions="actions"
+          :prevent="prevent"
           @move="move"
         />
+        <div v-else>
+          <h3>No delegates in queue</h3>
+          <p v-if="widthWindow <= 960">Add delegates from the plus button</p>
+          <p v-else>Start by typing a country name on the right</p>
+        </div>
       </div>
       <div class="options">
         <transition-group name="fade">
@@ -101,7 +105,9 @@
               </transition>
             </div>
             <div class="yield">
-              <button @click="changeYield(); prevent = false" :disabled="!selected">Yield</button>
+              <button @click="changeYield(selected); prevent = false" :disabled="!selected">
+                Yield
+              </button>
             </div>
           </div>
           <div key="4" class="overlay" v-if="widthWindow <= 960
@@ -115,7 +121,7 @@
 
 <script>
 import {
-  addTurn, getGSL, delTurn, yieldGSL, nextGSL,
+  addTurn, getGSL, delTurn, yieldGSL, nextGSL, timeLeft,
 } from '@/api/gsl';
 import { mapState } from 'vuex';
 import { negara } from '@/const/country';
@@ -164,21 +170,13 @@ export default {
           this.deleteTurn(index);
           break;
         case 'Clear Yield':
-          this.changeYield();
+          this.changeYield(0);
           break;
         case 'View Notes':
-          // view notes
+          // TODO:view notes
           break;
         case 'Restart':
-          // restart
-          break;
-        case 'Yield To':
-          if (this.widthWindow <= 960) {
-            this.currentCountry = index;
-            this.showYield = true;
-          } else {
-            // focus yield
-          }
+          this.restart();
           break;
         default:
       }
@@ -196,7 +194,6 @@ export default {
           list.push(data);
         }
       });
-      console.log('Matched Delegates with Country List', list);
       this.$store.commit('countryList', list);
     },
     newGSLList(l) {
@@ -221,25 +218,29 @@ export default {
       this.$store.commit('gslList', this.newArr);
       this.currentCountry = this.gslCurrent;
     },
-    async changeYield() {
+    async changeYield(selected) {
       try {
         let data;
         const order = this.gslCurrent + 1;
         console.log(this.socket.order, order);
         // if (this.socket.order === order) {
-        switch (this.selected) {
+        switch (selected) {
+          case 0:
+            data = {
+              order,
+              yield: '',
+            };
+            break;
           case 1:
             data = {
               order,
               yield: 'Chair',
-              time_left: this.socket.time,
             };
             break;
           case 2:
             data = {
               order,
               yield: 'Questions',
-              time_left: this.socket.time,
             };
             break;
           case 3:
@@ -252,20 +253,23 @@ export default {
             break;
           default:
         }
-        this.$socket.send(JSON.stringify({
-          session: 'gsl',
-          command: 'stop',
-          order,
-        }));
-        console.log('Stop!', order);
-        await yieldGSL(this.$route.params.id, data);
+        await yieldGSL(this.$route.params.id, JSON.stringify(data));
         console.log('Yield!', data);
-        await nextGSL(this.$route.params.id);
-        console.log('Next!');
-        // } else {
-        //   await yieldGSL(this.$route.params.id, data);
-        //   console.log('Yield!', data);
-        // }
+        if (selected === 1) {
+          this.$socket.send(JSON.stringify({
+            session: 'gsl',
+            command: 'stop',
+            order,
+          }));
+          console.log('Stop!', order);
+          await timeLeft(this.$route.params.id, JSON.stringify({
+            order,
+            time_left: this.socket.time,
+          }));
+          console.log('Update time left', this.socket.time);
+          await nextGSL(this.$route.params.id);
+          console.log('Next!');
+        }
         this.updateGSL();
       } catch (err) {
         console.error(err.response);
@@ -280,6 +284,10 @@ export default {
           order: this.gslCurrent,
         };
         this.$socket.send(JSON.stringify(next));
+        await timeLeft(this.$route.params.id, JSON.stringify({
+          order: this.gslCurrent + 1,
+          time_left: this.socket.time,
+        }));
         await nextGSL(this.$route.params.id);
         this.updateGSL();
         console.log('next!');
@@ -302,7 +310,7 @@ export default {
           order: this.gslCurrent,
         };
         this.$socket.send(JSON.stringify(play));
-      }, 1000);
+      }, 500);
     },
     async deleteTurn(i) {
       try {
@@ -313,13 +321,13 @@ export default {
         console.error(err.response);
       }
     },
-    async addQueue(i) {
+    async addQueue([country, time]) {
       try {
-        const [id] = this.delegatesData.filter((obj) => obj.country === i);
+        const [id] = this.delegatesData.filter((obj) => obj.country === country);
         const data = {
           delegate_id: id._id,
-          time_start: 90,
-          time_left: 90,
+          time_start: time,
+          time_left: time,
           yield: '',
         };
         if (id) {
@@ -335,7 +343,6 @@ export default {
     async updateGSL() {
       try {
         const list = await getGSL(this.$route.params.id);
-        console.log('Got new GSL', list.data.data.queue[0].yield, list.data.data.queue[0].delegate_id);
         if (list.data.data !== null) {
           this.gslData = list.data.data;
           this.newGSLList(list.data.data);
@@ -355,7 +362,7 @@ export default {
       if (this.socket.state === 2) {
         data.command = 'start';
         data.time = this.gslList[this.gslCurrent].time_left;
-        data.order = 1;
+        data.order = this.gslCurrent;
       } else if (this.socket.state === 1) {
         data.command = 'resume';
         data.order = this.gslCurrent;
@@ -411,7 +418,6 @@ export default {
           this.delegatesData = this.sortCountry(delegates.data.data);
           this.newCountryList();
         }
-        console.log('Got new Delegates', delegates.data.data);
       } catch (err) {
         console.error(err.response);
       }
@@ -432,8 +438,16 @@ export default {
       countryList: (state) => state.Delegates.countryList,
       gslList: (state) => state.Delegates.gslList,
       widthWindow: (state) => state.Global.widthWindow,
-      current: (state) => state.Global.current,
     }),
+    actions() {
+      const action = {
+        Restart: true,
+        'View Notes': false,
+        'Clear Yield': true,
+        'Remove From Queue': true,
+      };
+      return action;
+    },
   },
 };
 </script>

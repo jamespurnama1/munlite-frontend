@@ -42,7 +42,6 @@
         <input
           :class="{error: warn.name}"
           placeholder=" "
-          :data-value="motionData.name ? motionData.name : ''"
           v-model="motionData.name">
         <label>Name</label>
       <p class="err" v-if="warn.name">
@@ -50,6 +49,7 @@
       </p>
       </div>
       <Autocomplete
+        :class="{error: warn.proposer}"
         :items="countryList"
         :prefilled="proposer"
         @onchangeCountry="(country) => {
@@ -70,7 +70,6 @@
           :class="{error: warn.speaking_time}"
           placeholder=" "
           type="number"
-          :data-value="speaking_time ? speaking_time : ''"
           v-model.number="speaking_time">
         <label>Speaking Time (seconds)</label>
         <p class="err" v-if="warn.speaking_time">Please enter speaking time</p>
@@ -84,7 +83,6 @@
           :class="{error: warn.total_time}"
           placeholder=" "
           type="number"
-          :data-value="total_time ? total_time : ''"
           v-model.number="total_time">
         <label>Total Time (minutes)</label>
         <p class="err" v-if="warn.total_time">Please enter total time</p>
@@ -96,14 +94,14 @@
       </button>
       <button
         class="blue"
-        @click="addMotion(motionData); $emit('exitSafe')" v-if="!data
-        || Object.keys(data).length === 0"
+        @click="addMotion(motionData)"
+        v-if="!data || Object.keys(data).length === 0"
       >
         Create
       </button>
       <button
         class="blue"
-        @click="editMotion(motionData); $emit('exitSafe')"
+        @click="edit(motionData)"
         v-else
       >
         Save
@@ -148,7 +146,7 @@ export default {
         'Unmoderated Caucus',
         'Suspension of The Debate',
         'Continuation of The Debate',
-        'Adjournment of The Debate',
+        'Adjournment of The Meeting',
         'Consultation of The Whole',
       ],
       focus: false,
@@ -197,9 +195,42 @@ export default {
     },
     async addMotion(data) {
       try {
+        this.checkForm(data);
         await addMotion(this.$route.params.id, JSON.stringify(data));
+        this.$emit('exitSafe');
       } catch (err) {
         console.error(err);
+      }
+    },
+    edit(data) {
+      try {
+        this.checkForm(data);
+        this.editMotion(data);
+        this.$emit('exitSafe');
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    checkForm(data) {
+      this.warn = Object.assign(...Object.keys(this.warn).map((warn) => ({ [warn]: false })));
+      if (!data.type || data.type === '') {
+        this.warn.type = true;
+      }
+      if (!data.proposer || data.proposer === '') {
+        this.warn.proposer = true;
+      }
+      if (data.type && data.type.toLowerCase() === 'moderated caucus' && (!data.name || data.name === '')) {
+        this.warn.name = true;
+      }
+      if (data.type && data.type.toLowerCase() === 'moderated caucus' && (data.speaking_time === null || data.speaking_time === '')) {
+        this.warn.speaking_time = true;
+      }
+      if (data.type && (data.type.toLowerCase() === 'moderated caucus' || data.type.toLowerCase() === 'consultation of the whole' || data.type.toLowerCase() === 'unmoderated caucus')
+      && (data.total_time === null || data.total_time === '')) {
+        this.warn.total_time = true;
+      }
+      if (Object.values(this.warn).filter((f) => f === true).length > 0) {
+        throw new Error('Form field not satisfied');
       }
     },
   },
@@ -211,24 +242,39 @@ export default {
     type() {
       return this.motionData.type;
     },
+    name() {
+      return this.motionData.name;
+    },
+    proposerData() {
+      return this.motionData.proposer;
+    },
   },
   watch: {
     total_time() {
+      this.warn.total_time = false;
       this.motionData.total_time = this.total_time * 60;
     },
     speaking_time() {
+      this.warn.speaking_time = false;
       this.motionData.speaking_time = this.speaking_time;
     },
     type() {
+      this.warn.type = false;
       if (this.type !== 'Moderated Caucus') {
         this.motionData.name = null;
         this.speaking_time = null;
       }
       if (this.type === 'Suspension of The Debate'
       || this.type === 'Continuation of The Debate'
-      || this.type === 'Adjournment of The Debate') {
+      || this.type === 'Adjournment of The Meeting') {
         this.total_time = null;
       }
+    },
+    proposerData() {
+      this.warn.proposer = false;
+    },
+    name() {
+      this.warn.name = false;
     },
   },
 };

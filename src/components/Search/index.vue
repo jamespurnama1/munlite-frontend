@@ -6,7 +6,6 @@
           placeholder=" "
           :class="{focus: filterD.length > 0}"
           v-model="search"
-          :data-value="search ? search : ''"
           type="text"
           :style="`padding-left: ${extraPadding}px`"
           @keyup.delete="del($event)">
@@ -113,8 +112,8 @@ export default {
         let list = this.filterFunc(this.items, this.filterD, this.search);
         list = this.sortFunc(list, this.sort, this.sortDir);
         this.filteredData = list;
-        this.extraPad();
         this.$emit('sortedData', this.filteredData);
+        this.extraPad();
       },
       deep: true,
     },

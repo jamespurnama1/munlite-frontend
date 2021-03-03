@@ -13,7 +13,7 @@
         active: index === display,
         top: index < display,
         bottom: index > display,
-        }"
+      }"
       class="stack-cards__item">
         <Card
         :del="delegate"
@@ -33,6 +33,7 @@ import { gsap } from 'gsap';
 import { mapState } from 'vuex';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Card from '@/components/Card/index.vue';
+// import { debounce } from 'debounce';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,11 +72,9 @@ export default {
   },
   data() {
     return {
-      // stacks: 3,
-      // stackHeight: 75,
       cards: null,
-      spacing: 0.1,
-      // snap: null,
+      spacing: 0.3,
+      prevLabel: '',
       trigger: null,
       rawSequence: gsap.timeline({ paused: true }),
       scrub: null,
@@ -103,26 +102,15 @@ export default {
         }
       };
     },
-    // snap({ children, duration = 2000 }) {
-    //   const countTo = parseInt(children, 10);
-    //   const [count, setCount] = useState(0);
-
-    //   let frame = 0;
-    //   const totalFrames = Math.round(duration / frameDuration);
-    //   const counter = setInterval(() => {
-    //     frame += 1;
-    //     const progress = easeOutQuad(frame / totalFrames);
-    //     setCount(countTo * progress);
-
-    //     if (frame === totalFrames) {
-    //       clearInterval(counter);
-    //     }
-    //   }, frameDuration);
-
-    //   return Math.floor(count);
-    // },
     snap(n) {
-      return gsap.utils.snap(this.spacing, n);
+      const snap = gsap.utils.snap(
+        this.spacing,
+        gsap.utils.clamp(
+          this.spacing * 2,
+          (0.5 * this.spacing) + (this.spacing * (this.cards.length + 1)), n,
+        ),
+      );
+      return snap;
     },
     checkWidth() {
       if (this.width < 600) {
@@ -137,15 +125,7 @@ export default {
       this.$emit('move', i);
     },
     move(i) {
-      this.scrubTo(this.rawSequence.labels[`label${i}`]);
-      const timer = this.timer(5000);
-      // TODO: fix & add user idle
-      timer.start().then(() => {
-        this.$emit('move', this.isActive);
-      });
-      if (i === this.isActive || !this.active || this.prevent) {
-        timer.abort();
-      }
+      this.scrubTo(this.rawSequence.labels[`label${i}`] + 0.1);
     },
     rightClick(del) {
       this.$emit('context', del);
@@ -170,24 +150,25 @@ export default {
       this.$emit('move', this.display + 1);
     },
     scrubTo(totalTime) {
-      const progress = (totalTime / this.rawSequence.duration()) * (this.cards.length * 100);
+      const progress = (totalTime / this.rawSequence.duration())
+      * (this.cards.length * 100);
       this.trigger.scroll(progress);
     },
-    buildSeamlessLoop(items, spacing) {
+    buildSequence(items, spacing) {
       const startTime = 1;
       const l = items.length;
       let time = 0;
       let index;
       let item;
       let i;
-      gsap.set(items, { scale: 0.3 });
+      // gsap.set(items, { scale: 0.3 });
       for (i = 0; i < l; i += 1) {
         index = i % items.length;
         item = items[index];
         time = i * spacing;
         this.rawSequence.fromTo(item, {
-          scale: 0.3,
-          yPercent: '+=150',
+          scale: 0.5,
+          yPercent: '+=50',
         }, {
           scale: 1,
           zIndex: 100,
@@ -196,8 +177,8 @@ export default {
           ease: 'none',
         }, time)
           .to(item, {
-            scale: 0.3,
-            yPercent: '-=150',
+            scale: 0.5,
+            yPercent: '-=50',
             duration: 0.5,
             ease: 'none',
           }, time + 0.5);
@@ -208,45 +189,45 @@ export default {
       this.rawSequence.time(startTime);
       return this.rawSequence;
     },
-    addTween(items) {
-      console.log('adding new items', items);
-      let i = this.cards.length;
-      let time = 0;
-      let item;
-      let index;
-      const tl = gsap.timeline();
-      for (i; i < items.length; i += 1) {
-        index = i % items.length;
-        item = items[index];
-        time = i * this.spacing;
-        tl.fromTo(item, {
-          scale: 0.3,
-          yPercent: '+=150',
-        }, {
-          scale: 1,
-          zIndex: 100,
-          duration: 0.5,
-          yPercent: 0,
-          ease: 'none',
-        }, time)
-          .to(item, {
-            scale: 0.3,
-            yPercent: '-=150',
-            duration: 0.5,
-            ease: 'none',
-          }, time + 0.5);
-        if (i <= items.length) {
-          tl.addLabel(`label${i}`, time + 0.5);
-        }
-      }
-      return tl;
-    },
-    addClass(item, str) {
-      item.classList.add(str);
-    },
-    removeClass(item, str) {
-      item.classList.remove(str);
-    },
+    // addTween(items) {
+    //   console.log('adding new items', items);
+    //   let i = this.cards.length;
+    //   let time = 0;
+    //   let item;
+    //   let index;
+    //   const tl = gsap.timeline();
+    //   for (i; i < items.length; i += 1) {
+    //     index = i % items.length;
+    //     item = items[index];
+    //     time = i * this.spacing;
+    //     tl.fromTo(item, {
+    //       scale: 0.3,
+    //       yPercent: '+=150',
+    //     }, {
+    //       scale: 1,
+    //       zIndex: 100,
+    //       duration: 0.5,
+    //       yPercent: 0,
+    //       ease: 'none',
+    //     }, time)
+    //       .to(item, {
+    //         scale: 0.3,
+    //         yPercent: '-=150',
+    //         duration: 0.5,
+    //         ease: 'none',
+    //       }, time + 0.5);
+    //     if (i <= items.length) {
+    //       tl.addLabel(`label${i}`, time + 0.5);
+    //     }
+    //   }
+    //   return tl;
+    // },
+    // addClass(item, str) {
+    //   item.classList.add(str);
+    // },
+    // removeClass(item, str) {
+    //   item.classList.remove(str);
+    // },
     timer(ms) {
       let id;
       const start = () => new Promise((resolve) => {
@@ -268,56 +249,34 @@ export default {
       this.trigger = await ScrollTrigger.create({
         scroller: '.stackOverflow',
         pin: '.stack-cards',
-        // anticipatePin: 1,
+        anticipatePin: 1,
         pinType: 'fixed',
         start: 0,
         end: `+=${this.cards.length * 100}`,
         onUpdate: ((self) => {
-          console.time('animation script');
-          const timer = this.timer(500);
-          if (this.mount && self.scroller.scrollTop < this.minMax[0]) {
-            // eslint-disable-next-line no-param-reassign
-            timer.start().then(() => { [self.scroller.scrollTop] = this.minMax; });
-          } else if (this.mount && self.scroller.scrollTop > this.minMax[1]) {
-            // eslint-disable-next-line no-param-reassign
-            timer.start().then(() => { [, self.scroller.scrollTop] = this.minMax; });
-          } else {
-            timer.abort();
-            try {
-              const v = (self.scroller.scrollTop * this.rawSequence.duration())
-            / (this.cards.length * 100);
-              const c = parseInt(Object.keys(this.rawSequence.labels)
-                .find((key) => this.rawSequence.labels[key].toString() === v.toFixed(1))
-                .replace(/\D/g, ''), 10);
-              if (this.mount) {
-                this.$store.commit('changeCurrent', c);
-                this.$emit('move', c);
-                // console.log('scrolltrigger', c);
-              }
-              // }, 100, true);
-            } catch (err) {
-              // console.error(err); // ignore error as it is expected
-            }
+          const label = this.rawSequence.currentLabel();
+          const timer = this.timer(300);
+          if (label && label !== this.prevLabel && this.mount) {
+            timer.start().then(() => {
+              this.click(parseInt(this.rawSequence.currentLabel().replace(/label/, ''), 10)); this.prevLabel = label;
+            });
           }
-          this.scrub.vars.totalTime = this.snap(self.progress * this.rawSequence.duration());
+          this.scrub.vars.totalTime = self.progress * this.rawSequence.duration();
           this.scrub.invalidate().restart();
-          // eslint-disable-next-line no-param-reassign
-          self.wrapping = false;
-          console.timeEnd('animation script');
         }),
       });
       await setTimeout(() => {
         this.move(this.display);
-        // console.log('init', this.display);
         this.mount = true;
       }, 1000);
+      ScrollTrigger.addEventListener('scrollEnd', () => this.scrubTo(this.snap(this.trigger.progress * this.rawSequence.duration())));
     },
   },
   async mounted() {
     this.cards = document.querySelectorAll('.stack-cards__item');
-    this.scrub = gsap.to(this.buildSeamlessLoop(this.cards, this.spacing), {
+    this.scrub = gsap.to(this.buildSequence(this.cards, this.spacing), {
       totalTime: 0,
-      duration: 0.5,
+      duration: 0.3,
       ease: 'power3',
       paused: true,
     });
@@ -326,30 +285,26 @@ export default {
   computed: {
     ...mapState({
       width: (state) => state.Global.widthWindow,
+      idle: (state) => state.idleVue.isIdle,
     }),
-    minMax() {
-      return [
-        ((this.rawSequence.labels.label0 / this.rawSequence.duration())
-        * (this.cards.length * 100)),
-        ((this.rawSequence.labels[`label${this.cards.length - 1}`] / this.rawSequence.duration()) * (this.cards.length * 100)),
-      ];
-    },
   },
   watch: {
     active() {
       if (this.active) {
         this.$emit('move', this.isActive);
-        // console.log('isActive', this.isActive);
       }
     },
     display: {
-      // eslint-disable-next-line object-shorthand, func-names
-      handler: function () {
-        this.move(this.display);
-        // console.log('display', this.display);
+      handler() {
+        if (this.rawSequence.currentLabel() !== this.display) this.move(this.display);
       },
     },
+    idle() {
+      if (this.idle && this.active && typeof this.isActive === 'number') this.$emit('move', this.isActive);
+    },
     delegates() {
+      this.scrub.invalidate().restart();
+      this.trigger.refresh();
       // console.log(this.delegates);
       // if (this.delegates) {
       //   const newItems = this.delegates;
@@ -385,5 +340,5 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/index.scss';
-@import './index.scss'
+@import './index.scss';
 </style>

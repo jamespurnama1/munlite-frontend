@@ -7,13 +7,13 @@
       </div>
     </div>
     <div>
-      <h3>Quorum</h3>
+      <h3>Quorum Vote</h3>
       <div class="delegates-row">
         {{ rulesData.quorum }}
       </div>
     </div>
     <div>
-      <h3>DR Vote</h3>
+      <h3>DR Sponsors</h3>
       <div class="delegates-row">
         {{ rulesData.dr_vote }}
       </div>

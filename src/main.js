@@ -11,24 +11,12 @@ import Vue2TouchEvents from 'vue2-touch-events';
 import VueDragscroll from 'vue-dragscroll';
 import VueNativeSock from 'vue-native-websocket';
 import vClickOutside from 'v-click-outside';
+import IdleVue from 'idle-vue';
 
 import './registerServiceWorker';
 import store from './store';
 import router from './router';
 import App from './App.vue';
-
-Vue.use(Vue2TouchEvents, {
-  disableClick: true,
-})
-  .use(require('vue-shortkey'))
-  .use(VueDragscroll)
-  .use(vClickOutside)
-  .use(VueNativeSock, 'wss://dev.api.munlite.co/ws/', {
-    store,
-    reconnection: true,
-    connectManually: true,
-  })
-  .component('font-awesome-icon', FontAwesomeIcon);
 
 library.add(fas);
 
@@ -57,8 +45,24 @@ const vm = new Vue({
   render: (h) => h(App),
 });
 
+Vue.use(Vue2TouchEvents, {
+  disableClick: true,
+})
+  .use(require('vue-shortkey'))
+  .use(VueDragscroll)
+  .use(IdleVue, {
+    store,
+    idleTime: 4900,
+  })
+  .use(vClickOutside)
+  .use(VueNativeSock, 'wss://dev.api.munlite.co/ws/', {
+    store,
+    reconnection: true,
+    connectManually: true,
+  })
+  .component('font-awesome-icon', FontAwesomeIcon);
+
 router.afterEach((to) => {
-  console.log(to.params.id);
   if (to.params.id) {
     vm.$connect(`wss://dev.api.munlite.co/ws/:${to.params.id}`);
   } else {

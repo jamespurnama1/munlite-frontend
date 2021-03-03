@@ -1,17 +1,28 @@
 <template>
   <div>
-    <transition name="fade">
+    <transition-group name="fade">
+      <Confirmation
+        content="Discard Conference?"
+        :action="exitAdd"
+        :negative="true"
+        button="Discard"
+        whiteButton="Keep Editing"
+        v-if="showConfirm === 'add'"
+        @exit="showConfirm = false"
+        :key="`${showConfirm}Modal`"
+      />
+      <div class="overlay modal" :key="showConfirm" v-if="showConfirm === 'add'" />
       <add-conference
         v-if="showInput"
         :conf="editData"
-        @exit="exit"
+        @exit="showConfirm = 'add'"
+        @exitSafe="exit(); showInput = false; editData = {};"
         @update="updateConferencesData"
-        v-click-outside="config"
+        v-click-outside="configAdd"
+        key="addConf"
       />
-    </transition>
-    <transition name="fade">
-      <div class="overlay" v-if="showInput || showConfirm" />
-    </transition>
+      <div class="overlay" key="overlay" v-if="showInput || showConfirm" />
+    </transition-group>
     <transition-group
       v-on:beforeEnter="() => {transEnd = false}"
       v-on:afterLeave="() => {transEnd = true}"
@@ -162,12 +173,18 @@ export default {
       filteredData: [],
       filter: '',
       conf: null,
-      sortConf: 'down',
       sel: null,
       key: 0,
       transEnd: false,
       config: {
         handler: this.outside,
+        events: ['click'],
+      },
+      configAdd: {
+        handler: () => {
+          this.showConfirm = 'add';
+        },
+        middleware: (event) => event.target.className !== 'cancel',
         events: ['click'],
       },
       motions: null,
@@ -176,6 +193,10 @@ export default {
     };
   },
   methods: {
+    exitAdd() {
+      this.confirm = null;
+      this.showInput = false;
+    },
     delegate(items) {
       return items.filter((item) => item.chairman
         .some((chair) => chair.email !== this.$store.state.Global.me.email));
@@ -345,8 +366,6 @@ export default {
       this.exit();
     },
     exit() {
-      this.showInput = false;
-      this.editData = {};
       this.showConfirm = null;
     },
     async patchConferences(conf, data) {

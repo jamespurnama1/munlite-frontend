@@ -12,8 +12,6 @@
   position: relative;
   min-width: 200px;
   border-radius: 15px 15px 0 0;
-  -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-  -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
   box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
   justify-content: center;
   align-items: flex-start;
@@ -27,8 +25,6 @@
   background-color: white;
 
   @include max-media(mobile) {
-    -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
-    -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
   }
 
@@ -76,8 +72,6 @@
       width: 50px;
       height: 50px;
       border: 0;
-      -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
-      -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
       box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
       margin: 0 5px;
       transition: transform .3s ease, box-shadow .3s ease;
@@ -91,15 +85,11 @@
 
       &.blue {
         color: $blue;
-        -webkit-box-shadow: 0px 0px 10px 0px rgba(95,120,255,0.5);
-        -moz-box-shadow: 0px 0px 10px 0px rgba(95,120,255,0.5);
         box-shadow: 0px 0px 10px 0px rgba(95,120,255,0.5);
       }
 
       &.red {
         color: $red;
-        -webkit-box-shadow: 0px 0px 10px 0px rgba(255,95, 95,0.5);
-        -moz-box-shadow: 0px 0px 10px 0px rgba(255,95, 95,0.5);
         box-shadow: 0px 0px 10px 0px rgba(255,95, 95,0.5);
       }
 
@@ -146,8 +136,6 @@
     &.blue {
         color: $blue;
         border: 1px solid white !important;
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7) !important;
-        -moz-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7) !important;
         box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.7) !important;
       }
 

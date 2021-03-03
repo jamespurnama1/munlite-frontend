@@ -3,6 +3,12 @@
   width: calc(100% - 4rem);
   margin-bottom: 4rem;
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  @include max-media(mobile) {
+    width: calc(100% - 2rem);
+  }
 
   &-upper {
     display: flex;
@@ -10,25 +16,32 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+    overflow: hidden;
 
     @include max-media(tablet) {
       flex-direction: column;
       align-items: flex-start;
     }
 
-    h1 {
-      font-size: 3.5rem;
-      font-family: 'Montserrat', sans-serif;
-
-      @include max-media(tablet) {
-        font-size: 2.5rem;
-      }
+    .buttons {
+      display: flex;
     }
 
     .delegates-button {
       display: flex;
       flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+      background-color: white;
+      z-index: 2;
     }
+
+    p {
+      @include max-media(mobile) {
+        font-size: .5em;
+      }
+    }
+
     .button {
       font-family: 'Montserrat', sans-serif;
       border: 1px solid $light-grey;
@@ -45,6 +58,7 @@
 
       &:last-of-type {
         padding: 15px;
+        // width:
       }
 
       &.press {
@@ -57,7 +71,11 @@
       }
 
       @include max-media(tablet) {
-        margin: 1rem 1rem 1rem 0;
+        margin: 0;
+
+        &:first-of-type {
+          margin-right: .5rem;
+        }
       }
 
       @include max-media(mobile) {
@@ -66,8 +84,6 @@
 
       &:hover {
         border: 1px solid rgba(0,0,0,0);
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
-        -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
         box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
       }
 
@@ -105,6 +121,7 @@
       flex-wrap: wrap;
       margin: auto;
       width: 45%;
+      transform-origin: top center;
   
       @include max-media(tablet) {
         width: 100%;
@@ -169,10 +186,15 @@
   }
 
   &-table {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
     .content {
       display: flex;
       flex-direction: row;
       width: 100%;
+      flex-grow: 1;
 
       @include max-media(tablet) {
         flex-direction: column;
@@ -180,15 +202,23 @@
 
       .table-data {
         width: 55%;
-        max-height: 62vh;
         overflow-y: auto;
+        border-right: 1px solid $light-grey;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
         
         @include max-media(tablet) {
+          border: 0;
           width: 100%;
         }
 
         &.empty-data {
           color: gray;
+        }
+
+        .search {
+          margin-bottom: 1em;
         }
   
         .data {
@@ -307,28 +337,29 @@
     }
 
     .table {
+      display: flex;
+      flex-direction: column;
       width: 100%;
+      flex-grow: 1;
     }
 
     .title {
       font-family: 'Montserrat';
-      font-weight: bold;
       border-bottom: 1px solid $light-grey;
       display: flex;
-      flex-direction: row;    
-      margin-bottom: 10px;
+      flex-direction: row;
       padding-bottom: 5px;
-      font-size: 20px;
 
       @include max-media(tablet) {
         width: 100%;
       }
 
-      @include max-media(small-mobile) {
-        font-size: 14px;
-      }
+      // @include max-media(small-mobile) {
+      //   font-size: 14px;
+      // }
 
       &-name {
+        font-weight: bold;
         width: 38%;
 
         @include max-media(tablet) {

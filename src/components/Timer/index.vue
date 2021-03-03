@@ -41,7 +41,6 @@ export default {
       status: (state) => state.Socket.message.state,
       order: (state) => state.Socket.message.order,
       muted: (state) => state.Global.muted,
-      current: (state) => state.Global.current,
     }),
     timerReadable() {
       let mins;
@@ -58,7 +57,6 @@ export default {
   },
   watch: {
     timer() {
-      // console.log(this.timer);
       if (!this.muted && this.status === 0) {
         if (this.timer === 5) {
           document.getElementById('warn').play();
@@ -120,6 +118,7 @@ export default {
         repeat: 1,
         yoyo: true,
         ease: 'power2',
+        duration: 1,
       });
       this.$emit('restart');
     },

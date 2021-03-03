@@ -46,7 +46,7 @@
                 @click="expand === index ? expand = null : expand = index" />
               <span class="extra" v-if="width > 960 || expand === index">
               <p class="time">
-                <b>{{ Math.round(motion.total_time / 60) }}</b>
+                <b>{{ parseFloat((motion.total_time / 60).toFixed(1)) }}</b>
                 <span class="caption"> minutes</span>
                 <span v-if="motion.speaking_time !== 0">
                   <br>

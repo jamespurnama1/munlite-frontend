@@ -1,10 +1,9 @@
 <template>
-  <div id="autocomplete">
+  <div class="autocomplete">
     <div class="input">
       <input
         ref="input"
         v-model="newCountry"
-        :data-value="newCountry ? newCountry : ''"
         type="text"
         @focusin="focus = true; fillAutocomplete(); $emit('focus')"
         @input="fillAutocomplete"

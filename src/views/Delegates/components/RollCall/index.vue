@@ -65,14 +65,16 @@ export default {
   },
   methods: {
     async presence(j) {
-      const i = this.$store.state.Global.current;
       try {
         const data = {
-          country: this.delegatesData[i].country,
+          country: this.delegatesData[this.currentCountry].country,
           status: j,
         };
-        // eslint-disable-next-line no-underscore-dangle
-        await editDelegates(this.$route.params.id, this.delegatesData[i]._id, data);
+        await editDelegates(
+          this.$route.params.id,
+          this.delegatesData[this.currentCountry]._id,
+          data,
+        );
         this.$emit('update');
         this.getVoteCount();
       } catch (err) {

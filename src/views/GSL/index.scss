@@ -1,13 +1,13 @@
 .gsl {
   height: 90vh;
-  width: 90%;
+  width: calc(100% - 4rem);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
 
-  @include max-media(mobile) {
-    // height: 70vh;
-  }
+  // @include max-media(tablet) {
+  //   width: 
+  // }
 
   .upper {
     display: flex;
@@ -31,12 +31,21 @@
         font-size: .5rem;
       }
     }
-    button {
-      padding: 15px;
-      border-radius: 10px/10px;
+
+    .button {
       display: flex;
-      justify-content: center;
-      align-items: center;
+
+      button {
+        padding: 15px;
+        border-radius: 10px/10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:first-child {
+          margin-right: 10px;
+        }
+      }
     }
   }
 
@@ -211,8 +220,6 @@
       .bottom {
         position: relative;
         border-radius: 15px/15px;
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-        -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
         box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
         padding: 20px;
         padding-top: 10px;
@@ -300,22 +307,16 @@
           &:hover {
             animation: pulse 1s ease infinite alternate;
             border: 1px solid white;
-            -webkit-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
-            -moz-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
             box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
           }
 
           @keyframes pulse {
             from {
               color: black;
-              -webkit-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
-              -moz-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
               box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.2);
             }
             to {
               color: $blue;
-              -webkit-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.7);
-              -moz-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.7);
               box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.7);
             }
           }
@@ -334,8 +335,6 @@
           &:hover {
             animation: none;
             border: 1px solid $blue;
-            -webkit-box-shadow: none;
-            -moz-box-shadow: none;
             box-shadow: none;
           }
         }
@@ -388,8 +387,6 @@
           padding: 10px 20px;
           font-size: 20px;
           border: 0;
-          -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-          -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
           box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
 
           &:focus{
@@ -411,8 +408,6 @@
               box-shadow: none;
               border: none;
               transform: scale(1);
-              -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
-              -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
               box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
             }
           }

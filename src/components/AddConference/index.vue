@@ -1,6 +1,13 @@
 <template>
-  <div class="addConf">
-  <div class="confModal">
+  <div
+    class="addConf"
+    :class="{
+      scrollTop: scrollTop,
+      scrollBottom: scrollBottom,
+    }">
+  <div class="confModal"
+  @touchmove="scrollTop = confModal.scrollTop > 0;
+  scrollBottom = confModal.scrollHeight - confModal.scrollTop !== confModal.clientHeight">
     <h1 v-if="!conf || Object.keys(conf).length === 0">New Conference</h1>
     <h1 v-else>Edit Conference</h1>
     <div class="top">
@@ -10,7 +17,6 @@
           <input
             :class="{error: warn.title}"
             placeholder=" "
-            :data-value="newConf.title ? newConf.title : ''"
             v-model="newConf.title">
           <label>Name</label>
         <p class="err" v-if="warn.title">Please enter a name</p>
@@ -38,7 +44,6 @@
             :class="{error: warn.start_date}"
             placeholder="dd/mm/yyyy"
             type="date"
-            :data-value="dates.start ? dates.start : ''"
             v-model="dates.start">
           <label>Start Date</label>
           <p class="err" v-if="warn.start_date">Please enter a start date</p>
@@ -49,7 +54,6 @@
             :class="{error: warn.end_date}"
             placeholder="dd/mm/yyyy"
             type="date"
-            :data-value="dates.end ? dates.end : ''"
             v-model="dates.end">
           <label>End Date</label>
           <p class="err" v-if="warn.end_date">Please enter an end date</p>
@@ -59,7 +63,7 @@
     <h3>Chairs</h3>
     <div class="chair">
       <ul>
-        <li v-if="this.me" @contextmenu.prevent="showC(me.email, $event)">
+        <li v-if="me" @contextmenu.prevent="showC(me.email, $event)">
           <Context
             v-if="showContext === me.email"
             :name="me.email"
@@ -70,11 +74,14 @@
             @context="(...args) => context(...args)"
             v-click-outside="config" />
           <img class="avatar" :src="require('@/assets/img/home.png')">
-          <p>{{me.email}}</p>
+          <p><b>{{ me.first_name }}
+            {{ me.last_name }}</b>
+          <br>
+          {{ me.email }}</p>
         </li>
         <li
-          v-for="(chair, i) in newConf.chairman"
-          :key="i"
+          v-for="(chair, index) in newConf.chairman"
+          :key="index"
           @contextmenu.prevent="showC(chair, $event)">
           <Context
             v-if="showContext === chair"
@@ -85,7 +92,10 @@
             @context="(...args) => context(...args)"
             v-click-outside="config" />
           <img class="avatar" :src="require('@/assets/img/home.png')">
-          <p>{{ chair }}</p>
+          <p><b>{{ chairman[index].first_name }}
+            {{ chairman[index].last_name }}</b>
+            <br>
+            {{ chair }}</p>
         </li>
         <li>
           <div>
@@ -96,7 +106,6 @@
                   placeholder=" "
                   type="email"
                   v-model="email"
-                  :data-value="email ? email : ''"
                   @keyup.enter="addChair()">
                 <label>E-mail</label>
                 <p class="err" v-if="warn.email">{{ warn.email }}</p>
@@ -110,33 +119,39 @@
       </ul>
     </div>
     <h3>Rules</h3>
+    <p class="err">
+      Note that <b>1/2 delegates + 1</b> is not the same as <b>1/2 + 1 delegates</b>
+    </p>
     <div class="rules">
       <div class="input">
           <input
             :class="{error: warn.majority}"
             placeholder=" "
             v-model="newConf.majority"
-            :data-value="newConf.majority ? newConf.majority : ''">
+            @blur="append('majority')"
+          >
           <label>Majority</label>
-        <p class="err" v-if="warn.majority">Please enter a formula</p>
+        <p class="err" v-if="warn.majority">Please enter a valid formula</p>
       </div>
       <div class="input">
         <input
           :class="{error: warn.quorum}"
           placeholder=" "
           v-model="newConf.quorum"
-          :data-value="newConf.quorum ? newConf.quorum : ''">
-        <label>Quorum</label>
-        <p class="err" v-if="warn.quorum">Please enter a formula</p>
+          @blur="append('quorum')"
+        >
+        <label>Quorum Vote</label>
+        <p class="err" v-if="warn.quorum">Please enter a valid formula</p>
       </div>
       <div class="input">
         <input
           :class="{error: warn.dr_vote}"
           placeholder=" "
-          :data-value="newConf.dr_vote ? newConf.dr_vote : ''"
-          v-model="newConf.dr_vote">
-        <label>DR Vote</label>
-        <p class="err" v-if="warn.dr_vote">Please enter a formula</p>
+          @blur="append('dr_vote')"
+          v-model="newConf.dr_vote"
+        >
+        <label>DR Sponsors</label>
+        <p class="err" v-if="warn.dr_vote">Please enter a valid formula</p>
       </div>
       <div class="round">
         <h3>Rounding</h3>
@@ -159,7 +174,7 @@
     </span>
   </div>
     <span class="buttons">
-      <button @click="exit()">
+      <button @click="$emit('exit')">
         Cancel
       </button>
       <button
@@ -189,6 +204,7 @@ import {
 } from '@/api/conference';
 import { getUserData, checkUser } from '@/api/profile';
 import Context from '@/components/Context/index.vue';
+import { evaluate } from 'mathjs';
 
 export default {
   name: 'AddConference',
@@ -205,6 +221,9 @@ export default {
   },
   data() {
     return {
+      scrollTop: false,
+      scrollBottom: false,
+      confModal: null,
       round: false,
       email: null,
       dates: {
@@ -231,15 +250,27 @@ export default {
         title: null,
         start_date: null,
         end_date: null,
-        majority: null,
-        dr_vote: null,
-        quorum: null,
+        majority: '',
+        dr_vote: '',
+        quorum: '',
         rounding: 'Round Down',
         chairman: [],
       },
+      chairman: [],
     };
   },
   methods: {
+    debug() {
+      console.log(this.confModal.scrollTop === 0);
+    },
+    append(string) {
+      if (this.newConf[string] !== '' && !this.newConf[string].match(/del/i)) {
+        this.newConf[string] = this.newConf[string].concat(' delegates');
+      }
+      if (!this.newConf[string].match(/delegates/i)) {
+        this.newConf[string] = this.newConf[string].replace(/(del)(?:[a-z]*)/i, 'delegates');
+      }
+    },
     outside() {
       this.showContext = false;
     },
@@ -269,24 +300,28 @@ export default {
         .then((res) => {
           if (validateEmail(this.email)
           && duplicate.length === 0
-          && res
+          && res.found
           && this.email !== this.me.email) {
             this.newConf.chairman.push(this.email);
+            const resUpperCase = {
+              first_name: res.user_name.first_name.charAt(0).toUpperCase()
+            + res.user_name.first_name.slice(1),
+              last_name: res.user_name.last_name.charAt(0).toUpperCase()
+            + res.user_name.last_name.slice(1),
+            };
+            this.chairman.push(resUpperCase);
             this.$forceUpdate();
             this.email = '';
             // this.$set(this.newConf.chairman, this.newConf.chairman.length, this.email);
           } else if (!validateEmail(this.email)) {
             this.warn.email = 'Please enter a valid e-mail address';
-          } else if (!res) {
+          } else if (!res.found) {
             this.warn.email = 'E-mail is not registered at MUNLite';
           } else if (this.email === this.me.email || duplicate.length >= 0) {
             this.warn.email = 'Chair already added.';
           }
         })
         .catch((err) => console.error(err));
-    },
-    exit() {
-      this.$emit('exit');
     },
     editConf() {
       const difference = this.newConf.chairman.filter((x) => !this.conf.chairman.includes(x));
@@ -324,38 +359,63 @@ export default {
         }
       }
 
-      const data = this.newConf;
+      const data = { ...this.newConf };
       delete data.chairman;
-      updateConference(this.conf._id, JSON.stringify(data))
-        .then(() => {
-          this.$emit('update');
-          this.exit();
-        });
+      this.checkForm(data);
+      if (Object.values(this.warn).every((bool) => bool === false || bool === '')) {
+        updateConference(this.conf._id, JSON.stringify(data))
+          .then(() => {
+            this.$emit('update');
+            this.$emit('exitSafe');
+          });
+      }
     },
     addNewConf() {
-      const test = Object.keys(this.newConf).every((key) => {
-        if (key === 'chairman') {
-          return typeof this.newConf[key] === 'object';
-        }
-        return typeof this.newConf[key] === 'string' && this.newConf[key] !== '' && this.newConf[key];
-      });
-      if (test) {
+      this.checkForm(this.newConf);
+      if (Object.values(this.warn).every((bool) => bool === false || bool === '')) {
         createConference(JSON.stringify(this.newConf))
           .then(() => {
             this.$emit('update');
             this.newConf = '';
-            this.exit();
+            this.$emit('exitSafe');
           }).catch((err) => {
             console.error(err);
           });
-      } else {
-        Object.keys(this.newConf)
-          .filter((f) => !this.newConf[f])
-          .forEach((e) => { this.warn[e] = true; });
       }
+    },
+    checkForm(data) {
+      Object.keys(data)
+        .filter((f) => !data[f])
+        .forEach((e) => { this.warn[e] = true; });
+      const rules = {
+        majority: data.majority,
+        quorum: data.quorum,
+        dr_vote: data.dr_vote,
+      };
+      Object.keys(rules).forEach((key) => {
+        let mathEval = rules[key];
+        if (rules[key].match(/(\*|\+|-|\/)\s*(del)/i)) {
+          mathEval = mathEval.replace(/delegates/i, '(3)'); // replace suffix with actual number
+        } else {
+          mathEval = mathEval.replace(/delegates/i, '* (3)'); // if there was no operator, assume multiplication
+        }
+        if (!(rules[key].match(/((?:[-\d)(]*)(?:\d)(?:[-\d)(+/*]*))/i) && rules[key].match(/delegates/i))) {
+          this.warn[key] = true;
+        } else {
+          try {
+            evaluate(mathEval);
+          } catch (err) {
+            this.warn[key] = true;
+          }
+        }
+      });
     },
     async getMe() {
       const u = await getUserData();
+      u.data.data.first_name = u.data.data.first_name.charAt(0).toUpperCase()
+        + u.data.data.first_name.slice(1);
+      u.data.data.last_name = u.data.data.last_name.charAt(0).toUpperCase()
+        + u.data.data.last_name.slice(1);
       this.me = u.data.data;
     },
     async check(user) {
@@ -373,6 +433,9 @@ export default {
       return `${ye(sDate)}-${mo(sDate)}-${da(sDate)}`;
     },
   },
+  async mounted() {
+    this.confModal = this.$el.querySelector('.confModal');
+  },
   created() {
     this.getMe()
       .then(() => {
@@ -384,6 +447,15 @@ export default {
           for (let i = 0; i < c.length; i += 1) {
             if (c[i].email !== this.me.email) {
               arr.push(c[i].email);
+              this.check(c[i].email).then((response) => {
+                const res = {
+                  first_name: response.user_name.first_name.charAt(0).toUpperCase()
+                + response.user_name.first_name.slice(1),
+                  last_name: response.user_name.last_name.charAt(0).toUpperCase()
+                + response.user_name.last_name.slice(1),
+                };
+                this.chairman.push(res);
+              });
             }
             if (this.conf.rules.rounding === 'Round Up') this.round = true;
           }
@@ -392,8 +464,6 @@ export default {
           this.dates.start = this.dateFormat(this.conf.start_date);
         }
       });
-  },
-  computed: {
   },
   watch: {
     round: {

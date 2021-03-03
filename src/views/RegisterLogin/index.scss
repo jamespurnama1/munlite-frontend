@@ -12,8 +12,6 @@
   align-items: center;
   padding: 3rem 5%;
   border-radius: 15px;
-  -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
-  -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
   box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
 
   @include max-media(mobile) {
@@ -55,8 +53,6 @@
     flex-direction: column;
 
     input {
-      -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
-      -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
       box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
       background-color: $blue;
       color: white;
@@ -70,8 +66,6 @@
       @include transition(ease, .5s);
 
       &:hover {
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.72);
-        -moz-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.72);
         box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.72);
       }
 

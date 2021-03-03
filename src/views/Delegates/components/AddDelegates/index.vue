@@ -17,12 +17,17 @@
         </div>
       </div>
       <div class="right">
-        <Autocomplete :items="items" @onchangeCountry="onchangeCountry" class="country"/>
-        <p class="error" v-if="err">{{ err }}</p>
+        <Autocomplete
+          :class="{error: err}"
+          :items="items"
+          @onchangeCountry="onchangeCountry"
+          class="country"/>
+        <p class="err" v-if="err">{{ err }}</p>
         <div class="input">
           <input
             placeholder=" "
-            v-model="newCountry.short">
+            v-model="newCountry.short"
+          >
           <label>Short Name</label>
         </div>
       </div>
@@ -64,6 +69,7 @@ export default {
       this.$emit('exit');
     },
     onchangeCountry(country) {
+      this.err = '';
       this.newCountry.name = country;
     },
     async addNewCountry() {

@@ -2,7 +2,6 @@ const global = {
   state: {
     widthWindow: 0,
     heightWindow: 0,
-    current: 0,
     notAuthorized: false,
     genericError: false,
     muted: false,
@@ -24,9 +23,6 @@ const global = {
     },
     getHeight(state, i) {
       state.heightWindow = i;
-    },
-    changeCurrent(state, i) {
-      state.current = i;
     },
     noAuth(state, i) {
       state.notAuthorized = i;

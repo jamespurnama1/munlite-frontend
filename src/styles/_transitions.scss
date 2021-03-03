@@ -11,11 +11,11 @@
 }
 
 .slide-enter, .slide-leave-to {
-  transform: translate(0, -50vh);
+  transform: translate(0, -200%);
 }
 
 .slide-up-enter, .slide-up-leave-to {
-  transform: translate(0, 50vh);
+  transform: translate(0, 200%);
 }
 
 .slide-right-enter-active, .slide-right-leave-active,

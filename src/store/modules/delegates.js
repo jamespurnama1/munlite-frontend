@@ -1,7 +1,9 @@
 const delegates = {
   state: {
+    delegates: [],
     countryList: [],
     gslList: [],
+    caucusList: [],
     info: {
       Present: 0,
       'Present & Voting': 0,
@@ -17,7 +19,14 @@ const delegates = {
     gslList(state, l) {
       state.gslList.length = 0;
       state.gslList.push(...l);
-      // Vue.set(state, item.id, ...l);
+    },
+    delList(state, l) {
+      state.delegates.length = 0;
+      state.delegates.push(...l);
+    },
+    caucusList(state, l) {
+      state.caucusList.length = 0;
+      state.caucusList.push(...l);
     },
     present(state) {
       state.info.Present += 1;

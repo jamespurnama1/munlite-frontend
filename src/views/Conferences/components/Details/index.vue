@@ -44,10 +44,15 @@
 
           <div class="chair">
             <h3>Chair</h3>
-            <ul>
-              <li v-for="(chair, i) in confData.chairman" :key="i">
+            <ul v-if="chairman.length === confData.chairman.length">
+              <li
+                v-for="(chair, index) in confData.chairman"
+                :key="index"
+              >
                 <img :src="require('@/assets/img/home.png')">
-                {{ chair.email }}
+                <p><b>{{ chairman[index].first_name }} {{ chairman[index].last_name }}</b>
+                <br>
+                  {{ chair.email }}</p>
               </li>
             </ul>
           </div>
@@ -142,6 +147,7 @@ import { saveAs } from 'file-saver';
 import XLSX from 'xlsx';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { mapState } from 'vuex';
+import { checkUser } from '@/api/profile';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -157,6 +163,7 @@ export default {
     return {
       tl: null,
       motionsData: [],
+      chairman: [],
     };
   },
   mounted() {
@@ -166,8 +173,26 @@ export default {
     this.confData.motions.batches.forEach((motion) => {
       this.motionsData.push(...motion.batch_motions);
     });
+    this.confData.chairman.forEach((chair) => {
+      this.check(chair.email).then((response) => {
+        const res = {
+          first_name: response.user_name.first_name.charAt(0).toUpperCase()
+        + response.user_name.first_name.slice(1),
+          last_name: response.user_name.last_name.charAt(0).toUpperCase()
+        + response.user_name.last_name.slice(1),
+        };
+        this.chairman.push(res);
+      });
+    });
   },
   methods: {
+    async check(user) {
+      const data = {
+        email: user,
+      };
+      const u = await checkUser(JSON.stringify(data));
+      return u.data.data;
+    },
     buildExcel() {
       const wb = XLSX.utils.book_new();
       // ROLLCALL WS

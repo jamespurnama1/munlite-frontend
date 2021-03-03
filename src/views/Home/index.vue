@@ -1,12 +1,27 @@
 <template>
   <div id="Home">
-    <add-conference
-      v-if="showConf"
-      @exit="outside"
-      @update="updateConferencesData"
-      v-click-outside="config"
-    />
-    <div class="overlay" v-if="showConf"/>
+    <transition-group name="fade">
+      <Confirmation
+          content="Discard Conference?"
+          :action="outside"
+          :negative="true"
+          button="Discard"
+          whiteButton="Keep Editing"
+          v-if="showConfirm === 'add'"
+          @exit="showConfirm = false"
+          :key="`${showConfirm}Modal`"
+        />
+        <div class="overlay modal" :key="showConfirm" v-if="showConfirm === 'add'" />
+        <add-conference
+          v-if="showConf"
+          @exit="showConfirm = 'add'"
+          @exitSafe="outside(); showConf = false"
+          @update="updateConferencesData"
+          v-click-outside="config"
+          key="addConf"
+        />
+      <div class="overlay" key="overlay" v-if="showConf"/>
+    </transition-group>
     <div class="upper">
       <div class="profile">
         <div class="img"></div>
@@ -58,11 +73,13 @@
 import { getAllConferences } from '@/api/conference';
 import { logout } from '@/api/user';
 import AddConference from '@/components/AddConference/index.vue';
+import Confirmation from '@/components/Confirmation/index.vue';
 
 export default {
   name: 'Home',
   components: {
     AddConference,
+    Confirmation,
   },
   data() {
     return {
@@ -73,10 +90,14 @@ export default {
       },
       conferences: [],
       config: {
-        handler: this.outside,
+        handler: () => {
+          this.showConfirm = 'add';
+        },
+        middleware: (event) => event.target.className !== 'cancel',
         events: ['click'],
       },
       showConf: false,
+      showConfirm: false,
     };
   },
   created() {

@@ -55,7 +55,7 @@ const routes = [
   {
     path: '/caucus/:id',
     name: 'Caucus',
-    redirect: '/',
+    component: () => import('@/views/Caucus'),
   },
   {
     path: '/crisis/:id',

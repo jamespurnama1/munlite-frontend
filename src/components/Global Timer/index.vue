@@ -100,9 +100,6 @@ export default {
       progress: 0,
     };
   },
-  async mounted() {
-    this.scroll();
-  },
   methods: {
     async redo() {
       gsap.to('.redo', {
@@ -146,53 +143,6 @@ export default {
         order: this.order + 1,
       };
       this.$socket.send(JSON.stringify(next));
-    },
-    scroll() {
-      // ScrollTrigger.matchMedia({
-      //   '(max-width: 960px)': () => {
-      //     this.tl = gsap.timeline({
-      //       scrollTrigger: {
-      //         trigger: '#app',
-      //         start: 0,
-      //         end: '+=100px',
-      //         id: 'trigger1',
-      //         scrub: true,
-      //         snap: {
-      //           snapTo: [0, 1],
-      //           duration: { min: 0.3, max: 0.5 },
-      //           delay: 0.3,
-      //         },
-      //       },
-      //     });
-      //     this.tl.fromTo('.module, .main', {
-      //       boxShadow: '0px 0px 20px 0px rgba(0,0,0,0.15)',
-      //       border: '1px solid white',
-      //     }, {
-      //       boxShadow: '0px 0px 20px 0px rgba(0,0,0,0)',
-      //       border: '1px solid #d1d1d1',
-      //     })
-      //       .to('#timer', {
-      //         autoAlpha: 0,
-      //       }, 0)
-      //       .fromTo('.module', {
-      //         width: '100%',
-      //       }, {
-      //         minHeight: '70px',
-      //         padding: '10px',
-      //         width: 'calc(100% - 80px)',
-      //       }, 0)
-      //       .to('.main', {
-      //         x: '-100px',
-      //         autoAlpha: 1,
-      //       }, 0)
-      //       .to('.controls button', {
-      //         autoAlpha: 0,
-      //       }, 0)
-      //       .to('.controls', {
-      //         display: 'none',
-      //       });
-      //   },
-      // });
     },
     toggleActive() {
       const data = {

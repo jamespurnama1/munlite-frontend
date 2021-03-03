@@ -12,7 +12,9 @@
           <div
             v-for="(route, index) in conference"
             :key="index"
-            :class="{disabled: route === 'crisis'}">
+            :class="{
+              disabled: route === 'crisis'
+              }">
             <router-link
               :id="route"
               :to="`/${route}/${$route.params.id}`"
@@ -60,22 +62,19 @@
         <span></span>
       </div>
     </div>
-    <transition name="slide">
-      <div class="indicator" v-if="state && $route.params.id" :class="{blue: isConnected}">
-        <p v-if="!isConnected">You are offline. Reconnecting...</p>
+    <transition-group name="slide">
+      <div key="1" class="indicator" v-if="state && $route.params.id" :class="{blue: isConnected}">
+        <p v-if="!isConnected && off">You are offline. Reconnecting...</p>
+        <p v-else-if="!isConnected">Disconnected from server. Reconnecting...</p>
         <p v-else>Back Online!</p>
       </div>
-    </transition>
-    <transition name="slide">
-      <div class="indicator" v-if="noAuth">
+      <div key="2" class="indicator" v-if="noAuth">
         <p>You don't have permission</p>
       </div>
-    </transition>
-    <transition name="slide">
-      <div class="indicator" v-if="generic">
+      <div key="3" class="indicator" v-if="generic">
         <p>Something went wrong</p>
       </div>
-    </transition>
+    </transition-group>
     <Context
       v-if="showContext"
       v-click-outside="config"
@@ -111,6 +110,7 @@ export default {
         width: 0,
         height: 0,
       },
+      off: false,
       borderTemp: null,
       open: false,
       conference: ['overview', 'delegates', 'gsl', 'motions', 'caucus', 'crisis'],
@@ -160,6 +160,8 @@ export default {
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
     window.addEventListener('storage', this.logout);
+    window.addEventListener('online', () => { this.off = false; });
+    window.addEventListener('offline', () => { this.off = true; });
   },
   beforeUpdate() {
     if (!this.open) {
@@ -274,6 +276,8 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.checkMobileView);
     window.removeEventListener('storage', this.logout);
+    window.removeEventListener('online');
+    window.removeEventListener('offline');
   },
 };
 </script>

@@ -61,8 +61,6 @@
 
       &:hover {
         border: 1px solid rgba(0,0,0,0);
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
-        -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
         box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
       }
 
@@ -163,6 +161,7 @@
 
             .name {
               padding-right: 50px;
+              font-weight: bold;
 
               @include max-media(mobile) {
                 padding-right: 20px;
@@ -171,6 +170,7 @@
 
             .caption {
               font-size: .75em;
+              font-weight: normal;
             }
 
             svg {
@@ -254,8 +254,6 @@
                   cursor: pointer;
 
                   &:hover {
-                    -webkit-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.7);
-                    -moz-box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.7);
                     box-shadow: 0px 0px 20px 0px rgba(95, 120, 255, 0.7);
                   }
                 }
@@ -275,5 +273,9 @@
 
   .overlay {
     z-index: 199;
+
+    &.modal {
+      z-index: 205;
+    }
   }
 }

@@ -25,6 +25,7 @@
     width: 100%;
     list-style-type: none;
     backface-visibility: hidden;
+    // pointer-events: none;
   
     .stack-cards__item {
       position: absolute;
@@ -35,6 +36,7 @@
       top: 0;
       left: 0;
       backface-visibility: hidden;
+      // pointer-events: initial;
       // transform: translate(-50%, -50%);
 
       @supports not (aspect-ratio: 16 / 9) { 
