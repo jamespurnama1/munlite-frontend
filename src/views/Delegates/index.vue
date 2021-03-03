@@ -48,6 +48,8 @@
               :items="delStore"
               :sortFunc="sortMethod"
               :sortTypes="['Name', 'Presence']"
+              sortDefault="Name"
+              dirDefault="up"
               :filterFunc="filterMethod"
               :key="`${key} search`"
               :filterTypes="[['Present', 'Present & Voting', 'Not Present'],
@@ -243,10 +245,10 @@ export default {
         let compare;
         switch (dir) {
           case 'up':
-            compare = a[tipe] < b[tipe];
+            compare = a[tipe].toLowerCase() < b[tipe].toLowerCase();
             break;
           case 'down':
-            compare = a[tipe] > b[tipe];
+            compare = a[tipe].toLowerCase() > b[tipe].toLowerCase();
             break;
           default:
         }

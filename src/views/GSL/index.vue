@@ -40,7 +40,7 @@
           :prevent="prevent"
           @move="move"
         />
-        <div v-else>
+        <div class="noQueue" v-else>
           <h3>No delegates in queue</h3>
           <p v-if="widthWindow <= 960">Add delegates from the plus button</p>
           <p v-else>Start by typing a country name on the right</p>
@@ -199,7 +199,6 @@ export default {
     newGSLList(l) {
       this.newArr.length = 0;
       let data;
-      console.log(l, this.newArr);
       for (let i = 0; i < l.queue.length; i += 1) {
         [data] = this.delegatesData.filter((e) => e._id === l.queue[i].delegate_id);
         data.time_start = l.queue[i].time_start;
@@ -217,7 +216,6 @@ export default {
         this.newArr.push(data);
       }
       this.$store.commit('gslList', this.newArr);
-      this.currentCountry = this.gslCurrent;
     },
     async changeYield(selected) {
       try {
@@ -273,7 +271,7 @@ export default {
         }
         this.updateGSL();
       } catch (err) {
-        console.error(err.response);
+        console.error(err);
       }
       this.showYield = false;
     },
@@ -319,7 +317,7 @@ export default {
         console.log('Deleted Turn', i + 1);
         this.updateGSL();
       } catch (err) {
-        console.error(err.response);
+        console.error(err);
       }
     },
     async addQueue([country, time]) {
@@ -338,7 +336,7 @@ export default {
         }
         this.showQueue = false;
       } catch (err) {
-        console.error(err.response);
+        console.error(err);
       }
     },
     async updateGSL() {
@@ -353,7 +351,7 @@ export default {
           this.gslCurrent = this.gslData.current;
         }
       } catch (err) {
-        console.error(err.response);
+        console.error(err);
       }
     },
     toggleActive() {

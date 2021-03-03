@@ -55,7 +55,10 @@ button {
     // bottom: -30%;
   }
 
-  input {
+  input,
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-internal-autofill-selected {
     flex-grow: 1;
     font-size: 16px;
     padding: 10px;
@@ -63,6 +66,7 @@ button {
     display: block;
     border-radius: 10px/10px;
     border :1px solid $light-grey;
+    box-shadow: 0 0 0 30px white inset !important;
     background-color: white;
     font-family: 'Open Sans', sans-serif;
     -webkit-appearance: none;
@@ -76,7 +80,7 @@ button {
       color: transparent;
     }
     
-    &:focus, &.focus {
+    &:focus, &.focus, &:-webkit-autofill:focus {
       outline: none;
       border :1px solid $blue;
     }

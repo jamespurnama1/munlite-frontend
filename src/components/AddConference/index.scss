@@ -154,10 +154,19 @@
         .contain {
           width: 5em;
           height: 5em;
+          background-color: $light-grey;
           margin: .5em 0;
           border-radius: 50% / 50%;
+          background-size: cover;
+          background-position: center;
+          background-blend-mode: multiply;
+          color: transparent;
           cursor: pointer;
           overflow: hidden;
+          transition: all .3s ease;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           position: relative;
 
           @include max-media(mobile) {
@@ -166,25 +175,34 @@
             margin: .3em 0;
           }
 
-          .over {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.7);
-            font-weight: bold;
-            opacity: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: rgba(250,250,250,1);
             @include transition(.3s, ease);
 
-            &:hover {
-              opacity: 1;
-            }
-
+            
             p.caption {
               color: white;
             }
+          }
+
+          .over {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            p {
+              text-align: center;
+            }
+          }
+
+          .inputimage {
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            cursor: pointer;
           }
     
           .logo {

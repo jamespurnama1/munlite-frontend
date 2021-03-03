@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const global = {
   state: {
     widthWindow: 0,
@@ -50,6 +52,18 @@ const global = {
       commit('setContext', null);
       commit('setItem', []);
       commit('setContextPos', [0, 0]);
+    },
+    async updateMe({ commit, getters }) {
+      const fetch = axios.create({
+        baseURL: process.env.VUE_APP_BASE_API,
+        timeout: 7000,
+        headers: {
+          Authorization: `Bearer ${getters.jwt}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const profile = await fetch.get('/user/me');
+      commit('updateMe', profile.data.data);
     },
   },
 };

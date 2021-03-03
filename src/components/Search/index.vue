@@ -97,6 +97,8 @@ export default {
     items: Array,
     sortFunc: Function,
     sortTypes: Array,
+    sortDefault: String,
+    dirDefault: String,
     filterFunc: Function,
     filterTypes: Array,
   },
@@ -119,7 +121,9 @@ export default {
     },
   },
   mounted() {
-    this.filteredData = this.filterFunc(this.items, this.filterD, this.search);
+    this.sort = this.sortDefault;
+    this.sortDir = this.dirDefault;
+    this.filteredData = this.sortFunc(this.filteredData, this.sort, this.sortDir);
     this.$emit('sortedData', this.filteredData);
   },
   computed: {

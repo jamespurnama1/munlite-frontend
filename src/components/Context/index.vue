@@ -18,7 +18,7 @@
         :class="{
         disabled: !disabled,
         red: item === 'Delete' || item === 'Remove From Queue' }">
-        <p>
+        <p class="list">
           {{ item }}
         </p>
       </li>

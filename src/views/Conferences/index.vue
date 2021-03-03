@@ -53,7 +53,9 @@
           class="search"
           :items="conferencesData"
           :sortFunc="sortFunc"
-          :sortTypes="['name', 'date']"
+          sortDefault="Date"
+          dirDefault="down"
+          :sortTypes="['Name', 'Date']"
           :filterFunc="filterFunc"
           :key="key"
           :filterTypes="['Ongoing', ['Chair', 'Delegate', 'Best Delegate']]"
@@ -101,7 +103,7 @@
         </transition-group>
       </div>
       <Details
-        :key="sel"
+        :key="`${sel}${filteredData[sel].chairman.length}`"
         :ongoing="ongoing([filteredData[sel]]).length > 0"
         :sel="sel"
         @goBack="sel = null"
@@ -184,7 +186,7 @@ export default {
         handler: () => {
           this.showConfirm = 'add';
         },
-        middleware: (event) => event.target.className !== 'cancel',
+        middleware: (event) => event.target.className !== 'cancel' && event.target.className !== 'list',
         events: ['click'],
       },
       motions: null,
@@ -237,20 +239,19 @@ export default {
       return list;
     },
     sortFunc(items, type, dir) {
-      if (type === 'date') {
+      if (type === 'Date') {
         items.sort((a, b) => {
-          const dateA = Date.parse(a.start_date);
-          const dateB = Date.parse(b.start_date);
+          const dateA = Date.parse(a.end_date);
+          const dateB = Date.parse(b.end_date);
           let compare;
           switch (dir) {
             case 'down':
-              compare = dateA < dateB;
-              break;
-            case 'up':
               compare = dateA > dateB;
               break;
-            default:
+            case 'up':
               compare = dateA < dateB;
+              break;
+            default:
           }
           switch (compare) {
             case true:
@@ -261,18 +262,17 @@ export default {
               return 0;
           }
         });
-      } else if (type === 'name') {
+      } else if (type === 'Name') {
         items.sort((a, b) => {
           let compare;
           switch (dir) {
             case 'up':
-              compare = a.title < b.title;
+              compare = a.title.toLowerCase() < b.title.toLowerCase();
               break;
             case 'down':
-              compare = a.title > b.title;
+              compare = a.title.toLowerCase() > b.title.toLowerCase();
               break;
             default:
-              compare = a.title < b.title;
           }
           switch (compare) {
             case true:
@@ -318,9 +318,10 @@ export default {
       };
     },
     context([item, name, id, index]) {
-      if (item === 'Delete') {
+      console.log(!this.showInput);
+      if (!this.showInput && item === 'Delete') {
         this.showConfirm = name;
-      } else {
+      } else if (!this.showInput) {
         this.showInput = true;
         this.editData = this.filteredData[index];
         this.sel = this.conferencesData.findIndex((i) => i._id === id);

@@ -8,7 +8,7 @@
     </div>
     <div class="mid">
       <div class="left">
-        <div class="profile-pic" :style="`background-image: url('${defImg}')`" >
+        <div class="profile-pic">
           <span class="cam-logo">
             <font-awesome-icon :icon="['fas', 'camera']" size="lg" />
           </span>
@@ -58,12 +58,11 @@ export default {
       err: '',
     };
   },
-  computed: {
-    defImg() {
-      // eslint-disable-next-line global-require
-      return require('../../../../assets/img/home.png');
-    },
-  },
+  // computed: {
+  //   defImg() {
+  //     return require('../../../../assets/img/home.png');
+  //   },
+  // },
   methods: {
     exit() {
       this.$emit('exit');

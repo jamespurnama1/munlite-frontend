@@ -92,7 +92,6 @@
 
 <script>
 import { logout } from '@/api/user';
-import { getUserData } from '@/api/profile';
 import { mapState } from 'vuex';
 import Context from '@/components/Context/index.vue';
 import GlobalTimer from '@/components/Global Timer/index.vue';
@@ -151,18 +150,25 @@ export default {
     },
   },
   async created() {
-    try {
-      const profile = await getUserData();
-      this.$store.commit('updateMe', profile.data.data);
-    } catch (err) {
-      console.error(err);
-    }
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
     window.addEventListener('storage', this.logout);
     window.addEventListener('online', () => { this.off = false; });
     window.addEventListener('offline', () => { this.off = true; });
   },
+  // beforeRouteUpdate(to, from, next) {
+  //   console.log(to.name);
+  //   // if (to.name !== 'Log In' || to.name !== 'Sign Up') {
+  //   try {
+  //     const profile = getUserData().then(() => {
+  //       next((vm) => vm.$store.commit('updateMe', profile.data.data));
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  //   // }
+  //   // next();
+  // },
   beforeUpdate() {
     if (!this.open) {
       this.onTabClick();

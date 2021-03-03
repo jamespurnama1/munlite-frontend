@@ -80,11 +80,12 @@ const router = new VueRouter({
   routes,
 });
 
+const publicPages = ['Log In', 'Sign Up'];
+
 NProgress.configure({ easing: 'ease-out', speed: 1700, showSpinner: false });
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
-  const publicPages = ['Log In', 'Sign Up'];
   const authRequired = !publicPages.includes(to.name);
   const status = store.getters.loggedIn;
 
@@ -105,7 +106,8 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-router.afterEach(() => {
+router.afterEach((to) => {
+  if (!publicPages.includes(to.name)) store.dispatch('updateMe');
   // finish progress bar
   NProgress.done();
 });

@@ -3,7 +3,7 @@
   display: grid;
   height: calc(100vh - 4.6em);
   grid-template-rows: 70px minmax(0, 1fr);
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: minmax(350px,1fr) 2fr;
   grid-template-areas: 'upper upper'
                         'left right';
   width: calc(100% - 4rem);

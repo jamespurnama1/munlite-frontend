@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card" :class="{isActive: isActive}">
     <p class="desc" v-if="dsc && progress !== 100">{{ dsc }}</p>
     <div class="country" v-if="progress !== 100">
       <span :class="`flag-icon img flag-icon-${countryId(del.country).toLowerCase()}`" />
@@ -65,7 +65,7 @@ export default {
         this.dsc = this.del.status;
       } else if (this.time_left) {
         let t;
-        if (this.isActive) {
+        if (this.isActive && this.active) {
           t = this.timer;
         } else {
           t = this.time_left;
@@ -108,7 +108,7 @@ export default {
     timer: {
       handler() {
         let t;
-        if (this.isActive) {
+        if (this.isActive && this.active) {
           t = this.timer;
         } else {
           t = this.time_left;
@@ -125,7 +125,7 @@ export default {
     },
     delYield() {
       let t;
-      if (this.isActive) {
+      if (this.isActive && this.active) {
         t = this.timer;
       } else {
         t = this.time_left;

@@ -56,6 +56,9 @@
               <div class="info">
                 <span class="started-time">
                   {{ data.start_date.split("-").shift() }}
+                <div v-if="ongoing([data]).length > 0" class="badge">
+                  ONGOING
+                </div>
                 </span>
               </div>
             </div>
@@ -83,11 +86,6 @@ export default {
   },
   data() {
     return {
-      ongoing: {
-        name: 'Indonesia MUN',
-        timestamp: 10,
-        flag: 'id',
-      },
       conferences: [],
       config: {
         handler: () => {
@@ -104,6 +102,16 @@ export default {
     this.updateConferencesData();
   },
   methods: {
+    ongoing(items) {
+      const dt = Date.now();
+      return items.filter((item) => {
+        const a = new Date(item.start_date);
+        const b = new Date(item.end_date);
+        const c = new Date(b.getTime());
+        c.setDate(c.getDate() + 1);
+        return dt >= a && dt < c;
+      });
+    },
     async updateConferencesData() {
       try {
         const conferences = await getAllConferences();
@@ -115,10 +123,11 @@ export default {
       }
     },
     sortData(items, type, dir) {
+      const sort = items;
       if (type === 'date') {
-        items.sort((a, b) => {
-          const dateA = Date.parse(a.start_date);
-          const dateB = Date.parse(b.start_date);
+        sort.sort((a, b) => {
+          const dateA = Date.parse(a.end_date);
+          const dateB = Date.parse(b.end_date);
           let compare;
           switch (dir) {
             case 'down':
@@ -139,29 +148,8 @@ export default {
               return 0;
           }
         });
-      } else if (type === 'name') {
-        items.sort((a, b) => {
-          let compare;
-          switch (dir) {
-            case 'up':
-              compare = a.title < b.title;
-              break;
-            case 'down':
-              compare = a.title > b.title;
-              break;
-            default:
-              compare = a.title < b.title;
-          }
-          switch (compare) {
-            case true:
-              return -1;
-            case false:
-              return 1;
-            default:
-              return 0;
-          }
-        });
       }
+      sort.length = 5;
       return items;
     },
     outside() {

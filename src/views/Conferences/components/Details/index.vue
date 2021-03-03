@@ -185,6 +185,8 @@ export default {
       });
     });
   },
+  beforeUpdate() {
+  },
   methods: {
     async check(user) {
       const data = {

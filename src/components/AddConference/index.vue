@@ -24,16 +24,16 @@
       </div>
       <div class="upload">
         <h3>Logo</h3>
-        <span class="contain">
-          <div class="over">
-            <p class="caption">
-              Upload Image
+        <div class="contain">
+          <span class="over">
+            <p>
+              <font-awesome-icon :icon="['fas', 'camera']" size="lg" />
+              <br>
+              Change Image
             </p>
-          </div>
-          <img
-            class="logo"
-            :src="require('@/assets/img/home.png')">
-        </span>
+          </span>
+          <input type="file" name="myImage" accept="image/*" class="inputimage"/>
+        </div>
         <p class="caption">
           Supported format:<br>JPG, PNG, SVG<br>Max file size: 5MB
         </p>
@@ -63,16 +63,7 @@
     <h3>Chairs</h3>
     <div class="chair">
       <ul>
-        <li v-if="me" @contextmenu.prevent="showC(me.email, $event)">
-          <Context
-            v-if="showContext === me.email"
-            :name="me.email"
-            :id="me.email"
-            :pos="contextPos"
-            :action="['delete']"
-            :disabled="[true]"
-            @context="(...args) => context(...args)"
-            v-click-outside="config" />
+        <li v-if="me">
           <img class="avatar" :src="require('@/assets/img/home.png')">
           <p><b>{{ me.first_name }}
             {{ me.last_name }}</b>
@@ -81,21 +72,27 @@
         </li>
         <li
           v-for="(chair, index) in newConf.chairman"
-          :key="index"
-          @contextmenu.prevent="showC(chair, $event)">
-          <Context
-            v-if="showContext === chair"
-            :name="chair"
-            :id="chair"
-            :pos="contextPos"
-            :action="['delete']"
-            @context="(...args) => context(...args)"
-            v-click-outside="config" />
+          :key="chair._id"
+          @contextmenu.prevent="showC($event, chair, index)"
+          v-touch:touchhold.prevent="showCon(chair, index)"
+        >
           <img class="avatar" :src="require('@/assets/img/home.png')">
           <p><b>{{ chairman[index].first_name }}
             {{ chairman[index].last_name }}</b>
             <br>
-            {{ chair }}</p>
+            {{ chair }}
+          </p>
+          <Confirmation
+            :content="`Are you sure you want to remove ${chairman[index].first_name}
+            ${chairman[index].last_name}?`"
+            :action="removeChairman"
+            :id="chair"
+            button="Remove"
+            :negative="true"
+            v-if="showConfirm === chair"
+            v-click-outside="config"
+            @exit="showConfirm = null"
+          />
         </li>
         <li>
           <div>
@@ -196,21 +193,19 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import {
   createConference,
   updateConference,
   addChairman,
   delChairman,
 } from '@/api/conference';
-import { getUserData, checkUser } from '@/api/profile';
-import Context from '@/components/Context/index.vue';
+import Confirmation from '@/components/Confirmation/index.vue';
+import { checkUser } from '@/api/profile';
 import { evaluate } from 'mathjs';
 
 export default {
   name: 'AddConference',
-  components: {
-    Context,
-  },
   props: {
     conf: {
       type: Object,
@@ -219,8 +214,17 @@ export default {
       },
     },
   },
+  computed: {
+    ...mapState({
+      me: (state) => state.Global.me,
+    }),
+  //   defImg() {
+  //     return require('../../../../assets/img/home.png');
+  //   },
+  },
   data() {
     return {
+      showConfirm: null,
       scrollTop: false,
       scrollBottom: false,
       confModal: null,
@@ -230,13 +234,11 @@ export default {
         start: null,
         end: null,
       },
-      me: '',
-      showContext: false,
       config: {
         handler: this.outside,
+        middleware: (event) => event.target.className !== 'list',
         events: ['click'],
       },
-      contextPos: [0, 0],
       warn: {
         title: false,
         start_date: false,
@@ -259,9 +261,40 @@ export default {
       chairman: [],
     };
   },
+  components: {
+    Confirmation,
+  },
   methods: {
-    debug() {
-      console.log(this.confModal.scrollTop === 0);
+    removeChairman(email) {
+      this.newConf.chairman = this.newConf.chairman.filter((chair) => chair !== email);
+      this.showConfirm = null;
+    },
+    showC(event, data, index) {
+      if (!this.showInput) {
+        this.$store.dispatch('context', [
+          [`${this.chairman[index].first_name} ${this.chairman[index].last_name}`, data, index],
+          {
+            Delete: true,
+          },
+          [event.clientX, event.clientY],
+        ]);
+      }
+    },
+    showCon(data, index) {
+      return (event) => {
+        if (!this.showInput) {
+          this.$store.dispatch('context', [
+            [`${this.chairman[index].first_name} ${this.chairman[index].last_name}`, data, index],
+            {
+              Delete: true,
+            },
+            [event.touches[0].clientX, event.touches[0].clientY],
+          ]);
+        }
+      };
+    },
+    context([, , email]) {
+      this.showConfirm = email;
     },
     append(string) {
       if (this.newConf[string] !== '' && !this.newConf[string].match(/del/i)) {
@@ -273,21 +306,6 @@ export default {
     },
     outside() {
       this.showContext = false;
-    },
-    showC(c, e) {
-      if (e) {
-        const r = e.target.getBoundingClientRect();
-        this.contextPos = [e.clientX - r.left, e.clientY - r.top];
-      }
-      this.showContext = c;
-    },
-    context([i, d]) {
-      this.showContext = false;
-      if (i === 'delete') {
-        this.newConf.chairman = this.newConf.chairman.filter((item) => !d.includes(item));
-      } else {
-        this.showInput = d;
-      }
     },
     addChair() {
       const validateEmail = (email) => {
@@ -410,14 +428,6 @@ export default {
         }
       });
     },
-    async getMe() {
-      const u = await getUserData();
-      u.data.data.first_name = u.data.data.first_name.charAt(0).toUpperCase()
-        + u.data.data.first_name.slice(1);
-      u.data.data.last_name = u.data.data.last_name.charAt(0).toUpperCase()
-        + u.data.data.last_name.slice(1);
-      this.me = u.data.data;
-    },
     async check(user) {
       const data = {
         email: user,
@@ -435,35 +445,37 @@ export default {
   },
   async mounted() {
     this.confModal = this.$el.querySelector('.confModal');
+    if (this.conf && Object.keys(this.conf).length > 0) {
+      this.newConf = { ...this.conf.rules };
+      this.newConf.title = this.conf.title;
+      const c = this.conf.chairman;
+      const arr = [];
+      for (let i = 0; i < c.length; i += 1) {
+        if (c[i].email !== this.me.email) {
+          arr.push(c[i].email);
+          this.check(c[i].email).then((response) => {
+            const res = {
+              first_name: response.user_name.first_name.charAt(0).toUpperCase()
+            + response.user_name.first_name.slice(1),
+              last_name: response.user_name.last_name.charAt(0).toUpperCase()
+            + response.user_name.last_name.slice(1),
+            };
+            this.chairman.push(res);
+          });
+        }
+      }
+      if (this.conf.rules.rounding === 'Round Up') this.round = true;
+      this.newConf.chairman = [...arr];
+      this.dates.end = this.dateFormat(this.conf.end_date);
+      this.dates.start = this.dateFormat(this.conf.start_date);
+    }
   },
   created() {
-    this.getMe()
-      .then(() => {
-        if (this.conf && Object.keys(this.conf).length > 0) {
-          this.newConf = { ...this.conf.rules };
-          this.newConf.title = this.conf.title;
-          const c = this.conf.chairman;
-          const arr = [];
-          for (let i = 0; i < c.length; i += 1) {
-            if (c[i].email !== this.me.email) {
-              arr.push(c[i].email);
-              this.check(c[i].email).then((response) => {
-                const res = {
-                  first_name: response.user_name.first_name.charAt(0).toUpperCase()
-                + response.user_name.first_name.slice(1),
-                  last_name: response.user_name.last_name.charAt(0).toUpperCase()
-                + response.user_name.last_name.slice(1),
-                };
-                this.chairman.push(res);
-              });
-            }
-            if (this.conf.rules.rounding === 'Round Up') this.round = true;
-          }
-          this.newConf.chairman = [...arr];
-          this.dates.end = this.dateFormat(this.conf.end_date);
-          this.dates.start = this.dateFormat(this.conf.start_date);
-        }
-      });
+    window.onbeforeunload = () => 'Are you sure?';
+    this.$root.$on('context', (...args) => this.context(...args));
+  },
+  beforeDestroy() {
+    window.onbeforeunload = () => {};
   },
   watch: {
     round: {

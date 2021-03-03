@@ -136,6 +136,14 @@
       @include max-media(mobile-landscape) {
         width: 95%;
       }
+      
+      .noQueue {
+        margin: auto;
+
+        @include max-media(tablet) {
+          text-align: center;
+        }
+      }
     }
 
     .time {

@@ -130,7 +130,7 @@ export default {
         };
         this.$store.dispatch('register', user).then(
           () => {
-            this.$router.push('/login');
+            this.login();
           },
           (error) => {
             console.error(error);

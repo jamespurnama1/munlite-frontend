@@ -116,6 +116,8 @@ import Search from '@/components/Search/index.vue';
   :items="array"
   :key="array"
   :sortFunc="sortMethod"
+  sortDefault="type"
+  dirDefault="down"
   :sortTypes="['type']"
   :filterFunc="filterMethod"
   :filterTypes="['type', ['typeGroup', 'typeGroup', 'typeGroup']]"
@@ -134,13 +136,12 @@ sortMethod(items, type, dir) { // accepts 3 paramaters
       let compare;
       switch (dir) { // determine sort direction
         case 'up':
-          compare = a.title < b.title;
+          compare = a.title.toLowerCase() < b.title.toLowerCase();
           break;
         case 'down':
-          compare = a.title > b.title;
+          compare = a.title.toLowerCase() > b.title.toLowerCase();
           break;
         default:
-          compare = a.title < b.title;
       }
       switch (compare) { // actual comparison
         case true:

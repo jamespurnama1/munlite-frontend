@@ -81,11 +81,11 @@
                 @click="showConfirm = index"
                 :class="{
                   red: motion.no_vote > motion.yes_vote,
-                  blue: motion.no_vote < motion.yes_vote
-                  && motion.no_vote + motion.yes_vote >= majority
+                  blue: motion.no_vote + motion.yes_vote >= majority
                 }">
-                <p v-if="motion.no_vote > motion.yes_vote">Voting Failed</p>
-                <p v-else>Start Caucus</p>
+                <p v-if="motion.no_vote + motion.yes_vote >= majority">Start Caucus</p>
+                <p v-else-if="motion.no_vote > motion.yes_vote">Voting Failed</p>
+                <p v-else>No Votes</p>
                 <font-awesome-icon :icon="['fas', 'chevron-right']" />
               </button>
               </span>
@@ -199,13 +199,12 @@ export default {
     voteLogic() {
       let { majority } = this.rules;
       if (majority.match(/(\*|\+|-|\/)\s*(del)/i)) {
-        majority = majority.replace(/delegates/i, `(${this.delegatesData.length})`); // replace suffix with actual number
+        majority = majority.replace(/delegates/i, `${this.delegatesData.length}`); // replace suffix with actual number
       } else {
-        majority = majority.replace(/delegates/i, `* (${this.delegatesData.length})`); // if there was no operator, assume multiplication
+        majority = majority.replace(/delegates/i, `* ${this.delegatesData.length}`); // if there was no operator, assume multiplication
       }
       majority = majority.replace(/\s/gi, ''); // remove whitespace
-      if (majority.match(/((?:[-\d)(]*)(?:\d)(?:[-\d)(+/*]*))/i)) { // safety check before math eval
-        // eslint-disable-next-line no-eval
+      if (majority.match(/((?:[-\d)(]*)(?:\d)(?:[-\d)(+/*]*))/i)) {
         try {
           majority = evaluate(majority);
         } catch (err) {
@@ -321,7 +320,7 @@ export default {
         if (delegates.data.data !== null) {
           this.delegatesData = delegates.data.data.filter((del) => del.status.toLowerCase() === 'present' || del.status.toLowerCase() === 'present & voting');
           this.newCountryList();
-          if (this.rules.majortiy) this.voteLogic();
+          if (this.rules.majority) this.voteLogic();
         }
       } catch (err) {
         console.error(err.response);
@@ -389,7 +388,6 @@ export default {
     },
     async exit() {
       this.edit = null;
-      // this.showModal = false;
       this.showConfirm = null;
       await setTimeout(() => {
         this.updateMotionsData();
@@ -403,8 +401,7 @@ export default {
   created() {
     this.$root.$on('context', (...args) => this.context(...args));
     this.updateMotionsData();
-    this.updateDelegatesData();
-    this.updateConferenceData();
+    this.updateConferenceData().then(() => this.updateDelegatesData());
   },
 };
 </script>
