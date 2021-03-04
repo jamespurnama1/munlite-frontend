@@ -95,7 +95,7 @@ router.beforeEach((to, from, next) => {
         next();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
         const loginpath = window.location.pathname;
         next({ name: 'Log In', query: { from: loginpath } });
         // next('/login');

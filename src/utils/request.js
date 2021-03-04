@@ -30,13 +30,13 @@ service.interceptors.request.use(
         return config;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       },
     );
     return temp;
   },
   (error) => {
-    console.log(error); // for debug
+    console.error(error); // for debug
     return Promise.reject(error);
   },
 );
@@ -49,19 +49,12 @@ service.interceptors.response.use(
   },
   (error) => {
     const originalRequest = error.config;
-    // let refreshToken = localStorage.getItem("refreshToken");
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       return store.dispatch('fetchJWT')
-        .then((res) => {
-          if (res.status === 200) {
-            // localStorage.setItem('accessToken', res.data.accessToken);
-            console.log('Access token refreshed!');
-          }
-          return service(originalRequest);
-        });
+        .then(() => service(originalRequest));
     }
-    console.log(error); // for debug
+    console.error(error); // for debug
     if (error.response.status === 401) router.push('/login');
     return Promise.reject(error);
   },

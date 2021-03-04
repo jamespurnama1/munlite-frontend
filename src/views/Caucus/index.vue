@@ -29,6 +29,7 @@
         && socket"
         class="time"
         :class="{solo: !moderated}"
+        :next="noNext"
         @active="toggleActive()"
         @update="updateCaucus()"
         @restart="restart()"
@@ -63,6 +64,7 @@
             <Timer
               v-if="socket"
               class="time"
+              :next="noNext"
               @active="toggleActive()"
               @update="updateCaucus()"
               @restart="restart()"
@@ -148,6 +150,10 @@ export default {
         handler: this.outside,
         events: ['click'],
       },
+      nextButton: [
+        'consultation of the whole',
+        'unmoderated caucus',
+      ],
     };
   },
   methods: {
@@ -189,10 +195,12 @@ export default {
       let data;
       for (let i = 0; i < l.queue.length; i += 1) {
         [data] = this.delegatesData.filter((e) => e._id === l.queue[i].delegate_id);
-        data.time_start = l.queue[i].time_start;
-        data.time_left = l.queue[i].time_left;
-        data = { ...data };
-        this.newArr.push(data);
+        if (data) {
+          data.time_start = l.queue[i].time_start;
+          data.time_left = l.queue[i].time_left;
+          data = { ...data };
+          this.newArr.push(data);
+        }
       }
       this.$store.commit('caucusList', this.newArr);
       this.currentCountry = this.caucusCurrent;
@@ -211,7 +219,6 @@ export default {
         }));
         await nextCaucus(this.$route.params.id);
         this.updateCaucus();
-        console.log('next!');
       } catch (err) {
         console.error(err);
       }
@@ -240,7 +247,6 @@ export default {
     async deleteTurn(i) {
       try {
         await delTurn(this.$route.params.id, i + 1);
-        console.log('Deleted Turn', i + 1);
         this.updateCaucus();
       } catch (err) {
         console.error(err.response);
@@ -258,7 +264,6 @@ export default {
         && this.caucusData.length
         < (this.caucusData.motion.total_time / this.caucusData.motion.speaking_time)) {
           await addTurn(this.$route.params.id, data);
-          console.log('Added to Queue', data);
           this.updateCaucus();
         }
         this.showQueue = false;
@@ -300,7 +305,6 @@ export default {
         data.command = 'pause';
         data.order = this.caucusCurrent;
       }
-      console.log('Send WebSocket Data!', JSON.stringify(data));
       this.$socket.send(JSON.stringify(data));
     },
     select(i) {
@@ -359,6 +363,10 @@ export default {
       caucusList: (state) => state.Delegates.caucusList,
       widthWindow: (state) => state.Global.widthWindow,
     }),
+    noNext() {
+      if (this.nextButton.includes(this.caucusData.motion.type.toLowerCase())) return true;
+      return false;
+    },
     actions() {
       const action = {
         Restart: true,

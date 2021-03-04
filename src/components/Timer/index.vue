@@ -4,14 +4,17 @@
       <h3 id="timer">Timer</h3>
       <h1 class="read">{{ timerReadable }}</h1>
       <div class="controls">
-        <button :class="{blue: status !== 0}" @click="debounce(toggleActive(), 1000, true)">
+        <button
+          :class="{blue: status !== 0, large: !next}"
+          @click="debounce(toggleActive(), 1000, true)"
+        >
           <font-awesome-icon v-if="status === 0" :icon="['fas', 'pause']" />
           <font-awesome-icon v-else-if="status !== 0" :icon="['fas', 'play']" />
         </button>
         <button @click="debounce(redo(), 1000, true)">
           <font-awesome-icon class="redo" :icon="['fas', 'redo']" />
         </button>
-        <button @click="debounce(skip(), 1000, true)">
+        <button v-if="next" @click="debounce(skip(), 1000, true)">
           <font-awesome-icon class="skip" :icon="['fas', 'step-forward']" />
         </button>
         <button :class="{red: muted}" @click="toggleSound()">
@@ -35,6 +38,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default {
   name: 'Timer',
+  props: {
+    next: {
+      type: Boolean,
+      default: true,
+    },
+  },
   computed: {
     ...mapState({
       timer: (state) => state.Socket.message.time,
@@ -94,23 +103,6 @@ export default {
     this.scroll();
   },
   methods: {
-    // timeout(ms) {
-    //   let id;
-    //   const start = () => new Promise((resolve) => {
-    //     if (id === -1) {
-    //       throw new Error('Timer already aborted');
-    //     }
-    //     id = setTimeout(resolve, ms);
-    //   });
-    //   const abort = () => {
-    //     if (id !== -1 || id === undefined) {
-    //       clearTimeout(id);
-    //       id = -1;
-    //     }
-    //   };
-
-    //   return { start, abort };
-    // },
     redo() {
       gsap.to('.redo', {
         rotate: '-=360deg',

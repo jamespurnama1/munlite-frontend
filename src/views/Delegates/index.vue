@@ -324,7 +324,6 @@ export default {
         }
         return 0;
       });
-      console.log(items);
       return items;
     },
     async updateDelegatesData() {

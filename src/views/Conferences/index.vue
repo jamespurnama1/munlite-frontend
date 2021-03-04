@@ -318,7 +318,6 @@ export default {
       };
     },
     context([item, name, id, index]) {
-      console.log(!this.showInput);
       if (!this.showInput && item === 'Delete') {
         this.showConfirm = name;
       } else if (!this.showInput) {

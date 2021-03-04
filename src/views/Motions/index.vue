@@ -81,9 +81,9 @@
                 @click="showConfirm = index"
                 :class="{
                   red: motion.no_vote > motion.yes_vote,
-                  blue: motion.no_vote + motion.yes_vote >= majority
+                  blue: canStart(motion._id),
                 }">
-                <p v-if="motion.no_vote + motion.yes_vote >= majority">Start Caucus</p>
+                <p v-if="canStart(motion._id)">Start Caucus</p>
                 <p v-else-if="motion.no_vote > motion.yes_vote">Voting Failed</p>
                 <p v-else>No Votes</p>
                 <font-awesome-icon :icon="['fas', 'chevron-right']" />
@@ -101,16 +101,16 @@
                 @exit="exit"
               />
               <Confirmation
-              :content="`Start the ${motion.name
-              ? motion.name : motion.type.toLowerCase()}?`"
-              :action="startMotion"
-              :negative="false"
-              :id="motion._id"
-              button="Start"
-              v-else-if="showConfirm !== null && showConfirm === index"
-              v-click-outside="config"
-              @exit="exit"
-            />
+                :content="`Start the ${motion.name
+                ? motion.name : motion.type.toLowerCase()}?`"
+                :action="startMotion"
+                :negative="false"
+                :id="motion._id"
+                button="Start"
+                v-else-if="showConfirm !== null && showConfirm === index"
+                v-click-outside="config"
+                @exit="exit"
+              />
             </div>
             </transition-group>
           </div>
@@ -119,6 +119,16 @@
       </div>
     </div>
     <transition-group name="fade">
+    <Confirmation
+      :content="`${temp} started!`"
+      :action="function() {showOkay = false; temp = null;}"
+      :negative="false"
+      button="Okay"
+      :whiteButton="false"
+      v-if="showOkay"
+      v-click-outside="configOK"
+      :key="showOkay"
+    />
     <Confirmation
       content="Discard adding motion?"
       :action="exitAdd"
@@ -130,17 +140,17 @@
       :key="`${showConfirm}Modal`"
     />
     <div class="overlay modal" :key="showConfirm" v-if="showConfirm === 'add'" />
-      <add-motion
-        :editMotion="editMotion"
-        v-if="showModal"
-        :data="edit"
-        @exit="showConfirm = 'add'"
-        @exitSafe="exit(); showModal = false"
-        @update="updateMotionsData"
-        v-click-outside="configAdd"
-        key="3"
-      />
-    <div class="overlay" key="4" v-if="showModal|| showConfirm != null" />
+    <add-motion
+      :editMotion="editMotion"
+      v-if="showModal"
+      :data="edit"
+      @exit="showConfirm = 'add'"
+      @exitSafe="exit(); showModal = false"
+      @update="updateMotionsData"
+      v-click-outside="configAdd"
+      key="3"
+    />
+    <div class="overlay" key="4" v-if="showModal|| showConfirm != null || showOkay" />
     </transition-group>
   </div>
 </template>
@@ -170,9 +180,18 @@ export default {
     return {
       showModal: false,
       showConfirm: null,
+      showOkay: false,
+      temp: null,
       motionsData: [],
       config: {
         handler: this.exit,
+        events: ['click'],
+      },
+      configOK: {
+        handler: () => {
+          this.showOkay = false;
+          this.temp = null;
+        },
         events: ['click'],
       },
       configAdd: {
@@ -187,6 +206,11 @@ export default {
       expand: null,
       rules: {},
       majority: 0,
+      noTimer: [
+        'Suspension of The Debate',
+        'Continuation of The Debate',
+        'Adjournment of The Meeting',
+      ],
     };
   },
   computed: {
@@ -196,6 +220,13 @@ export default {
     }),
   },
   methods: {
+    canStart(id) {
+      const [motion] = this.motionsData.filter((m) => m._id === id);
+      const bool = (motion.no_vote + motion.yes_vote >= this.majority)
+        && (motion.no_vote < motion.yes_vote)
+        && (motion.no_vote + motion.yes_vote === this.delegatesData.length);
+      return bool;
+    },
     voteLogic() {
       let { majority } = this.rules;
       if (majority.match(/(\*|\+|-|\/)\s*(del)/i)) {
@@ -351,14 +382,16 @@ export default {
       }
     },
     async startMotion(id) {
-      const [motion] = this.motionsData.filter((m) => m._id === id);
-      if (motion.no_vote < motion.yes_vote
-        && motion.no_vote + motion.yes_vote === this.delegatesData.length) {
-        try {
-          const data = {
-            motion_id: id,
-          };
-          startCaucus(this.$route.params.id, JSON.stringify(data));
+      try {
+        const [motion] = this.motionsData.filter((m) => m._id === id);
+        const data = {
+          motion_id: id,
+        };
+        startCaucus(this.$route.params.id, JSON.stringify(data));
+        if (this.canStart(id) && this.noTimer.includes(motion.type)) {
+          this.showOkay = id;
+          this.temp = motion.type.toString();
+        } else if (this.canStart(id)) {
           const ws = {
             session: 'caucus',
             command: 'stop',
@@ -366,9 +399,9 @@ export default {
           };
           this.$socket.send(JSON.stringify(ws));
           this.$router.push(`/caucus/${this.$route.params.id}`).catch(() => {});
-        } catch (err) {
-          console.error(err);
         }
+      } catch (err) {
+        // console.error(err);
       }
     },
     newCountryList() {
@@ -394,7 +427,7 @@ export default {
       }, 500);
     },
     exitAdd() {
-      this.confirm = null;
+      this.showConfirm = null;
       this.showModal = false;
     },
   },

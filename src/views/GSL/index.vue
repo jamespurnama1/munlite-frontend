@@ -201,19 +201,21 @@ export default {
       let data;
       for (let i = 0; i < l.queue.length; i += 1) {
         [data] = this.delegatesData.filter((e) => e._id === l.queue[i].delegate_id);
-        data.time_start = l.queue[i].time_start;
-        data.time_left = l.queue[i].time_left;
-        let y;
-        if (!l.queue[i].yield) {
-          delete data.yield;
-        } else if (l.queue[i].yield.toLowerCase() === 'questions' || l.queue[i].yield.toLowerCase() === 'chair') {
-          y = { yield: l.queue[i].yield };
-        } else if (l.queue[i].yield) {
-          const [delY] = this.delegatesData.filter((e) => e._id === l.queue[i].yield);
-          y = { yield: delY.country };
+        if (data) {
+          data.time_start = l.queue[i].time_start;
+          data.time_left = l.queue[i].time_left;
+          let y;
+          if (!l.queue[i].yield) {
+            delete data.yield;
+          } else if (l.queue[i].yield.toLowerCase() === 'questions' || l.queue[i].yield.toLowerCase() === 'chair') {
+            y = { yield: l.queue[i].yield };
+          } else if (l.queue[i].yield) {
+            const [delY] = this.delegatesData.filter((e) => e._id === l.queue[i].yield);
+            y = { yield: delY.country };
+          }
+          data = { ...data, ...y };
+          this.newArr.push(data);
         }
-        data = { ...data, ...y };
-        this.newArr.push(data);
       }
       this.$store.commit('gslList', this.newArr);
     },
@@ -221,7 +223,6 @@ export default {
       try {
         let data;
         const order = this.gslCurrent + 1;
-        console.log(this.socket.order, order);
         // if (this.socket.order === order) {
         switch (selected) {
           case 0:
@@ -253,21 +254,17 @@ export default {
           default:
         }
         await yieldGSL(this.$route.params.id, JSON.stringify(data));
-        console.log('Yield!', data);
         if (selected === 1) {
           this.$socket.send(JSON.stringify({
             session: 'gsl',
             command: 'stop',
             order,
           }));
-          console.log('Stop!', order);
           await timeLeft(this.$route.params.id, JSON.stringify({
             order,
             time_left: this.socket.time,
           }));
-          console.log('Update time left', this.socket.time);
           await nextGSL(this.$route.params.id);
-          console.log('Next!');
         }
         this.updateGSL();
       } catch (err) {
@@ -289,7 +286,6 @@ export default {
         }));
         await nextGSL(this.$route.params.id);
         this.updateGSL();
-        console.log('next!');
       } catch (err) {
         console.error(err);
       }
@@ -314,7 +310,6 @@ export default {
     async deleteTurn(i) {
       try {
         await delTurn(this.$route.params.id, i + 1);
-        console.log('Deleted Turn', i + 1);
         this.updateGSL();
       } catch (err) {
         console.error(err);
@@ -331,7 +326,6 @@ export default {
         };
         if (id) {
           await addTurn(this.$route.params.id, data);
-          console.log('Added to Queue', data);
           this.updateGSL();
         }
         this.showQueue = false;
@@ -369,7 +363,6 @@ export default {
         data.command = 'pause';
         data.order = this.gslCurrent;
       }
-      console.log('Send WebSocket Data!', JSON.stringify(data));
       this.$socket.send(JSON.stringify(data));
     },
     select(i) {

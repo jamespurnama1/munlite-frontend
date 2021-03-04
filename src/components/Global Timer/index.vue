@@ -1,9 +1,13 @@
 <template>
   <div class="time">
     <div class="module">
-      <h1 class="read">{{ timerReadable }}</h1>
+      <h1 @click="push" class="read">{{ timerReadable }}
+          <span v-if="session='caucus'">Caucus</span>
+          <span v-else>GSL</span></h1>
       <div class="progress" :style="`clip-path: inset(0 ${progress}% 0 0);`">
-        <h1 class="read">{{ timerReadable }}</h1>
+          <h1 @click="push" class="read">{{ timerReadable }}
+          <span v-if="session='caucus'">Caucus</span>
+          <span v-else>GSL</span></h1>
       </div>
       <div class="controls">
         <button :class="{blue: status !== 0}" @click="toggleActive()">
@@ -43,6 +47,7 @@ export default {
   computed: {
     ...mapState({
       timer: (state) => state.Socket.message.time,
+      session: (state) => state.Socket.message.session,
       status: (state) => state.Socket.message.state,
       order: (state) => state.Socket.message.order,
       width: (state) => state.Global.widthWindow,
@@ -101,6 +106,10 @@ export default {
     };
   },
   methods: {
+    push() {
+      if (this.session.toLowerCase() === 'caucus') this.$router.push(`/caucus/${this.$route.params.id}`);
+      else this.$router.push(`/gsl/${this.$route.params.id}`);
+    },
     async redo() {
       gsap.to('.redo', {
         rotate: '-=360deg',
@@ -157,7 +166,6 @@ export default {
       } else {
         data.command = 'pause';
       }
-      console.log('Send WebSocket Data!', JSON.stringify(data));
       this.$socket.send(JSON.stringify(data));
     },
     toggleSound() {

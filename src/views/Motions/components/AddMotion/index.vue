@@ -168,6 +168,10 @@ export default {
       this.speaking_time = this.data.speaking_time;
       this.proposer = this.data.proposer;
     }
+    window.onbeforeunload = () => 'Are you sure?';
+  },
+  beforeDestroy() {
+    window.onbeforeunload = () => {};
   },
   methods: {
     keymap(event) {

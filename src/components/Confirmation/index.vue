@@ -2,7 +2,7 @@
   <div class="confirmation">
     <h3>{{ content }}</h3>
     <div class="buttons">
-      <button @click="exit()" class="cancel">{{ whiteButton }}</button>
+      <button v-if="whiteButton !== false" @click="exit()" class="cancel">{{ whiteButton }}</button>
       <button @click="action(id); exit()"
         :class="{red: negative, blue: negative === false}">
         {{ button }}
@@ -18,7 +18,7 @@ export default {
     action: Function,
     button: String,
     whiteButton: {
-      type: String,
+      type: String || Boolean,
       default: 'Cancel',
     },
     content: String,

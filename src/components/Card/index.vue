@@ -70,7 +70,7 @@ export default {
         } else {
           t = this.time_left;
         }
-        if (this.del.yield) {
+        if (this.del.yield && this.$route.name === 'GSL') {
           this.dsc = `${t} sec → ${this.delYield}`;
         } else {
           this.dsc = `${t} sec`;
@@ -114,7 +114,7 @@ export default {
           t = this.time_left;
         }
         this.progress = Math.min(Math.max((t / this.time_start) * 100, 0), 125);
-        if (this.delYield) {
+        if (this.delYield && this.$route.name === 'GSL') {
           this.dsc = `${t} sec → ${this.delYield}`;
         } else {
           this.dsc = `${t} sec`;

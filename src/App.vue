@@ -156,19 +156,6 @@ export default {
     window.addEventListener('online', () => { this.off = false; });
     window.addEventListener('offline', () => { this.off = true; });
   },
-  // beforeRouteUpdate(to, from, next) {
-  //   console.log(to.name);
-  //   // if (to.name !== 'Log In' || to.name !== 'Sign Up') {
-  //   try {
-  //     const profile = getUserData().then(() => {
-  //       next((vm) => vm.$store.commit('updateMe', profile.data.data));
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  //   // }
-  //   // next();
-  // },
   beforeUpdate() {
     if (!this.open) {
       this.onTabClick();
