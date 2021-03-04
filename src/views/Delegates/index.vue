@@ -207,13 +207,20 @@ export default {
               },
             },
           });
-          this.tl.to('.info', {
+          this.tl.fromTo('.table', {
+            y: this.infoHeight,
+          }, {
             y: `-=${this.infoHeight}`,
-            opacity: 0,
           })
-            .to('.table', {
+            .to('.info', {
               y: `-=${this.infoHeight}`,
+              opacity: 0,
             }, 0);
+        },
+        '(min-width: 961px)': () => {
+          gsap.set('.table', {
+            y: 0,
+          });
         },
       });
     },
@@ -382,9 +389,6 @@ export default {
   },
   mounted() {
     this.infoHeight = this.$el.querySelector('.info').clientHeight;
-    gsap.set('.table', {
-      y: this.infoHeight,
-    });
     this.scroll();
     this.$on('stage', (i) => {
       if (i === 0) {
