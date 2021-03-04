@@ -364,8 +364,8 @@ export default {
       widthWindow: (state) => state.Global.widthWindow,
     }),
     noNext() {
-      if (this.nextButton.includes(this.caucusData.motion.type.toLowerCase())) return true;
-      return false;
+      if (this.nextButton.includes(this.caucusData.motion.type.toLowerCase())) return false;
+      return true;
     },
     actions() {
       const action = {
