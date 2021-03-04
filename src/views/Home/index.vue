@@ -131,13 +131,12 @@ export default {
           let compare;
           switch (dir) {
             case 'down':
-              compare = dateA < dateB;
-              break;
-            case 'up':
               compare = dateA > dateB;
               break;
-            default:
+            case 'up':
               compare = dateA < dateB;
+              break;
+            default:
           }
           switch (compare) {
             case true:
