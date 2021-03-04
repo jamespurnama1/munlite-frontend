@@ -28,14 +28,14 @@
           </button>
         </span>
       </div>
+    </div>
+    <div class="delegates-table">
       <div class="info" v-if="width <= 960">
         <div class="info-data" v-for="(value, key) in info" :key="key">
           <p class="title emphasize">{{ key }}</p>
           <p class="data"><b class="emphasize">{{ value }}</b> Delegates</p>
         </div>
       </div>
-    </div>
-    <div class="delegates-table">
       <div class="table">
         <div class="title">
           <p class="title-name">Name</p>
@@ -64,7 +64,7 @@
               }"
             />
             <transition-group name="fade">
-            <div
+            <li
               v-for="(data, index) in delegatesData"
               :key="data._id"
               class="data"
@@ -89,7 +89,7 @@
                   @exit="exit"
                 />
               </transition>
-            </div>
+            </li>
             </transition-group>
           </div>
           <div class="table-data empty-data" v-else>No Delegates in the list</div>
@@ -194,10 +194,11 @@ export default {
         '(max-width: 960px)': () => {
           this.tl = gsap.timeline({
             scrollTrigger: {
-              trigger: '#app',
+              trigger: '.table-data',
               start: 0,
               end: `+=${this.infoHeight}`,
               id: 'trigger1',
+              scroller: '.table-data',
               scrub: true,
               snap: {
                 snapTo: [0, 1],
@@ -209,11 +210,9 @@ export default {
           this.tl.to('.info', {
             y: `-=${this.infoHeight}`,
             opacity: 0,
-            ease: 'power1',
           })
-            .to('.delegates-table', {
+            .to('.table', {
               y: `-=${this.infoHeight}`,
-              ease: 'power1',
             }, 0);
         },
       });
@@ -383,6 +382,9 @@ export default {
   },
   mounted() {
     this.infoHeight = this.$el.querySelector('.info').clientHeight;
+    gsap.set('.table', {
+      y: this.infoHeight,
+    });
     this.scroll();
     this.$on('stage', (i) => {
       if (i === 0) {
@@ -397,4 +399,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/index.scss';
 @import './index.scss';
+</style>
+
+<style lang="scss">
+#app {
+  max-height: 100vh;
+}
 </style>

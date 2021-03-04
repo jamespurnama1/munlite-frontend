@@ -20,9 +20,14 @@
           <div class="table-data" v-if="motionsData.length > 0">
             <transition-group name="fade">
             <div
-              v-for="(motion, index) in motionsData"
-              :key="motion._id"
+              v-for="(batch, index) in confData.motions.batches"
+              :key="index"
               class="data"
+            >
+            <li
+              v-for="(motion) in batch.batch_motions"
+              :key="motion._id"
+              :class="{pass: motion.yes_vote > motion.no_vote}"
             >
               <span>
                 <p class="name" v-if="motion.name !== ''">
@@ -61,6 +66,8 @@
                 <p>{{ motion.no_vote }}</p>
               </div>
               </span>
+            </li>
+            <hr>
             </div>
             </transition-group>
           </div>

@@ -2,11 +2,11 @@
   <div class="time">
     <div class="module">
       <h1 @click="push" class="read">{{ timerReadable }}
-          <span v-if="session='caucus'">Caucus</span>
+          <span v-if="sess === 'caucus'">Caucus</span>
           <span v-else>GSL</span></h1>
       <div class="progress" :style="`clip-path: inset(0 ${progress}% 0 0);`">
           <h1 @click="push" class="read">{{ timerReadable }}
-          <span v-if="session='caucus'">Caucus</span>
+          <span v-if="sess === 'caucus'">Caucus</span>
           <span v-else>GSL</span></h1>
       </div>
       <div class="controls">
@@ -47,7 +47,7 @@ export default {
   computed: {
     ...mapState({
       timer: (state) => state.Socket.message.time,
-      session: (state) => state.Socket.message.session,
+      sess: (state) => state.Socket.message.session,
       status: (state) => state.Socket.message.state,
       order: (state) => state.Socket.message.order,
       width: (state) => state.Global.widthWindow,
@@ -107,7 +107,7 @@ export default {
   },
   methods: {
     push() {
-      if (this.session.toLowerCase() === 'caucus') this.$router.push(`/caucus/${this.$route.params.id}`);
+      if (this.sess.toLowerCase() === 'caucus') this.$router.push(`/caucus/${this.$route.params.id}`);
       else this.$router.push(`/gsl/${this.$route.params.id}`);
     },
     async redo() {
