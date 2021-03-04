@@ -57,8 +57,7 @@ button {
 
   input,
   input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-internal-autofill-selected {
+  input:-webkit-autofill:hover {
     flex-grow: 1;
     font-size: 16px;
     padding: 10px;
