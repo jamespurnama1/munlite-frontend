@@ -148,7 +148,7 @@ export default {
           }
         });
       }
-      sort.length = 5;
+      if (sort.length > 5) sort.length = 5;
       return items;
     },
     outside() {
