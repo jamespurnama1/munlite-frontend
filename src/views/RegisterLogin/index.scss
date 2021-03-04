@@ -21,6 +21,7 @@
 
   img {
     width: 60%;
+    height: auto;
     min-width: 10rem;
     max-width: 20rem;
     margin-bottom: 2rem;
@@ -36,12 +37,12 @@
     .input {
       margin-bottom: 1rem;
 
-      .errmsg {
-        text-align: center;
-        color: $red;
-        font-size: 12px;
-        margin-bottom: 10px;
-      }
+    }
+    .errmsg {
+      text-align: center;
+      color: $red;
+      font-size: 12px;
+      margin-bottom: 10px;
     }
   }
 
