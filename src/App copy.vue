@@ -299,6 +299,5 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
-@import '@/styles/index.scss';
 @import './App.scss'
 </style>

@@ -2,8 +2,9 @@
   "baseUrl": "http://localhost:8080",
   "fixturesFolder": "tests/e2e/fixtures",
   "integrationFolder": "tests/e2e/specs",
-  "pluginsFile": "tests/e2e/plugins",
+  "pluginsFile": "tests/e2e/plugins/index.ts",
   "screenshotsFolder": "tests/e2e/screenshots",
-  "supportFile": "tests/e2e/support",
-  "videosFolder": "tests/e2e/videos"
+  "supportFile": "tests/e2e/support/index.ts",
+  "videosFolder": "tests/e2e/videos",
+  "testFiles": ["**/*.feature", "**/*.ts", "**/*.js"]
 }

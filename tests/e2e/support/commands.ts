@@ -1,14 +1,3 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
 // -- This is a parent command --
 Cypress.Commands.add('isNotInViewport', (element) => {
   cy.get(element).then(($el) => {
@@ -33,5 +22,40 @@ Cypress.Commands.add('isInViewport', (element) => {
     expect(rect.bottom).not.to.be.greaterThan(bottom as number);
     expect(rect.top).not.to.be.greaterThan(bottom as number);
     expect(rect.bottom).not.to.be.greaterThan(bottom as number);
+  });
+});
+
+// -- set auth_token --
+Cypress.Commands.add('login', () => {
+  if (window.location.href) cy.visit('/login');
+  cy.window().then((window: any) => {
+      cy.request({
+        method: 'POST', 
+        url: `${Cypress.env('base_api')}/login`,
+        body: {
+          email: Cypress.env('email'),
+          password: Cypress.env('password'),
+        }
+      })
+        .its('body')
+        .then((response: any) => {
+          window.store.commit('setJWT', response.data.access_token);
+        });
+  });
+});
+
+Cypress.Commands.add('getConfID', () => {
+  cy.window().then((window: any) => {
+    cy.request({
+      method: 'GET',
+      url: `${Cypress.env('base_api')}/api/conference`,
+      headers: {
+        Authorization: `Bearer ${window.store.getters.jwt}`,
+      },
+    })
+      .its('body')
+      .then((response: any) => {
+        return response.data[0]._id;
+      });
   });
 });

@@ -177,6 +177,5 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
-@import "./index.scss";
+@import './index.scss';
 </style>

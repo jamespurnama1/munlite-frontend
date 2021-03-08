@@ -1,12 +1,12 @@
-/// <reference types="cypress" />
-
-/**
- * @type {Cypress.PluginConfig}
- */
+/// <reference path="../support/index.d.ts" />
 
 // const navbarTab = ['Overview', 'Delegates', 'Motions', 'Caucus', 'Crisis'];
 
 // describe('NavBar Test', () => {
+//   before(() => {
+//     cy.login();
+//   });
+
 //   it('Render all navigation tab', () => {
 //     cy.visit('/');
 

@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:e2e": "vue-cli-service test:e2e",
+    "test": "cypress open",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -44,11 +44,11 @@
     "xlsx": "^0.16.9"
   },
   "devDependencies": {
+    "@types/node": "^14.14.32",
     "@types/nprogress": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "^4.5.6",
-    "@vue/cli-plugin-e2e-cypress": "^4.5.6",
     "@vue/cli-plugin-eslint": "^4.5.6",
     "@vue/cli-plugin-pwa": "^4.5.6",
     "@vue/cli-plugin-router": "^4.5.6",
@@ -58,11 +58,12 @@
     "@vue/eslint-config-airbnb": "^5.0.2",
     "@vue/eslint-config-typescript": "^5.1.0",
     "babel-eslint": "^10.1.0",
+    "cypress": "^6.6.0",
     "cypress-cucumber-preprocessor": "^4.0.1",
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-vue": "^7.7.0",
-    "node-sass": "^5.0.0",
+    "sass": "^1.32.8",
     "sass-loader": "^10.1.1",
     "typescript": "~3.9.3",
     "vue-template-compiler": "^2.6.12",

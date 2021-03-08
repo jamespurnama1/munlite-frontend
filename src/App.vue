@@ -229,15 +229,17 @@ export default Vue.extend({
       document.body.style.overflow = 'visible';
       this.open = false;
     },
-    async logout(event) {
-      this.open = false;
-      try {
-        await logout();
-        this.$store.dispatch('logout');
-        if (!event) window.localStorage.setItem('logout', Date.now().toString());
-        this.$router.push('/login');
-      } catch (err) {
-        console.error(err);
+    async logout(event: StorageEvent) {
+      if (event.key === 'logout') {
+        this.open = false;
+        try {
+          await logout();
+          this.$store.dispatch('logout');
+          if (!localStorage.getItem('logout')) window.localStorage.setItem('logout', Date.now().toString());
+          this.$router.push('/login');
+        } catch (err) {
+          console.error(err);
+        }
       }
     },
     toggleMenu() {
@@ -277,6 +279,5 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import '@/styles/index.scss';
-@import './App.scss'
+@import './App.scss';
 </style>

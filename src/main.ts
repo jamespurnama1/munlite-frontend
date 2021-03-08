@@ -72,3 +72,5 @@ router.afterEach((to) => {
 });
 
 vm.$mount('#app');
+
+if (window.Cypress) window.store = store;

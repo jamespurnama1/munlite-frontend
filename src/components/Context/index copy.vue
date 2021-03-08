@@ -86,6 +86,5 @@ export default class Context extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/index.scss';
 @import './index.scss';
 </style>

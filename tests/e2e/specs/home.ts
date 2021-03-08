@@ -1,11 +1,11 @@
-/// <reference types="cypress" />
+/// <reference path="../support/index.d.ts" />
 
-/**
- * @type {Cypress.PluginConfig}
- */
+describe('Home Page UI', () => {
+  before(() => {
+    cy.login();
+  });
 
-// describe('Home Page UI', () => {
-//   it('Render all components', () => {
-//     cy.visit('/home');
-//   });
-// });
+  it('Render all components', () => {
+    cy.visit('/');
+  });
+});
