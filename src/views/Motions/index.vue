@@ -150,7 +150,7 @@
       v-click-outside="configAdd"
       key="3"
     />
-    <div class="overlay" key="4" v-if="showModal|| showConfirm != null || showOkay" />
+    <div class="overlay" key="4" v-if="showModal|| showConfirm || showOkay" />
     </transition-group>
   </div>
 </template>
