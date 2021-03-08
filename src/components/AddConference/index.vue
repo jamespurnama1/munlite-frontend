@@ -192,7 +192,8 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { mapState } from 'vuex';
 import {
   createConference,
@@ -203,8 +204,10 @@ import {
 import Confirmation from '@/components/Confirmation/index.vue';
 import { checkUser } from '@/api/profile';
 import { evaluate } from 'mathjs';
+// eslint-disable-next-line no-unused-vars
+import { conferenceType, profileType } from '@/types/api';
 
-export default {
+export default Vue.extend({
   name: 'AddConference',
   props: {
     conf: {
@@ -216,7 +219,7 @@ export default {
   },
   computed: {
     ...mapState({
-      me: (state) => state.Global.me,
+      me: (state: any) => state.Global.me,
     }),
   //   defImg() {
   //     return require('../../../../assets/img/home.png');
@@ -224,17 +227,18 @@ export default {
   },
   data() {
     return {
-      showConfirm: null,
-      scrollTop: false,
-      scrollBottom: false,
-      confModal: null,
-      round: false,
-      email: null,
+      showConfirm: null as string | boolean | null,
+      scrollTop: false as boolean,
+      scrollBottom: false as boolean,
+      confModal: null as Element | null,
+      round: false as boolean,
+      email: '' as string,
       dates: {
-        start: null,
-        end: null,
+        start: null as string | null,
+        end: null as string | null,
       },
       config: {
+        // @ts-ignore
         handler: this.outside,
         middleware: (event) => event.target.className !== 'list',
         events: ['click'],
@@ -246,68 +250,68 @@ export default {
         majority: false,
         dr_vote: false,
         quorum: false,
-        email: '',
+        email: '' as boolean | string,
       },
       newConf: {
-        title: null,
-        start_date: null,
-        end_date: null,
+        title: '',
+        start_date: '',
+        end_date: '',
         majority: '',
         dr_vote: '',
         quorum: '',
         rounding: 'Round Down',
         chairman: [],
-      },
-      chairman: [],
+      } as conferenceType.createConference,
+      chairman: [] as Array<any>,
     };
   },
   components: {
     Confirmation,
   },
   methods: {
-    removeChairman(email) {
+    removeChairman(email): void {
       this.newConf.chairman = this.newConf.chairman.filter((chair) => chair !== email);
       this.showConfirm = null;
     },
-    showC(event, data, index) {
-      if (!this.showInput) {
+    showC(event: MouseEvent, data: object, index: number): void {
+      // if (!this.showInput) {
+      this.$store.dispatch('context', [
+        [`${this.chairman[index].first_name} ${this.chairman[index].last_name}`, data, index],
+        {
+          Delete: true,
+        },
+        [event.clientX, event.clientY],
+      ]);
+      // }
+    },
+    showCon(data: object, index: number): any {
+      return (event) => {
+        // if (!this.showInput) {
         this.$store.dispatch('context', [
           [`${this.chairman[index].first_name} ${this.chairman[index].last_name}`, data, index],
           {
             Delete: true,
           },
-          [event.clientX, event.clientY],
+          [event.touches[0].clientX, event.touches[0].clientY],
         ]);
-      }
-    },
-    showCon(data, index) {
-      return (event) => {
-        if (!this.showInput) {
-          this.$store.dispatch('context', [
-            [`${this.chairman[index].first_name} ${this.chairman[index].last_name}`, data, index],
-            {
-              Delete: true,
-            },
-            [event.touches[0].clientX, event.touches[0].clientY],
-          ]);
-        }
+        // }
       };
     },
-    context([, , email]) {
-      this.showConfirm = email;
+    context([, , email]: any[] = []): void {
+      if (email) this.showConfirm = email; console.log(email);
     },
-    append(string) {
-      if (this.newConf[string] !== '' && !this.newConf[string].match(/del/i)) {
+    append(string: string): void {
+      if (this.newConf && this.newConf[string] !== '' && !this.newConf[string].match(/del/i)) {
         this.newConf[string] = this.newConf[string].concat(' delegates');
       }
-      if (!this.newConf[string].match(/delegates/i)) {
+      if (this.newConf && !this.newConf[string].match(/delegates/i)) {
         this.newConf[string] = this.newConf[string].replace(/(del)(?:[a-z]*)/i, 'delegates');
       }
     },
-    outside() {
-      this.showContext = false;
+    outside(): void {
+      this.showConfirm = false;
     },
-    addChair() {
+    addChair(): void {
       const validateEmail = (email) => {
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
@@ -315,22 +319,23 @@ export default {
       const duplicate = this.newConf.chairman
         .filter((f) => f === this.email);
       this.check(this.email)
-        .then((res) => {
+        .then((res: any) => {
           if (validateEmail(this.email)
-          && duplicate.length === 0
-          && res.found
-          && this.email !== this.me.email) {
-            this.newConf.chairman.push(this.email);
-            const resUpperCase = {
-              first_name: res.user_name.first_name.charAt(0).toUpperCase()
-            + res.user_name.first_name.slice(1),
-              last_name: res.user_name.last_name.charAt(0).toUpperCase()
-            + res.user_name.last_name.slice(1),
-            };
-            this.chairman.push(resUpperCase);
-            this.$forceUpdate();
-            this.email = '';
-            // this.$set(this.newConf.chairman, this.newConf.chairman.length, this.email);
+            && duplicate.length === 0
+            && res.found
+            && this.email
+            && this.email !== this.me.email) {
+              this.newConf!.chairman.push(this.email);
+              const resUpperCase = {
+                first_name: res.user_name.first_name.charAt(0).toUpperCase()
+              + res.user_name.first_name.slice(1),
+                last_name: res.user_name.last_name.charAt(0).toUpperCase()
+              + res.user_name.last_name.slice(1),
+              };
+              this.chairman.push(resUpperCase);
+              this.$forceUpdate();
+              this.email = '';
+              // this.$set(this.newConf.chairman, this.newConf.chairman.length, this.email);
           } else if (!validateEmail(this.email)) {
             this.warn.email = 'Please enter a valid e-mail address';
           } else if (!res.found) {
@@ -341,7 +346,7 @@ export default {
         })
         .catch((err) => console.error(err));
     },
-    editConf() {
+    editConf(): void {
       const difference = this.newConf.chairman.filter((x) => !this.conf.chairman.includes(x));
       if (difference.length > 0) {
         try {
@@ -349,7 +354,7 @@ export default {
             const data = {
               email: difference[i],
             };
-            addChairman(this.conf._id, JSON.stringify(data));
+            addChairman(this.conf._id, data);
           }
         } catch (err) {
           if (err.response.status === 422) {
@@ -359,7 +364,8 @@ export default {
         }
       }
 
-      let diff = this.conf.chairman.filter((x) => !this.newConf.chairman.includes(x.email));
+      let diff;
+      diff = this.conf.chairman.filter((x) => !this.newConf!.chairman!.includes(x.email));
       diff = diff.filter((x) => this.me.email !== x.email);
       if (diff.length > 0) {
         try {
@@ -367,7 +373,7 @@ export default {
             const data = {
               email: diff[i].email,
             };
-            delChairman(this.conf._id, JSON.stringify(data));
+            delChairman(this.conf._id, data);
           }
         } catch (err) {
           if (err.response.status === 422) {
@@ -377,31 +383,39 @@ export default {
         }
       }
 
-      const data = { ...this.newConf };
-      delete data.chairman;
+      const data: conferenceType.updateConference = (({ chairman, ...o }) => o)(this.newConf);
       this.checkForm(data);
       if (Object.values(this.warn).every((bool) => bool === false || bool === '')) {
-        updateConference(this.conf._id, JSON.stringify(data))
+        updateConference(this.conf._id, data)
           .then(() => {
             this.$emit('update');
             this.$emit('exitSafe');
           });
       }
     },
-    addNewConf() {
-      this.checkForm(this.newConf);
+    addNewConf(): void {
+      this.checkForm(this.newConf as conferenceType.createConference);
       if (Object.values(this.warn).every((bool) => bool === false || bool === '')) {
-        createConference(JSON.stringify(this.newConf))
+        createConference(this.newConf)
           .then(() => {
             this.$emit('update');
-            this.newConf = '';
+            this.newConf = {
+              title: '',
+              start_date: '',
+              end_date: '',
+              majority: '',
+              dr_vote: '',
+              quorum: '',
+              rounding: 'Round Down',
+              chairman: [],
+            };
             this.$emit('exitSafe');
           }).catch((err) => {
             console.error(err);
           });
       }
     },
-    checkForm(data) {
+    checkForm(data: any): void {
       Object.keys(data)
         .filter((f) => !data[f])
         .forEach((e) => { this.warn[e] = true; });
@@ -428,14 +442,14 @@ export default {
         }
       });
     },
-    async check(user) {
+    async check(user: string): Promise<profileType.checkUser> {
       const data = {
         email: user,
       };
-      const u = await checkUser(JSON.stringify(data));
+      const u = await checkUser(data);
       return u.data.data;
     },
-    dateFormat(d) {
+    dateFormat(d): string {
       const sDate = new Date(d);
       const ye = (y) => new Intl.DateTimeFormat('en', { year: 'numeric' }).format(y);
       const mo = (m) => new Intl.DateTimeFormat('en', { month: '2-digit' }).format(m);
@@ -443,13 +457,13 @@ export default {
       return `${ye(sDate)}-${mo(sDate)}-${da(sDate)}`;
     },
   },
-  async mounted() {
+  async mounted(): Promise<void> {
     this.confModal = this.$el.querySelector('.confModal');
     if (this.conf && Object.keys(this.conf).length > 0) {
       this.newConf = { ...this.conf.rules };
-      this.newConf.title = this.conf.title;
-      const c = this.conf.chairman;
-      const arr = [];
+      this.newConf!.title = this.conf.title;
+      const c: Array<any> = this.conf.chairman;
+      const arr: Array<any> = [];
       for (let i = 0; i < c.length; i += 1) {
         if (c[i].email !== this.me.email) {
           arr.push(c[i].email);
@@ -465,12 +479,12 @@ export default {
         }
       }
       if (this.conf.rules.rounding === 'Round Up') this.round = true;
-      this.newConf.chairman = [...arr];
+      this.newConf!.chairman = [...arr];
       this.dates.end = this.dateFormat(this.conf.end_date);
       this.dates.start = this.dateFormat(this.conf.start_date);
     }
   },
-  created() {
+  created(): void {
     window.onbeforeunload = () => 'Are you sure?';
     this.$root.$on('context', (...args) => this.context(...args));
   },
@@ -482,10 +496,10 @@ export default {
       handler() {
         switch (this.round) {
           case true:
-            this.newConf.rounding = 'Round Up';
+            this.newConf!.rounding = 'Round Up';
             break;
           case false:
-            this.newConf.rounding = 'Round Down';
+            this.newConf!.rounding = 'Round Down';
             break;
           default:
         }
@@ -500,35 +514,35 @@ export default {
     newConf: {
       deep: true,
       handler() {
-        if (this.newConf.title) {
+        if (this.newConf && this.newConf.title) {
           this.warn.title = false;
         }
-        if (this.newConf.quorum) {
+        if (this.newConf && this.newConf.quorum) {
           this.warn.quorum = false;
         }
-        if (this.newConf.dr_vote) {
+        if (this.newConf && this.newConf.dr_vote) {
           this.warn.dr_vote = false;
         }
-        if (this.newConf.majority) {
+        if (this.newConf && this.newConf.majority) {
           this.warn.majority = false;
         }
-        if (this.newConf.start_date) {
+        if (this.newConf && this.newConf.start_date) {
           this.warn.start_date = false;
         }
-        if (this.newConf.end_date) {
+        if (this.newConf && this.newConf.end_date) {
           this.warn.end_date = false;
         }
       },
     },
     dates: {
       deep: true,
-      handler() {
-        this.newConf.start_date = new Date(this.dates.start).toISOString();
-        this.newConf.end_date = new Date(this.dates.end).toISOString();
+      handler(): void {
+        this.newConf!.start_date = new Date(this.dates.start as string).toISOString();
+        this.newConf!.end_date = new Date(this.dates.end as string).toISOString();
       },
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

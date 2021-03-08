@@ -65,29 +65,31 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
   name: 'RegisterLogin',
   data() {
     return {
       formData: {
-        first: '',
-        last: '',
-        email: '',
-        password: '',
-        confirm: '',
+        first: '' as string,
+        last: '' as string,
+        email: '' as string,
+        password: '' as string,
+        confirm: '' as string,
       },
-      errorMessage: '',
-      signupButton: 'Sign Up',
-      loginButton: 'Log In',
+      errorMessage: '' as string,
+      signupButton: 'Sign Up' as string,
+      loginButton: 'Log In' as string,
     };
   },
   computed: {
-    loggedIn() {
+    loggedIn(): boolean {
       return this.$store.state.loggedIn;
     },
-    pass() {
-      let p;
+    pass(): string {
+      let p: string = '';
       switch (this.$route.path) {
         case '/login':
           p = 'current-password';
@@ -96,7 +98,6 @@ export default {
           p = 'new-password';
           break;
         default:
-          p = '';
       }
       return p;
     },
@@ -107,7 +108,7 @@ export default {
     }
   },
   methods: {
-    async signup() {
+    async signup(): Promise<void> {
       if (this.formData.password !== this.formData.confirm) {
         this.errorMessage = 'Confirmed password does not match';
 
@@ -140,7 +141,7 @@ export default {
         );
       }
     },
-    async login() {
+    async login(): Promise<void> {
       if (this.formData.email.length > 0 && this.formData.password.length > 0) {
         this.loginButton = 'Logging in...';
         const user = {
@@ -150,6 +151,7 @@ export default {
         this.$store.dispatch('login', user).then(
           () => {
             if (this.$route.query.from) {
+              // @ts-ignore
               this.$router.push(this.$route.query.from);
             } else {
               this.$router.push('/');
@@ -165,14 +167,14 @@ export default {
         this.errorMessage = 'Fill all required fields';
       }
     },
-    formSubmission() {
+    formSubmission(): void {
       if (this.$route.path === '/signup') {
         this.signup();
       } else {
         this.login();
       }
     },
-    changeRoute() {
+    changeRoute(): void {
       this.errorMessage = '';
       Object.keys(this.formData).forEach((item) => {
         this.formData[item] = '';
@@ -184,7 +186,7 @@ export default {
         this.$router.push('/login');
       }
     },
-    validateEmail(email) {
+    validateEmail(email: string): boolean {
       const mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z]+)*$/;
       if (mailformat.test(email)) {
         return true;
@@ -192,7 +194,7 @@ export default {
       return false;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

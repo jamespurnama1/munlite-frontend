@@ -45,26 +45,30 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+// eslint-disable-next-line no-unused-vars
+import Vue, { PropType } from 'vue';
 import { editDelegates, getAllDelegates } from '@/api/delegates';
 import CardStack from '@/components/CardStack/index.vue';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType } from '@/types/api';
 
-export default {
+export default Vue.extend({
   components: {
     CardStack,
   },
   data() {
     return {
-      button: 'Present &amp;&nbsp;Voting',
-      voteCount: 0,
-      currentCountry: 0,
+      button: 'Present &amp;&nbsp;Voting' as string,
+      voteCount: 0 as number,
+      currentCountry: 0 as number,
     };
   },
   props: {
-    delegatesData: Array,
+    delegatesData: Array as PropType<delegatesType.getAllDelegates[]>,
   },
   methods: {
-    async presence(j) {
+    async presence(j: string): Promise<void> {
       try {
         const data = {
           country: this.delegatesData[this.currentCountry].country,
@@ -80,17 +84,19 @@ export default {
       } catch (err) {
         console.error(err);
       }
+      // @ts-ignore
       this.$children[0].goNext();
     },
-    move(index) {
-      const j = Math.min(Math.max(parseInt(index, 10), 0), this.delegatesData.length - 1);
+    move(index: number): void {
+      const j = Math.min(Math.max(parseInt(index.toString(), 10), 0),
+        this.delegatesData.length - 1);
       this.currentCountry = j;
     },
-    async getVoteCount() {
+    async getVoteCount(): Promise<void> {
       const vote = await getAllDelegates(this.$route.params.id);
-      this.voteCount = (vote.data.data.filter((obj) => obj.status !== 'N/A')).length;
+      this.voteCount = (vote.data.data.filter((obj: delegatesType.getAllDelegates) => obj.status !== 'N/A')).length;
     },
-    decoder(str) { // Vue workaround for &nbsp;
+    decoder(str: string): string { // Vue workaround for &nbsp;
       const textArea = document.createElement('textarea');
       textArea.innerHTML = str;
       return textArea.value;
@@ -99,7 +105,7 @@ export default {
   created() {
     this.getVoteCount();
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

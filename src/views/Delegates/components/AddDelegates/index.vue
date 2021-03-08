@@ -36,11 +36,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { addDelegates } from '@/api/delegates';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType } from '@/types/api';
 import Autocomplete from '@/components/Autocomplete/index.vue';
 
-export default {
+export default Vue.extend({
   name: 'AddDelegates',
   components: {
     Autocomplete,
@@ -50,12 +53,12 @@ export default {
   },
   data() {
     return {
-      imageDel: null,
+      imageDel: null as null,
       newCountry: {
-        name: '',
-        short: null,
+        name: '' as string,
+        short: '' as string,
       },
-      err: '',
+      err: '' as string,
     };
   },
   // computed: {
@@ -64,24 +67,27 @@ export default {
   //   },
   // },
   methods: {
-    exit() {
+    exit(): void {
       this.$emit('exit');
     },
-    onchangeCountry(country) {
+    onchangeCountry(country): void {
       this.err = '';
       this.newCountry.name = country;
     },
-    async addNewCountry() {
+    async addNewCountry(): Promise<void> {
       try {
         if (this.newCountry.name.length > 0) {
-          const data = [{
+          const data: delegatesType.addDelegates = {
             country: this.newCountry.name,
             status: 'N/A',
-          }];
+          };
           await addDelegates(this.$route.params.id, data);
           this.$emit('update');
 
-          this.newCountry = '';
+          this.newCountry = {
+            name: '',
+            short: '',
+          };
           this.$emit('exit');
         }
       } catch (err) {
@@ -90,7 +96,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

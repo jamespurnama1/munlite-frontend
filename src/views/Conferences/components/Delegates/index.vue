@@ -64,20 +64,23 @@
   </div>
 </template>
 
-<script>
-import { negara } from '@/const/country';
+<script lang="ts">
+import Vue from 'vue';
+import negara from '@/const/country';
 import { mapState } from 'vuex';
 import Search from '@/components/Search/index.vue';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType } from '@/types/api';
 
-export default {
+export default Vue.extend({
   name: 'Motions',
   components: {
     Search,
   },
   data() {
     return {
-      delegatesData: [],
-      key: 0,
+      delegatesData: [] as delegatesType.getAllDelegates[],
+      key: 0 as number,
     };
   },
   props: {
@@ -85,24 +88,26 @@ export default {
   },
   computed: {
     ...mapState({
-      width: (state) => state.Global.widthWindow,
+      width: (state: any) => state.Global.widthWindow,
     }),
   },
   methods: {
-    getDelegatesID(name) {
+    getDelegatesID(name: string): string {
       const data = negara.filter((obj) => obj.name === name);
       if (data.length > 0) {
         return data[0].id;
       }
       return 'ad';
     },
-    sortMethod(items, type, dir) {
-      let tipe;
-      if (type === 'Name') {
-        tipe = 'country';
-      } else if (type === 'Presence') tipe = 'status';
+    sortMethod(
+      items: delegatesType.getAllDelegates[],
+      type: string,
+      dir: string,
+    ): delegatesType.getAllDelegates[] {
+      let tipe: string = 'status';
+      if (type === 'Name') tipe = 'country';
       items.sort((a, b) => {
-        let compare;
+        let compare: boolean = false;
         switch (dir) {
           case 'up':
             compare = a[tipe].toLowerCase() < b[tipe].toLowerCase();
@@ -123,7 +128,11 @@ export default {
       });
       return items;
     },
-    filterMethod(items, tags, search) {
+    filterMethod(
+      items: delegatesType.getAllDelegates[],
+      tags: string[],
+      search: string,
+    ): delegatesType.getAllDelegates[] {
       let list = items;
       if (search !== '') {
         list = list.filter(
@@ -145,7 +154,7 @@ export default {
       this.key += 1;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

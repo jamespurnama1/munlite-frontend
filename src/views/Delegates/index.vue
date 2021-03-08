@@ -3,7 +3,7 @@
     <transition name="fade">
       <add-delegates
         v-if="showInput"
-        :items="countryList"
+        :items="negara"
         @exit="exit"
         @update="updateDelegatesData"
       />
@@ -77,18 +77,6 @@
                 {{ data.country }}
               </p>
               <p class="presence">{{ data.status }}</p>
-              <transition name="fade">
-                <Confirmation
-                  :content="`Are you sure you want to delete ${data.country}?`"
-                  :action="deleteDelegatesData"
-                  :id="data._id"
-                  :negative="true"
-                  button="Delete"
-                  v-if="showConfirm === `del ${index}`"
-                  v-click-outside="config"
-                  @exit="exit"
-                />
-              </transition>
             </li>
             </transition-group>
           </div>
@@ -119,21 +107,39 @@
         <Pass :key="3" v-else-if='stage === 3' />
       </div>
     </transition>
-    <transition name="fade">
-    <div class="overlay" v-if="showOverlay || showInput || showConfirm != null" />
-    </transition>
+    <transition-group name="fade">
+    <Confirmation
+      :content="`Are you sure you want to delete ${delegatesData[showConfirm].country}?`"
+      :action="deleteDelegatesData"
+      :id="delegatesData[showConfirm]._id"
+      :negative="true"
+      button="Delete"
+      :key="`del ${showConfirm}`"
+      v-if="typeof showConfirm === 'number'"
+      v-click-outside="config"
+      @exit="exit"
+    />
+    <div
+      class="overlay"
+      v-if="showOverlay || showInput || typeof showConfirm === 'number'"
+      key="overlay"
+    />
+    </transition-group>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getAllDelegates, deleteDelegates } from '@/api/delegates';
 import { getConference } from '@/api/conference';
-import { negara } from '@/const/country';
+import negara from '@/const/country';
 import Confirmation from '@/components/Confirmation/index.vue';
 import { mapState } from 'vuex';
 import Search from '@/components/Search/index.vue';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType } from '@/types/api';
 import AddDelegates from './components/AddDelegates/index.vue';
 import RollCall from './components/RollCall/index.vue';
 import Vote from './components/Vote/index.vue';
@@ -141,7 +147,7 @@ import Pass from './components/Pass/index.vue';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default {
+export default Vue.extend({
   name: 'Delegates',
   components: {
     RollCall,
@@ -153,29 +159,30 @@ export default {
   },
   data() {
     return {
-      showOverlay: false,
-      showInput: false,
-      newCountry: '',
-      stage: 0,
-      delegatesData: [],
-      dr_vote: 0,
-      rulesData: [],
-      countryList: negara,
-      showConfirm: null,
+      showOverlay: false as boolean,
+      showInput: false as boolean,
+      newCountry: '' as string,
+      stage: 0 as number,
+      delegatesData: [] as delegatesType.getAllDelegates[],
+      dr_vote: 0 as number,
+      rulesData: [] as string[],
+      showConfirm: false as boolean | string,
       config: {
+        // @ts-ignore
         handler: this.exit,
         events: ['click'],
       },
-      key: 0,
-      infoHeight: 0,
+      key: 0 as number,
+      infoHeight: 0 as number,
+      tl: null as GSAPTimeline | null,
     };
   },
   computed: {
     ...mapState({
-      width: (state) => state.Global.widthWindow,
-      delStore: (state) => state.Delegates.delegates,
+      width: (state: any) => state.Global.widthWindow as number,
+      delStore: (state: any) => state.Delegates.delegates as delegatesType.getAllDelegates[],
     }),
-    info() {
+    info(): {[key: string]: number} {
       const present = this.delStore.filter((obj) => obj.status.toLowerCase() === 'present');
       const pv = this.delStore.filter((obj) => obj.status.toLowerCase() === 'present & voting');
       const total = present.length + pv.length;
@@ -189,7 +196,7 @@ export default {
     },
   },
   methods: {
-    scroll() {
+    scroll(): void {
       ScrollTrigger.matchMedia({
         '(max-width: 960px)': () => {
           this.tl = gsap.timeline({
@@ -224,7 +231,11 @@ export default {
         },
       });
     },
-    filterMethod(items, tags, search) {
+    filterMethod(
+      items: delegatesType.getAllDelegates[],
+      tags: string[],
+      search: string,
+    ): delegatesType.getAllDelegates[] {
       let list = items;
       if (search !== '') {
         list = list.filter(
@@ -242,13 +253,17 @@ export default {
       }
       return list;
     },
-    sortMethod(items, type, dir) {
-      let tipe;
+    sortMethod(
+      items: delegatesType.getAllDelegates[],
+      type: string,
+      dir: string,
+    ): delegatesType.getAllDelegates[] {
+      let tipe: string = '';
       if (type === 'Name') {
         tipe = 'country';
       } else if (type === 'Presence') tipe = 'status';
       items.sort((a, b) => {
-        let compare;
+        let compare: boolean = false;
         switch (dir) {
           case 'up':
             compare = a[tipe].toLowerCase() < b[tipe].toLowerCase();
@@ -269,7 +284,7 @@ export default {
       });
       return items;
     },
-    context([action, , , index]) {
+    context([action, , , index]: any[] = []): void {
       switch (action) {
         case 'Present':
           // change presence
@@ -278,12 +293,12 @@ export default {
           // view notes
           break;
         case 'Delete':
-          this.showConfirm = `del ${index}`;
+          this.showConfirm = index;
           break;
         default:
       }
     },
-    showC(event, data, index) {
+    showC(event: MouseEvent, data: delegatesType.getAllDelegates, index: number): void {
       if (!this.stage) {
         this.$store.dispatch('context', [
           [data.country, data._id, index],
@@ -292,7 +307,7 @@ export default {
         ]);
       }
     },
-    showCon(data, index) {
+    showCon(data: delegatesType.getAllDelegates, index: number) {
       return (event) => {
         if (!this.stage) {
           this.$store.dispatch('context', [
@@ -303,22 +318,22 @@ export default {
         }
       };
     },
-    showModal() {
+    showModal(): void {
       this.showOverlay = true;
       this.stage = 1;
     },
-    toggleInput() {
+    toggleInput(): void {
       this.showInput = !this.showInput;
       this.newCountry = '';
     },
-    getDelegatesID(name) {
+    getDelegatesID(name: string): string {
       const data = negara.filter((obj) => obj.name === name);
       if (data.length > 0) {
         return data[0].id;
       }
       return 'ad';
     },
-    sortCountry(items) {
+    sortCountry(items: delegatesType.getAllDelegates[]): delegatesType.getAllDelegates[] {
       items.sort((a, b) => {
         const nameA = a.country.toUpperCase();
         const nameB = b.country.toUpperCase();
@@ -332,7 +347,7 @@ export default {
       });
       return items;
     },
-    async updateDelegatesData() {
+    async updateDelegatesData(): Promise<void> {
       try {
         const delegates = await getAllDelegates(this.$route.params.id);
         this.$store.commit('delList', delegates.data.data);
@@ -343,7 +358,7 @@ export default {
         console.error(err);
       }
     },
-    async deleteDelegatesData(country) {
+    async deleteDelegatesData(country: string): Promise<void> {
       try {
         const responses = new Promise((resolve) => {
           resolve(deleteDelegates(this.$route.params.id, country));
@@ -356,19 +371,19 @@ export default {
         console.error(err);
       }
     },
-    exit() {
+    exit(): void {
       this.showInput = false;
-      this.showConfirm = null;
+      this.showConfirm = false;
     },
   },
   watch: {
     stage() {
       if (this.stage > 0) {
-        document.querySelector('body').style.cssText = 'height: 100vh; width: 100vw; overflow: hidden;';
+        (document.querySelector('body') as HTMLElement).style.cssText = 'height: 100vh; width: 100vw; overflow: hidden;';
       } else {
-        document.querySelector('body').style.removeProperty('height');
-        document.querySelector('body').style.removeProperty('width');
-        document.querySelector('body').style.removeProperty('overflow');
+        (document.querySelector('body') as HTMLElement).style.removeProperty('height');
+        (document.querySelector('body') as HTMLElement).style.removeProperty('width');
+        (document.querySelector('body') as HTMLElement).style.removeProperty('overflow');
       }
     },
   },
@@ -382,13 +397,13 @@ export default {
       this.rulesData = conference.data.data.rules;
       const [parse] = (conference.data.data.rules.dr_vote).split(' ');
       const num = parse.split('/');
-      this.dr_vote = (num[0] / num[1]).toFixed(2);
+      this.dr_vote = parseFloat((num[0] / num[1]).toFixed(2));
     } catch (err) {
       console.error(err);
     }
   },
   mounted() {
-    this.infoHeight = this.$el.querySelector('.info').clientHeight;
+    if (this.$el.querySelector('.info')) this.infoHeight = this.$el.querySelector('.info')!.clientHeight;
     this.scroll();
     this.$on('stage', (i) => {
       if (i === 0) {
@@ -397,7 +412,7 @@ export default {
       this.stage = i;
     });
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

@@ -119,19 +119,22 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import {
   addTurn, getGSL, delTurn, yieldGSL, nextGSL, timeLeft,
 } from '@/api/gsl';
 import { mapState } from 'vuex';
-import { negara } from '@/const/country';
+import negara from '@/const/country';
 import { getAllDelegates } from '@/api/delegates';
 import Autocomplete from '@/components/Autocomplete/index.vue';
 import CardStack from '@/components/CardStack/index.vue';
 import Timer from '@/components/Timer/index.vue';
 import Queue from '@/components/Queue/index.vue';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType, gslType, websocketType } from '@/types/api';
 
-export default {
+export default Vue.extend({
   name: 'GSL',
   components: {
     CardStack,
@@ -141,30 +144,37 @@ export default {
   },
   data() {
     return {
-      delegatesData: [],
-      gslData: null,
-      currentCountry: 0, // cardstacks display
-      selected: null,
-      yieldDelegate: '',
-      yieldCountry: '',
-      showInput: false,
-      gslCurrent: null, // current in GET gsl
-      newArr: [],
-      showYield: false,
-      showQueue: false,
-      prevent: false,
+      delegatesData: [] as delegatesType.getAllDelegates[],
+      gslData: null as gslType.getGSL | null,
+      currentCountry: 0 as number, // cardstacks display
+      selected: null as 0 | 1 | 2 | 3 | null,
+      yieldDelegate: '' as string,
+      yieldCountry: '' as string,
+      showInput: false as boolean,
+      gslCurrent: null as number | null, // current in GET gsl
+      newArr: [] as unknown as (delegatesType.getAllDelegates & Partial<gslType.getTurn>)[],
+      showYield: false as boolean,
+      showQueue: false as boolean,
+      prevent: false as boolean,
       config: {
+        // @ts-ignore
         handler: this.outside,
         events: ['click'],
+      },
+      actions: {
+        Restart: true as boolean,
+        'View Notes': false as boolean,
+        'Clear Yield': true as boolean,
+        'Remove From Queue': true as boolean,
       },
     };
   },
   methods: {
-    outside() {
+    outside(): void {
       this.showYield = false;
       this.showQueue = false;
     },
-    context([action, , , index]) {
+    context([action, , , index]: any[] = []): void {
       switch (action) {
         case 'Remove From Queue':
           this.deleteTurn(index);
@@ -181,10 +191,10 @@ export default {
         default:
       }
     },
-    newCountryList() {
-      const list = [];
+    newCountryList(): void {
+      const list: { name: string }[] = [];
       this.delegatesData.forEach((item) => {
-        let data = negara.filter((e) => e.name === item.country)[0];
+        let data: { name: string } = negara.filter((e) => e.name === item.country)[0];
         if (data) {
           list.push(data);
         } else {
@@ -196,19 +206,22 @@ export default {
       });
       this.$store.commit('countryList', list);
     },
-    newGSLList(l) {
+    newGSLList(l: gslType.getGSL) {
       this.newArr.length = 0;
-      let data;
+      let data: delegatesType.getAllDelegates & Partial<gslType.getTurn>;
       for (let i = 0; i < l.queue.length; i += 1) {
         [data] = this.delegatesData.filter((e) => e._id === l.queue[i].delegate_id);
         if (data) {
           data.time_start = l.queue[i].time_start;
           data.time_left = l.queue[i].time_left;
-          let y;
+          let y: { yield: string } = {
+            yield: '',
+          };
           if (!l.queue[i].yield) {
             delete data.yield;
-          } else if (l.queue[i].yield.toLowerCase() === 'questions' || l.queue[i].yield.toLowerCase() === 'chair') {
-            y = { yield: l.queue[i].yield };
+          } else if (l.queue[i].yield
+            && (l.queue[i].yield!.toLowerCase() === 'questions' || l.queue[i].yield!.toLowerCase() === 'chair')) {
+            y = { yield: l.queue[i].yield as string };
           } else if (l.queue[i].yield) {
             const [delY] = this.delegatesData.filter((e) => e._id === l.queue[i].yield);
             y = { yield: delY.country };
@@ -219,10 +232,14 @@ export default {
       }
       this.$store.commit('gslList', this.newArr);
     },
-    async changeYield(selected) {
+    async changeYield(selected: 0 | 1 | 2 | 3): Promise<void> {
       try {
-        let data;
-        const order = this.gslCurrent + 1;
+        let order: number = 0;
+        let data: gslType.yieldGSL = {
+          order,
+          yield: '',
+        };
+        if (this.gslCurrent !== null) order = this.gslCurrent + 1;
         // if (this.socket.order === order) {
         switch (selected) {
           case 0:
@@ -253,17 +270,17 @@ export default {
             break;
           default:
         }
-        await yieldGSL(this.$route.params.id, JSON.stringify(data));
+        await yieldGSL(this.$route.params.id, data);
         if (selected === 1) {
           this.$socket.send(JSON.stringify({
             session: 'gsl',
             command: 'stop',
             order,
           }));
-          await timeLeft(this.$route.params.id, JSON.stringify({
+          await timeLeft(this.$route.params.id, {
             order,
             time_left: this.socket.time,
-          }));
+          });
           await nextGSL(this.$route.params.id);
         }
         this.updateGSL();
@@ -272,7 +289,7 @@ export default {
       }
       this.showYield = false;
     },
-    async next() {
+    async next(): Promise<void> {
       try {
         const next = {
           session: 'gsl',
@@ -280,34 +297,38 @@ export default {
           order: this.gslCurrent,
         };
         this.$socket.send(JSON.stringify(next));
-        await timeLeft(this.$route.params.id, JSON.stringify({
-          order: this.gslCurrent + 1,
-          time_left: this.socket.time,
-        }));
-        await nextGSL(this.$route.params.id);
-        this.updateGSL();
+        if (this.gslCurrent !== null) {
+          await timeLeft(this.$route.params.id, {
+            order: this.gslCurrent + 1,
+            time_left: this.socket.time,
+          });
+          await nextGSL(this.$route.params.id);
+          this.updateGSL();
+        }
       } catch (err) {
         console.error(err);
       }
     },
-    async restart() {
+    restart(): void {
       const data = {
         session: 'gsl',
         command: 'stop',
         order: this.gslCurrent,
       };
       this.$socket.send(JSON.stringify(data));
-      await setTimeout(() => {
-        const play = {
-          session: 'gsl',
-          command: 'start',
-          time: this.gslList[this.gslCurrent].time_start,
-          order: this.gslCurrent,
-        };
-        this.$socket.send(JSON.stringify(play));
+      setTimeout(() => {
+        if (this.gslCurrent !== null) {
+          const play = {
+            session: 'gsl',
+            command: 'start',
+            time: this.gslList[this.gslCurrent].time_start,
+            order: this.gslCurrent,
+          };
+          this.$socket.send(JSON.stringify(play));
+        }
       }, 500);
     },
-    async deleteTurn(i) {
+    async deleteTurn(i: number): Promise<void> {
       try {
         await delTurn(this.$route.params.id, i + 1);
         this.updateGSL();
@@ -315,7 +336,7 @@ export default {
         console.error(err);
       }
     },
-    async addQueue([country, time]) {
+    async addQueue([country, time]: [string, number]): Promise<void> {
       try {
         const [id] = this.delegatesData.filter((obj) => obj.country === country);
         const data = {
@@ -333,14 +354,14 @@ export default {
         console.error(err);
       }
     },
-    async updateGSL() {
+    async updateGSL(): Promise<void> {
       try {
         const list = await getGSL(this.$route.params.id);
         if (list.data.data !== null) {
           this.gslData = list.data.data;
           this.newGSLList(list.data.data);
         }
-        if (this.gslCurrent !== this.gslData.current) {
+        if (this.gslData && this.gslCurrent !== this.gslData.current) {
           this.currentCountry = this.gslData.current;
           this.gslCurrent = this.gslData.current;
         }
@@ -348,31 +369,35 @@ export default {
         console.error(err);
       }
     },
-    toggleActive() {
-      const data = {
+    toggleActive(): void {
+      const data: websocketType.send = {
         session: 'gsl',
+        order: 0,
       };
-      if (this.socket.state === 2) {
+      if (this.gslCurrent !== null && this.socket.state === 2) {
         data.command = 'start';
         data.time = this.gslList[this.gslCurrent].time_left;
         data.order = this.gslCurrent;
-      } else if (this.socket.state === 1) {
+      } else if (this.gslCurrent !== null && this.socket.state === 1) {
         data.command = 'resume';
         data.order = this.gslCurrent;
-      } else {
+      } else if (this.gslCurrent !== null) {
         data.command = 'pause';
         data.order = this.gslCurrent;
       }
       this.$socket.send(JSON.stringify(data));
     },
-    select(i) {
+    select(i: 0 | 1 | 2 | 3): void {
       this.selected = i;
     },
-    move(index) {
-      const j = Math.min(Math.max(parseInt(index, 10), 0), this.gslData.queue.length - 1);
+    move(index: number): void {
+      let j: number = 0;
+      if (this.gslData) {
+        j = Math.min(Math.max(parseInt(index.toString(), 10), 0), this.gslData.queue.length - 1);
+      }
       this.currentCountry = j;
     },
-    yieldInput(country) {
+    yieldInput(country: string): void {
       if (country.length > 0) {
         this.selected = 3;
       } else {
@@ -382,14 +407,14 @@ export default {
       this.yieldDelegate = del._id;
       this.yieldCountry = country;
     },
-    getDelegatesID(name) {
+    getDelegatesID(name: string): string {
       const data = negara.filter((obj) => obj.name === name);
       if (data.length > 0) {
         return data[0].id;
       }
       return 'ad';
     },
-    sortCountry(items) {
+    sortCountry(items: delegatesType.getAllDelegates[]): delegatesType.getAllDelegates[] {
       items.sort((a, b) => {
         const nameA = a.country.toUpperCase();
         const nameB = b.country.toUpperCase();
@@ -403,7 +428,7 @@ export default {
       });
       return items;
     },
-    async updateDelegatesData() {
+    async updateDelegatesData(): Promise<void> {
       try {
         const delegates = await getAllDelegates(this.$route.params.id);
         if (delegates.data.data !== null) {
@@ -426,22 +451,13 @@ export default {
   },
   computed: {
     ...mapState({
-      socket: (state) => state.Socket.message,
-      countryList: (state) => state.Delegates.countryList,
-      gslList: (state) => state.Delegates.gslList,
-      widthWindow: (state) => state.Global.widthWindow,
+      socket: (state: any) => state.Socket.message,
+      countryList: (state: any) => state.Delegates.countryList,
+      gslList: (state: any) => state.Delegates.gslList,
+      widthWindow: (state: any) => state.Global.widthWindow,
     }),
-    actions() {
-      const action = {
-        Restart: true,
-        'View Notes': false,
-        'Clear Yield': true,
-        'Remove From Queue': true,
-      };
-      return action;
-    },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

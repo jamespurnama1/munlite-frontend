@@ -9,8 +9,10 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
   name: 'warning',
   props: {
     title: {
@@ -19,7 +21,7 @@ export default {
     },
     desc: String,
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

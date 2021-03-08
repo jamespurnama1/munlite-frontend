@@ -72,13 +72,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { getAllConferences } from '@/api/conference';
 import { logout } from '@/api/user';
 import AddConference from '@/components/AddConference/index.vue';
 import Confirmation from '@/components/Confirmation/index.vue';
+// eslint-disable-next-line no-unused-vars
+import { conferenceType } from '@/types/api';
 
-export default {
+export default Vue.extend({
   name: 'Home',
   components: {
     AddConference,
@@ -86,33 +89,34 @@ export default {
   },
   data() {
     return {
-      conferences: [],
+      conferences: [] as conferenceType.getAllConferences[],
       config: {
         handler: () => {
+          // @ts-ignore
           this.showConfirm = 'add';
         },
         middleware: (event) => event.target.className !== 'cancel',
         events: ['click'],
       },
-      showConf: false,
-      showConfirm: false,
+      showConf: false as boolean,
+      showConfirm: false as boolean,
     };
   },
   created() {
     this.updateConferencesData();
   },
   methods: {
-    ongoing(items) {
-      const dt = Date.now();
+    ongoing(items: conferenceType.getAllConferences[]): conferenceType.getAllConferences[] {
+      const dt: Date = new Date(Date.now());
       return items.filter((item) => {
-        const a = new Date(item.start_date);
-        const b = new Date(item.end_date);
-        const c = new Date(b.getTime());
+        const a: Date = new Date(item.start_date);
+        const b: Date = new Date(item.end_date);
+        const c: Date = new Date(b.getTime());
         c.setDate(c.getDate() + 1);
         return dt >= a && dt < c;
       });
     },
-    async updateConferencesData() {
+    async updateConferencesData(): Promise<void> {
       try {
         const conferences = await getAllConferences();
         if (conferences.data.data !== null) {
@@ -122,7 +126,11 @@ export default {
         console.error(err);
       }
     },
-    sortData(items, type, dir) {
+    sortData(
+      items: conferenceType.getAllConferences[],
+      type: string,
+      dir: string,
+    ): conferenceType.getAllConferences[] {
       const sort = items;
       if (type === 'date') {
         sort.sort((a, b) => {
@@ -151,10 +159,10 @@ export default {
       if (sort.length > 5) sort.length = 5;
       return items;
     },
-    outside() {
+    outside(): void {
       this.showConf = false;
     },
-    async changeAcc() {
+    async changeAcc(): Promise<void> {
       try {
         await logout();
         this.$store.dispatch('logout');
@@ -164,7 +172,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

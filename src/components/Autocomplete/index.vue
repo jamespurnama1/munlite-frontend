@@ -33,9 +33,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 
-export default {
+export default Vue.extend({
   name: 'Autocomplete',
   props: {
     items: {
@@ -62,16 +63,16 @@ export default {
   },
   data() {
     return {
-      newCountry: '',
-      results: [],
-      isOpen: false,
-      arrowCounter: 0,
-      focus: false,
-      sel: 0,
+      newCountry: '' as string,
+      results: [] as Array<any>,
+      isOpen: false as boolean,
+      arrowCounter: 0 as number,
+      focus: false as boolean,
+      sel: 0 as number,
     };
   },
   methods: {
-    keymap(event) {
+    keymap(event): void {
       switch (event.srcKey) {
         case 'up':
           this.sel = Math.max(this.sel - 1, 0);
@@ -87,28 +88,28 @@ export default {
           break;
       }
     },
-    fillAutocomplete() {
+    fillAutocomplete(): void {
       this.isOpen = true;
       this.filterResults();
     },
-    filterResults() {
+    filterResults(): void {
       if (this.newCountry) {
         this.results = this.items.filter(
-          (item) => item.name.toLowerCase().indexOf(this.newCountry.toLowerCase()) > -1,
+          (item: any) => item.name.toLowerCase().indexOf(this.newCountry.toLowerCase()) > -1,
         );
       } else {
         this.results = this.items;
       }
     },
-    setResult(result) {
+    setResult(result): void {
       this.newCountry = result.name;
       this.$emit('onchangeCountry', this.newCountry);
       this.focus = false;
     },
-    emitData() {
+    emitData(): void {
       this.$emit('onchangeCountry', this.newCountry);
     },
-    handleClickOutside(evt) {
+    handleClickOutside(evt): void {
       if (!this.$el.contains(evt.target)) {
         this.isOpen = false;
         this.focus = false;
@@ -124,7 +125,7 @@ export default {
   destroyed() {
     document.removeEventListener('click', this.handleClickOutside);
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

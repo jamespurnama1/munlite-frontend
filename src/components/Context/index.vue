@@ -26,11 +26,12 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { mapState } from 'vuex';
-import { negara } from '@/const/country';
+import negara from '@/const/country';
 
-export default {
+export default Vue.extend({
   name: 'Context',
   data() {
     return {
@@ -55,7 +56,7 @@ export default {
       return 'ad';
     },
     rect() {
-      return document.querySelector('.context').getBoundingClientRect();
+      return (document.querySelector('.context') as HTMLElement).getBoundingClientRect();
     },
   },
   mounted() {
@@ -63,21 +64,21 @@ export default {
   },
   computed: {
     ...mapState({
-      width: (state) => state.Global.widthWindow,
-      height: (state) => state.Global.heightWindow,
-      nameItem: (state) => state.Global.item[0],
-      idItem: (state) => state.Global.item[1],
-      index: (state) => state.Global.item[2],
-      pos: (state) => state.Global.contextPos,
-      action: (state) => state.Global.showContext,
+      width: (state: any) => state.Global.widthWindow,
+      height: (state: any) => state.Global.heightWindow,
+      nameItem: (state: any) => state.Global.item[0],
+      idItem: (state: any) => state.Global.item[1],
+      index: (state: any) => state.Global.item[2],
+      pos: (state: any) => state.Global.contextPos,
+      action: (state: any) => state.Global.showContext,
     }),
   },
   watch: {
-    pos: {
-      handler: 'posXY',
+    pos() {
+      this.posXY();
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

@@ -141,41 +141,47 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+// eslint-disable-next-line no-unused-vars
+import Vue, { PropType } from 'vue';
 import { gsap } from 'gsap';
 import { saveAs } from 'file-saver';
 import XLSX from 'xlsx';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { mapState } from 'vuex';
 import { checkUser } from '@/api/profile';
+// eslint-disable-next-line no-unused-vars
+import { conferenceType, motionsType, profileType } from '@/types/api';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default {
+export default Vue.extend({
   name: 'confDetails',
   props: {
     sel: Number,
-    confData: Object,
+    confData: Object as PropType<conferenceType.getConference>,
     ongoing: Boolean,
     transEnd: Boolean,
   },
   data() {
     return {
-      tl: null,
-      motionsData: [],
-      chairman: [],
+      tl: null as GSAPTimeline | null,
+      motionsData: [] as motionsType.getMotions[],
+      chairman: [] as {first_name: string, last_name: string}[],
     };
   },
   mounted() {
     this.scroll();
   },
   created() {
-    this.confData.motions.batches.forEach((motion) => {
-      this.motionsData.push(...motion.batch_motions);
-    });
+    if (this.confData.motions) {
+      this.confData.motions.batches.forEach((motion) => {
+        this.motionsData.push(...motion.batch_motions);
+      });
+    }
     this.confData.chairman.forEach((chair) => {
       this.check(chair.email).then((response) => {
-        const res = {
+        const res: {first_name: string, last_name: string} = {
           first_name: response.user_name.first_name.charAt(0).toUpperCase()
         + response.user_name.first_name.slice(1),
           last_name: response.user_name.last_name.charAt(0).toUpperCase()
@@ -188,17 +194,17 @@ export default {
   beforeUpdate() {
   },
   methods: {
-    async check(user) {
+    async check(user: string): Promise<profileType.checkUser> {
       const data = {
         email: user,
       };
-      const u = await checkUser(JSON.stringify(data));
+      const u = await checkUser(data);
       return u.data.data;
     },
-    buildExcel() {
+    buildExcel(): void {
       const wb = XLSX.utils.book_new();
       // ROLLCALL WS
-      const data = [['Country', 'Present', 'Present & Voting']];
+      const data: (number | string)[][] = [['Country', 'Present', 'Present & Voting']];
       this.confData.delegates.forEach((delegate) => {
         data.push([
           delegate.country,
@@ -223,7 +229,7 @@ export default {
       XLSX.utils.book_append_sheet(wb, rollCallWS, 'Roll Call');
 
       // RULES WS
-      const rules = [
+      const rules: any[] = [
         ['Present'],
         ['Present & Voting'],
         ['Total'],
@@ -253,13 +259,15 @@ export default {
       XLSX.utils.book_append_sheet(wb, rulesWS, 'Rules');
 
       // GSL WS
-      const gsl = [
+      const gsl: (string | number)[][] = [
         ['No', 'Country', 'Time', 'Yield', 'Yield'],
         ['', '', 'Min', 'Sec', 'Yield', 'Yield'],
       ];
-      for (let i = 0; i < this.confData.gsl.length; i += 1) {
-        gsl.push([i + 1, '', this.confData.gsl.queue[i].time_left, 'Yield to']);
-      } // TODO: delegate, time minute, & yield to
+      if (this.confData.gsl) {
+        for (let i = 0; i < this.confData.gsl.length; i += 1) {
+          gsl.push([i + 1, '', this.confData.gsl.queue[i].time_left, 'Yield to']);
+        } // TODO: delegate, time minute, & yield to
+      }
 
       const gslWS = XLSX.utils.aoa_to_sheet(gsl);
       const merge = [
@@ -278,7 +286,7 @@ export default {
       const blob = new Blob([wbout], { type: 'application/octet-stream' });
       saveAs(blob, `${this.confData.title}.xlsx`);
     },
-    scroll() {
+    scroll(): void {
       ScrollTrigger.matchMedia({
         '(max-width: 960px)': () => {
           ScrollTrigger.create({
@@ -341,7 +349,7 @@ export default {
   },
   computed: {
     ...mapState({
-      width: (state) => state.Global.widthWindow,
+      width: (state: any) => state.Global.widthWindow,
     }),
   },
   watch: {
@@ -349,7 +357,7 @@ export default {
       ScrollTrigger.refresh(true);
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

@@ -155,8 +155,9 @@
   </div>
 </template>
 
-<script>
-import { negara } from '@/const/country';
+<script lang="ts">
+import Vue from 'vue';
+import negara from '@/const/country';
 import {
   getMotions,
   deleteMotion,
@@ -166,11 +167,13 @@ import {
 import { getAllDelegates } from '@/api/delegates';
 import { getConference } from '@/api/conference';
 import Confirmation from '@/components/Confirmation/index.vue';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType, motionsType } from '@/types/api';
 import { mapState } from 'vuex';
 import { evaluate } from 'mathjs';
 import AddMotion from './components/AddMotion/index.vue';
 
-export default {
+export default Vue.extend({
   name: 'Motions',
   components: {
     Confirmation,
@@ -178,56 +181,65 @@ export default {
   },
   data() {
     return {
-      showModal: false,
-      showConfirm: null,
-      showOkay: false,
-      temp: null,
-      motionsData: [],
+      showModal: false as boolean,
+      showConfirm: false as boolean | string,
+      showOkay: false as boolean | string,
+      temp: null as null | string,
+      motionsData: [] as motionsType.getMotions[],
       config: {
+        // @ts-ignore
         handler: this.exit,
         events: ['click'],
       },
       configOK: {
         handler: () => {
+          // @ts-ignore
           this.showOkay = false;
+          // @ts-ignore
           this.temp = null;
         },
         events: ['click'],
       },
       configAdd: {
         handler: () => {
+          // @ts-ignore
           this.showConfirm = 'add';
         },
         middleware: (event) => event.target.className !== 'cancel',
         events: ['click'],
       },
-      edit: null,
-      delegatesData: [],
+      edit: null as null | motionsType.updateMotion,
+      delegatesData: [] as delegatesType.getAllDelegates[],
       expand: null,
-      rules: {},
-      majority: 0,
+      rules: {} as {
+        majority: string;
+        dr_vote: string;
+        quorum: string;
+        rounding: string;
+      },
+      majority: 0 as number,
       noTimer: [
         'Suspension of The Debate',
         'Continuation of The Debate',
         'Adjournment of The Meeting',
-      ],
+      ] as string[],
     };
   },
   computed: {
     ...mapState({
-      width: (state) => state.Global.widthWindow,
-      countryList: (state) => state.Delegates.countryList,
+      width: (state: any) => state.Global.widthWindow,
+      countryList: (state: any) => state.Delegates.countryList,
     }),
   },
   methods: {
-    canStart(id) {
-      const [motion] = this.motionsData.filter((m) => m._id === id);
-      const bool = (motion.no_vote + motion.yes_vote >= this.majority)
+    canStart(id: string): boolean {
+      const [motion]: motionsType.getMotions[] = this.motionsData.filter((m) => m._id === id);
+      const bool: boolean = (motion.no_vote + motion.yes_vote >= this.majority)
         && (motion.no_vote < motion.yes_vote)
         && (motion.no_vote + motion.yes_vote === this.delegatesData.length);
       return bool;
     },
-    voteLogic() {
+    voteLogic(): void {
       let { majority } = this.rules;
       if (majority.match(/(\*|\+|-|\/)\s*(del)/i)) {
         majority = majority.replace(/delegates/i, `${this.delegatesData.length}`); // replace suffix with actual number
@@ -249,7 +261,7 @@ export default {
       if (this.rules.rounding.match(/up/i)) this.majority = Math.ceil(evaluate(majority));
       else this.majority = Math.floor(evaluate(majority));
     },
-    context([action, , , index]) {
+    context([action, , , index]: any[] = []): void {
       switch (action) {
         case 'Start Caucus':
           this.showConfirm = index;
@@ -264,7 +276,11 @@ export default {
         default:
       }
     },
-    showC(event, data, index) {
+    showC(
+      event: MouseEvent,
+      data: motionsType.getMotions,
+      index: number,
+    ): void {
       if (!this.showModal) {
         const name = data.name ? data.name : data.type;
         this.$store.dispatch('context', [
@@ -274,7 +290,7 @@ export default {
         ]);
       }
     },
-    showCon(data, index) {
+    showCon(data: motionsType.getMotions, index: number) {
       return (event) => {
         if (!this.showModal) {
           const name = data.name ? data.name : data.type;
@@ -286,17 +302,17 @@ export default {
         }
       };
     },
-    toggleModal() {
+    toggleModal(): void {
       this.showModal = !this.showModal;
     },
-    getDelegatesID(name) {
+    getDelegatesID(name: string): string {
       const data = negara.filter((obj) => obj.name === name);
       if (data.length > 0) {
         return data[0].id;
       }
       return 'ad';
     },
-    sortMotions(items) {
+    sortMotions(items: motionsType.getMotions[]): motionsType.getMotions[] {
       items.sort((a, b) => {
         const nameA = a.name.toUpperCase();
         const nameB = b.name.toUpperCase();
@@ -328,14 +344,14 @@ export default {
       });
       return items;
     },
-    async editMotion(data) {
+    async editMotion(data: motionsType.updateMotion): Promise<void> {
       try {
-        await updateMotion(this.$route.params.id, JSON.stringify(data));
+        await updateMotion(this.$route.params.id, data);
       } catch (err) {
         console.error(err);
       }
     },
-    async updateMotionsData() {
+    async updateMotionsData(): Promise<void> {
       try {
         const motions = await getMotions(this.$route.params.id);
         if (motions.data.data !== null) {
@@ -345,7 +361,7 @@ export default {
         console.error(err);
       }
     },
-    async updateDelegatesData() {
+    async updateDelegatesData(): Promise<void> {
       try {
         const delegates = await getAllDelegates(this.$route.params.id);
         if (delegates.data.data !== null) {
@@ -357,7 +373,7 @@ export default {
         console.error(err.response);
       }
     },
-    async deleteMotionsData(motion) {
+    async deleteMotionsData(motion: string): Promise<void> {
       try {
         const responses = new Promise((resolve) => {
           resolve(deleteMotion(this.$route.params.id, motion));
@@ -370,7 +386,7 @@ export default {
         console.error(err);
       }
     },
-    async updateConferenceData() {
+    async updateConferenceData(): Promise<void> {
       try {
         const conf = await getConference(this.$route.params.id);
         if (conf.data.data !== null) {
@@ -381,13 +397,13 @@ export default {
         console.error(err);
       }
     },
-    async startMotion(id) {
+    async startMotion(id: string): Promise<void> {
       try {
         const [motion] = this.motionsData.filter((m) => m._id === id);
         const data = {
           motion_id: id,
         };
-        startCaucus(this.$route.params.id, JSON.stringify(data));
+        startCaucus(this.$route.params.id, data);
         if (this.canStart(id) && this.noTimer.includes(motion.type)) {
           this.showOkay = id;
           this.temp = motion.type.toString();
@@ -404,10 +420,10 @@ export default {
         // console.error(err);
       }
     },
-    newCountryList() {
-      const list = [];
+    newCountryList(): void {
+      const list: { name: string }[] = [];
       this.delegatesData.forEach((item) => {
-        let data = negara.filter((e) => e.name === item.country)[0];
+        let data: { name: string } = negara.filter((e) => e.name === item.country)[0];
         if (data) {
           list.push(data);
         } else {
@@ -419,15 +435,15 @@ export default {
       });
       this.$store.commit('countryList', list);
     },
-    async exit() {
+    exit(): void {
       this.edit = null;
-      this.showConfirm = null;
-      await setTimeout(() => {
+      this.showConfirm = false;
+      setTimeout(() => {
         this.updateMotionsData();
       }, 500);
     },
-    exitAdd() {
-      this.showConfirm = null;
+    exitAdd(): void {
+      this.showConfirm = false;
       this.showModal = false;
     },
   },
@@ -436,7 +452,7 @@ export default {
     this.updateMotionsData();
     this.updateConferenceData().then(() => this.updateDelegatesData());
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

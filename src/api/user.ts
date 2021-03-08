@@ -1,3 +1,4 @@
+import { userType } from '@/types/api';
 import axios from 'axios';
 
 const service = axios.create({
@@ -11,13 +12,19 @@ const serviceCred = axios.create({
   withCredentials: true,
 });
 
-export async function login(data) {
-  const res = serviceCred.post('/login', data);
+export async function login(data: userType.login) {
+  const res = serviceCred.post(
+    '/login',
+    data,
+  );
   return res;
 }
 
-export async function signup(data) {
-  const res = service.post('/user', data);
+export async function signup(data: userType.signup) {
+  const res = service.post(
+    '/user',
+    data,
+  );
   return res;
 }
 

@@ -30,7 +30,8 @@ Sentry.init({
     }),
     new Integrations.BrowserTracing(),
   ],
-  tracesSampleRate: 1,
+  debug: false,
+  tracesSampleRate: 0.5,
 });
 
 Vue.config.productionTip = false;

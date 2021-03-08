@@ -142,7 +142,8 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { mapState } from 'vuex';
 import {
   getAllConferences,
@@ -152,11 +153,13 @@ import {
 import Search from '@/components/Search/index.vue';
 import Confirmation from '@/components/Confirmation/index.vue';
 import AddConference from '@/components/AddConference/index.vue';
+// eslint-disable-next-line no-unused-vars
+import { conferenceType } from '@/types/api';
 import Details from './components/Details/index.vue';
 import Motions from './components/Motions/index.vue';
 import Delegates from './components/Delegates/index.vue';
 
-export default {
+export default Vue.extend({
   name: 'Conference',
   components: {
     Search,
@@ -168,22 +171,24 @@ export default {
   },
   data() {
     return {
-      showConfirm: false,
-      showInput: false,
-      conferencesData: [],
-      editData: {},
-      filteredData: [],
-      filter: '',
+      showConfirm: false as boolean | string,
+      showInput: false as boolean,
+      conferencesData: [] as conferenceType.getAllConferences[],
+      editData: {} as Partial<conferenceType.getConference>,
+      filteredData: [] as conferenceType.getAllConferences[],
+      // filter: '' as string,
       conf: null,
-      sel: null,
-      key: 0,
+      sel: null as number | null,
+      key: 0 as number,
       transEnd: false,
       config: {
+        // @ts-ignore
         handler: this.outside,
         events: ['click'],
       },
       configAdd: {
         handler: () => {
+          // @ts-ignore
           this.showConfirm = 'add';
         },
         middleware: (event) => event.target.className !== 'cancel' && event.target.className !== 'list',
@@ -195,29 +200,32 @@ export default {
     };
   },
   methods: {
-    exitAdd() {
-      this.confirm = null;
+    exitAdd(): void {
       this.showInput = false;
     },
-    delegate(items) {
+    delegate(items: conferenceType.getAllConferences[]): conferenceType.getAllConferences[] {
       return items.filter((item) => item.chairman
         .some((chair) => chair.email !== this.$store.state.Global.me.email));
     },
-    chair(items) {
+    chair(items: conferenceType.getAllConferences[]): conferenceType.getAllConferences[] {
       return items.filter((item) => item.chairman
         .some((chair) => chair.email === this.$store.state.Global.me.email));
     },
-    ongoing(items) {
-      const dt = Date.now();
+    ongoing(items: conferenceType.getAllConferences[]): conferenceType.getAllConferences[] {
+      const dt: Date = new Date(Date.now());
       return items.filter((item) => {
-        const a = new Date(item.start_date);
-        const b = new Date(item.end_date);
-        const c = new Date(b.getTime());
+        const a: Date = new Date(item.start_date);
+        const b: Date = new Date(item.end_date);
+        const c: Date = new Date(b.getTime());
         c.setDate(c.getDate() + 1);
         return dt >= a && dt < c;
       });
     },
-    filterFunc(items, tags, search) {
+    filterFunc(
+      items: conferenceType.getAllConferences[],
+      tags: string[],
+      search: string,
+    ): conferenceType.getAllConferences[] {
       let list = items;
       if (search !== '') {
         list = list.filter(
@@ -238,7 +246,11 @@ export default {
       }
       return list;
     },
-    sortFunc(items, type, dir) {
+    sortFunc(
+      items: conferenceType.getAllConferences[],
+      type: string,
+      dir: string,
+    ): conferenceType.getAllConferences[] {
       if (type === 'Date') {
         items.sort((a, b) => {
           const dateA = Date.parse(a.end_date);
@@ -286,12 +298,12 @@ export default {
       }
       return items;
     },
-    outside() {
+    outside(): void {
       this.showInput = false;
       this.editData = {};
       this.showConfirm = false;
     },
-    showC(event, data, index) {
+    showC(event: MouseEvent, data: conferenceType.getConference, index: number): void {
       if (!this.showInput) {
         this.$store.dispatch('context', [
           [data.title, data._id, index],
@@ -303,7 +315,7 @@ export default {
         ]);
       }
     },
-    showCon(data, index) {
+    showCon(data: conferenceType.getConference, index: number) {
       return (event) => {
         if (!this.showInput) {
           this.$store.dispatch('context', [
@@ -317,7 +329,7 @@ export default {
         }
       };
     },
-    context([item, name, id, index]) {
+    context([item, name, id, index]: any[] = []): void {
       if (!this.showInput && item === 'Delete') {
         this.showConfirm = name;
       } else if (!this.showInput) {
@@ -326,10 +338,10 @@ export default {
         this.sel = this.conferencesData.findIndex((i) => i._id === id);
       }
     },
-    select(i) {
+    select(i: number): void {
       this.sel = i;
     },
-    toggleInput(t) {
+    toggleInput(t: string): void {
       if (t === 'add') {
         this.editData = {};
       } else {
@@ -337,7 +349,7 @@ export default {
       }
       this.showInput = true;
     },
-    async updateConferencesData() {
+    async updateConferencesData(): Promise<void> {
       try {
         const conferences = await getAllConferences();
         if (conferences.data.data !== null) {
@@ -349,7 +361,7 @@ export default {
         console.error(err);
       }
     },
-    async deleteConferenceData(conf) {
+    async deleteConferenceData(conf: string): Promise<void> {
       delConference(conf)
         .then(() => {
           this.sel = null;
@@ -365,10 +377,13 @@ export default {
         });
       this.exit();
     },
-    exit() {
-      this.showConfirm = null;
+    exit(): void {
+      this.showConfirm = false;
     },
-    async patchConferences(conf, data) {
+    async patchConferences(
+      conf: conferenceType.getConference,
+      data: conferenceType.updateConference,
+    ): Promise<void> {
       try {
         const responses = new Promise((resolve) => {
           resolve(updateConference(conf._id, data));
@@ -380,13 +395,13 @@ export default {
         console.error(err);
       }
     },
-    readable(d, e) {
+    readable(d: string, e: string): string {
       const sDate = new Date(d);
       const eDate = new Date(e);
-      const ye = (y) => new Intl.DateTimeFormat('en', { year: 'numeric' }).format(y);
-      const mo = (m) => new Intl.DateTimeFormat('en', { month: 'short' }).format(m);
-      const da = (day) => new Intl.DateTimeFormat('en', { day: '2-digit' }).format(day);
-      let r;
+      const ye = (y: Date) => new Intl.DateTimeFormat('en', { year: 'numeric' }).format(y);
+      const mo = (m: Date) => new Intl.DateTimeFormat('en', { month: 'short' }).format(m);
+      const da = (day: Date) => new Intl.DateTimeFormat('en', { day: '2-digit' }).format(day);
+      let r: string = '';
       if (typeof e === 'string') {
         r = `${da(sDate)} ${mo(sDate)} - ${da(eDate)} ${mo(eDate)} ${ye(eDate)}`;
       } else if (typeof e === 'undefined') {
@@ -394,7 +409,7 @@ export default {
       }
       return r;
     },
-    yearOnly(d) {
+    yearOnly(d: string) {
       return d;
     },
   },
@@ -404,9 +419,9 @@ export default {
   },
   computed: {
     ...mapState({
-      width: (state) => state.Global.widthWindow,
-      notAuthorized: (state) => state.Global.notAuthorized,
-      me: (state) => state.Global.me,
+      width: (state: any) => state.Global.widthWindow,
+      notAuthorized: (state: any) => state.Global.notAuthorized,
+      me: (state: any) => state.Global.me,
     }),
     transName() {
       if (this.width > 960) return 'fade';
@@ -414,7 +429,7 @@ export default {
       return 'slide-left';
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

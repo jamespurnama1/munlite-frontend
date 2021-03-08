@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+import { profileType } from '@/types/api';
 import request from '@/utils/request';
 
 export async function getUserData() {
@@ -6,7 +7,10 @@ export async function getUserData() {
   return res;
 }
 
-export async function checkUser(data) {
-  const res = request.post('/user/check', data);
+export async function checkUser(data: {email: string}) {
+  const res = request.post(
+    '/user/check',
+    data,
+  );
   return res;
 }

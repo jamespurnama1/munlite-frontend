@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { negara } from '@/const/country';
+import negara from '@/const/country';
 import { mapState } from 'vuex';
 
 export default {

@@ -40,23 +40,29 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { getConference } from '@/api/conference';
 
-export default {
+export default Vue.extend({
   name: 'Home',
   data() {
     return {
-      title: '',
-      chairData: [],
-      rules: ['Majority', 'DR Votes', 'Quorum', 'Rounding'],
-      rulesData: [],
+      title: '' as string,
+      chairData: [] as string[],
+      rules: [] as string[],
+      rulesData: [] as string[],
     };
   },
   async created() {
     try {
       const conference = await getConference(this.$route.params.id);
       this.rulesData = Object.values(conference.data.data.rules);
+      this.rules = Object.keys(conference.data.data.rules);
+      this.rules = this.rules.map((rule) => {
+        if (rule === 'dr_vote') return 'DR Sponsors';
+        return rule[0].toUpperCase() + rule.slice(1).toLowerCase();
+      });
       this.title = conference.data.data.title;
       if (conference.data.data.chairman) {
         this.chairData = conference.data.data.chairman;
@@ -65,7 +71,7 @@ export default {
       console.error(err);
     }
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

@@ -29,22 +29,23 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import Autocomplete from '@/components/Autocomplete/index.vue';
 
-export default {
+export default Vue.extend({
   name: 'Queue',
   components: {
     Autocomplete,
   },
   data() {
     return {
-      showInput: false,
-      newCountry: '',
-      time: null,
+      showInput: false as boolean,
+      newCountry: '' as string,
+      time: null as number | null,
       warn: {
-        time: false,
-        country: false,
+        time: false as boolean,
+        country: false as boolean,
       },
     };
   },
@@ -54,7 +55,7 @@ export default {
     disable: Boolean,
   },
   methods: {
-    toggleInput() {
+    toggleInput(): void {
       if (!this.time && typeof this.time !== 'number') {
         this.warn.time = true;
       }
@@ -81,7 +82,7 @@ export default {
   created() {
     this.time = this.defaultTime;
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

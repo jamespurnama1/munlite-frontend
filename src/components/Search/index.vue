@@ -69,28 +69,33 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+// eslint-disable-next-line no-unused-vars
+import Vue, { PropType } from 'vue';
+
+export default Vue.extend({
   name: 'Search',
   data() {
     return {
-      showFilter: false,
-      showSort: false,
-      sortDir: 'down',
-      sort: 'date',
-      filterD: [],
+      showFilter: false as boolean,
+      showSort: false as boolean,
+      sortDir: 'down' as string,
+      sort: 'date' as string,
+      filterD: [] as Array<string>,
       config: {
+        // @ts-ignore
         handler: this.outside,
         events: ['click'],
       },
       configF: {
+        // @ts-ignore
         handler: this.outsideF,
         events: ['click'],
       },
-      search: '',
-      prevSearch: '',
-      filteredData: this.items,
-      extraPadding: 10,
+      search: '' as string,
+      prevSearch: '' as string,
+      filteredData: this.items as Array<any>,
+      extraPadding: 10 as number,
     };
   },
   props: {
@@ -100,7 +105,7 @@ export default {
     sortDefault: String,
     dirDefault: String,
     filterFunc: Function,
-    filterTypes: Array,
+    filterTypes: Array as PropType<string[]>,
   },
   watch: {
     search() {
@@ -129,8 +134,9 @@ export default {
   computed: {
   },
   methods: {
-    extraPad() {
-      let padding = 10 + (parseInt(this.em(), 10) * parseInt(this.filterD.length, 10));
+    extraPad(): void {
+      let padding = 10 + (parseInt(this.em().toString(), 10)
+      * parseInt(this.filterD.length.toString(), 10));
       if (this.filterD.includes('DELEGATE')) {
         padding += 55.48; // 55.48px + 1em of .badge width
       }
@@ -145,29 +151,30 @@ export default {
       }
       this.extraPadding = padding;
     },
-    em() {
-      return parseFloat(getComputedStyle(document.querySelector('.badge')).fontSize);
+    em(): number {
+      if (document.querySelector('.badge')) return parseFloat(getComputedStyle(document.querySelector('.badge') as Element).fontSize);
+      return 10;
     },
-    del(event) {
+    del(event): void {
       if (this.filterD.length > 0
       && (event.target.selectionStart === 0 && this.prevSearch.length !== 1)) {
         this.filterD.pop();
       }
       this.prevSearch = this.search;
     },
-    outside(e) {
+    outside(e): void {
       if (!e.target.classList.contains('exclude')
       && !e.target.parentElement.classList.contains('exclude')) {
         this.showSort = false;
       }
     },
-    outsideF(e) {
+    outsideF(e): void {
       if (!e.target.classList.contains('excludeF')
       && !e.target.parentElement.classList.contains('excludeF')) {
         this.showFilter = false;
       }
     },
-    filterData(tag) {
+    filterData(tag): void {
       if (this.filterD.includes(tag)) {
         this.filterD = this.filterD.filter((f) => f !== tag);
       } else {
@@ -180,19 +187,19 @@ export default {
           if (typeof item === 'object') {
             let noReplace = true;
             this.filterD.forEach((f) => {
-              if (item.includes(tag) && item.includes(f)) {
+              if ((item as string).includes(tag) && (item as string).includes(f)) {
                 this.filterD.splice(this.filterD.indexOf(f), 1, tag);
                 noReplace = false;
               }
             });
-            if (noReplace && item.includes(tag)) {
+            if (noReplace && (item as string).includes(tag)) {
               this.filterD.push(tag);
             }
           }
         }
       }
     },
-    sortData(i) {
+    sortData(i): void {
       if (this.sort === i && this.sortDir === 'down') {
         this.sortDir = 'up';
       } else if (this.sort === i && this.sortDir === 'up') {
@@ -203,7 +210,7 @@ export default {
       this.filteredData = this.sortFunc(this.filteredData, i, this.sortDir);
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

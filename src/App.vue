@@ -48,8 +48,8 @@
           id="border"
           v-if="widthWindow > 960"
           :style="{
-            left: `${borderStyles.left-1}px`,
-            width: `${borderStyles.width}px`,
+            left: `${border.left-1}px`,
+            width: `${border.width}px`,
           }"
         ></div>
       </div>
@@ -90,13 +90,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { logout } from '@/api/user';
 import { mapState } from 'vuex';
 import Context from '@/components/Context/index.vue';
 import GlobalTimer from '@/components/Global Timer/index.vue';
 
-export default {
+export default Vue.extend({
   name: 'MUN',
   components: {
     GlobalTimer,
@@ -123,26 +124,26 @@ export default {
   },
   computed: {
     ...mapState({
-      isConnected: (state) => state.Socket.isConnected,
-      noAuth: (state) => state.Global.notAuthorized,
-      generic: (state) => state.Global.genericError,
-      widthWindow: (state) => state.Global.widthWindow,
-      showContext: (state) => state.Global.showContext,
-      contextPos: (state) => state.Global.contextPos,
+      isConnected: (state: any) => state.Socket.isConnected,
+      noAuth: (state: any) => state.Global.notAuthorized,
+      generic: (state: any) => state.Global.genericError,
+      widthWindow: (state: any) => state.Global.widthWindow,
+      showContext: (state: any) => state.Global.showContext,
+      contextPos: (state: any) => state.Global.contextPos,
     }),
-    borderStyles() {
-      return this.borderTemp == null ? this.border : this.borderTemp;
-    },
-    showNavBar() {
+    // borderStyles() {
+    //   return this.borderTemp == null ? this.border : this.borderTemp;
+    // },
+    showNavBar(): boolean {
       return this.widthWindow > 960 || this.open;
     },
-    pathCheckConference() {
+    pathCheckConference(): boolean {
       if (this.$route.path === '/') {
         return false;
       }
       return this.conference.includes(this.$route.path.split('/')[1]);
     },
-    pathCheckGeneral() {
+    pathCheckGeneral(): boolean {
       if (this.$route.path === '/') {
         return true;
       }
@@ -201,7 +202,7 @@ export default {
       }
       return this.state;
     },
-    onTabClick() {
+    onTabClick(): void {
       if (this.$route.path.split('/')[1] === '') {
         const styles = {
           left: 32,
@@ -219,9 +220,9 @@ export default {
       } else {
         const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
         const styles = {
-          left: tab.offsetLeft + 32,
-          width: tab.offsetWidth + 2,
-          height: tab.offsetHeight,
+          left: (tab as HTMLElement).offsetLeft + 32,
+          width: (tab as HTMLElement).offsetWidth + 2,
+          height: (tab as HTMLElement).offsetHeight,
         };
         this.border = styles;
       }
@@ -233,7 +234,7 @@ export default {
       try {
         await logout();
         this.$store.dispatch('logout');
-        if (!event) window.localStorage.setItem('logout', Date.now());
+        if (!event) window.localStorage.setItem('logout', Date.now().toString());
         this.$router.push('/login');
       } catch (err) {
         console.error(err);
@@ -269,10 +270,10 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.checkMobileView);
     window.removeEventListener('storage', this.logout);
-    window.removeEventListener('online');
-    window.removeEventListener('offline');
+    // window.removeEventListener('online');
+    // window.removeEventListener('offline');
   },
-};
+});
 </script>
 
 <style lang="scss">

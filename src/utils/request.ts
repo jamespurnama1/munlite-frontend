@@ -9,10 +9,10 @@ const service = axios.create({
   timeout: 7000,
 });
 
-const calculatePercentage = (loaded, total) => Math.floor(loaded * 1.0) / total;
+const calculatePercentage = (loaded: number, total: number) => Math.floor(loaded * 1.0) / total;
 
 service.interceptors.request.use(
-  (config) => {
+  (config: any) => {
     config.onDownloadProgress = (e) => {
       const percentage = calculatePercentage(e.loaded, e.total);
       NProgress.set(percentage);

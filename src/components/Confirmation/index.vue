@@ -11,8 +11,10 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
   name: 'Confirmation',
   props: {
     action: Function,
@@ -30,7 +32,7 @@ export default {
       this.$emit('exit');
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

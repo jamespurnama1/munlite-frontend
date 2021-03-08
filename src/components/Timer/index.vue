@@ -28,15 +28,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { mapState } from 'vuex';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { debounce } from 'debounce';
 
-gsap.registerPlugin(ScrollTrigger);
-
-export default {
+export default Vue.extend({
   name: 'Timer',
   props: {
     next: {
@@ -46,10 +44,10 @@ export default {
   },
   computed: {
     ...mapState({
-      timer: (state) => state.Socket.message.time,
-      status: (state) => state.Socket.message.state,
-      order: (state) => state.Socket.message.order,
-      muted: (state) => state.Global.muted,
+      timer: (state: any) => state.Socket.message.time,
+      status: (state: any) => state.Socket.message.state,
+      order: (state: any) => state.Socket.message.order,
+      muted: (state: any) => state.Global.muted,
     }),
     timerReadable() {
       let mins;
@@ -68,7 +66,7 @@ export default {
     timer() {
       if (!this.muted && this.status === 0) {
         if (this.timer === 5) {
-          document.getElementById('warn').play();
+          (document.getElementById('warn') as HTMLAudioElement).play();
           gsap.to('.read', {
             rotate: '+=20deg',
             color: '#FF5F5F',
@@ -88,22 +86,18 @@ export default {
           });
         }
       } else if (!this.muted && this.timer === 0) {
-        document.getElementById('ding').play();
+        (document.getElementById('ding') as HTMLAudioElement).play();
       }
     },
   },
   data() {
     return {
-      interval: null,
-      tl: null,
+      tl: null as GSAPTimeline | null,
       debounce,
     };
   },
-  async mounted() {
-    this.scroll();
-  },
   methods: {
-    redo() {
+    redo(): void {
       gsap.to('.redo', {
         rotate: '-=360deg',
         color: '#5f78ff',
@@ -114,7 +108,7 @@ export default {
       });
       this.$emit('restart');
     },
-    async skip() {
+    skip(): void {
       gsap.to('.skip', {
         color: '#5f78ff',
         repeat: 3,
@@ -123,14 +117,14 @@ export default {
       });
       this.$emit('next');
     },
-    toggleActive() {
+    toggleActive(): void {
       this.$emit('active');
     },
-    toggleSound() {
+    toggleSound(): void {
       this.$store.commit('toggleMute');
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

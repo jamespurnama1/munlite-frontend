@@ -117,18 +117,21 @@
 </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import {
   addTurn, currentCaucus, delTurn, nextCaucus, timeLeft,
 } from '@/api/caucus';
 import { mapState } from 'vuex';
-import { negara } from '@/const/country';
+import negara from '@/const/country';
 import { getAllDelegates } from '@/api/delegates';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType, caucusType, websocketType } from '@/types/api';
 import CardStack from '@/components/CardStack/index.vue';
 import Timer from '@/components/Timer/index.vue';
 import Queue from '@/components/Queue/index.vue';
 
-export default {
+export default Vue.extend({
   name: 'Caucus',
   components: {
     CardStack,
@@ -137,30 +140,36 @@ export default {
   },
   data() {
     return {
-      delegatesData: [],
-      caucusData: null,
-      currentCountry: 0, // cardstacks display
-      selected: null,
-      showInput: false,
-      caucusCurrent: null, // current in GET caucus
-      newArr: [],
-      showQueue: false,
-      prevent: false,
+      delegatesData: [] as delegatesType.getAllDelegates[],
+      caucusData: null as caucusType.currentCaucus | null,
+      currentCountry: 0 as number, // cardstacks display
+      selected: null as number | null,
+      showInput: false as boolean,
+      caucusCurrent: null as number | null, // current in GET caucus
+      newArr: [] as {}[],
+      showQueue: false as boolean,
+      prevent: false as boolean,
       config: {
+        // @ts-ignore
         handler: this.outside,
         events: ['click'],
+      },
+      actions: {
+        Restart: true as boolean,
+        'View Notes': false as boolean,
+        'Remove From Queue': true as boolean,
       },
       nextButton: [
         'consultation of the whole',
         'unmoderated caucus',
-      ],
+      ] as string[],
     };
   },
   methods: {
-    outside() {
+    outside(): void {
       this.showQueue = false;
     },
-    context([action, , , index]) {
+    context([action, , , index]: any[] = []): void {
       switch (action) {
         case 'Remove From Queue':
           this.deleteTurn(index);
@@ -174,8 +183,8 @@ export default {
         default:
       }
     },
-    newCountryList() {
-      const list = [];
+    newCountryList(): void {
+      const list: any[] = [];
       this.delegatesData.forEach((item) => {
         let data = negara.filter((e) => e.name === item.country)[0];
         if (data) {
@@ -183,6 +192,7 @@ export default {
         } else {
           data = {
             name: item.country,
+            id: '',
           };
           list.push(data);
         }
@@ -190,7 +200,7 @@ export default {
 
       this.$store.commit('countryList', list);
     },
-    newCaucusList(l) {
+    newCaucusList(l): void {
       this.newArr.length = 0;
       let data;
       for (let i = 0; i < l.queue.length; i += 1) {
@@ -203,9 +213,9 @@ export default {
         }
       }
       this.$store.commit('caucusList', this.newArr);
-      this.currentCountry = this.caucusCurrent;
+      this.currentCountry = this.caucusCurrent as number;
     },
-    async next() {
+    async next(): Promise<void> {
       try {
         const next = {
           session: 'caucus',
@@ -213,25 +223,28 @@ export default {
           order: this.caucusCurrent,
         };
         this.$socket.send(JSON.stringify(next));
-        await timeLeft(this.$route.params.id, JSON.stringify({
-          order: this.caucusCurrent + 1,
-          time_left: this.socket.time,
-        }));
+        if (this.caucusCurrent) {
+          await timeLeft(this.$route.params.id, {
+            order: this.caucusCurrent + 1,
+            time_left: this.socket.time,
+          });
+        }
         await nextCaucus(this.$route.params.id);
         this.updateCaucus();
       } catch (err) {
         console.error(err);
       }
     },
-    async restart() {
+    async restart(): Promise<void> {
       const data = {
         session: 'caucus',
         command: 'stop',
         order: this.caucusCurrent,
       };
       this.$socket.send(JSON.stringify(data));
-      let time = this.caucusData.motion.total_time;
-      if (this.caucusData.motion.type.toLowerCase() === 'moderated caucus') {
+      let time: number;
+      if (this.caucusData) time = this.caucusData.motion.total_time;
+      if (this.caucusData && this.caucusCurrent && this.caucusData.motion.type.toLowerCase() === 'moderated caucus') {
         time = this.caucusList[this.caucusCurrent].time_start;
       }
       await setTimeout(() => {
@@ -244,7 +257,7 @@ export default {
         this.$socket.send(JSON.stringify(play));
       }, 1000);
     },
-    async deleteTurn(i) {
+    async deleteTurn(i): Promise<void> {
       try {
         await delTurn(this.$route.params.id, i + 1);
         this.updateCaucus();
@@ -252,7 +265,7 @@ export default {
         console.error(err.response);
       }
     },
-    async addQueue([country, time]) {
+    async addQueue([country, time]): Promise<void> {
       try {
         const [id] = this.delegatesData.filter((obj) => obj.country === country);
         const data = {
@@ -261,6 +274,7 @@ export default {
           time_left: time,
         };
         if (id
+        && this.caucusData
         && this.caucusData.length
         < (this.caucusData.motion.total_time / this.caucusData.motion.speaking_time)) {
           await addTurn(this.$route.params.id, data);
@@ -271,14 +285,14 @@ export default {
         console.error(err.response);
       }
     },
-    async updateCaucus() {
+    async updateCaucus(): Promise<void> {
       try {
         const list = await currentCaucus(this.$route.params.id);
         if (list.data.data !== null) {
           this.caucusData = list.data.data;
           this.newCaucusList(list.data.data);
         }
-        if (this.caucusCurrent !== this.caucusData.current) {
+        if (this.caucusData && this.caucusCurrent !== this.caucusData.current) {
           this.currentCountry = this.caucusData.current;
           this.caucusCurrent = this.caucusData.current;
         }
@@ -286,42 +300,46 @@ export default {
         console.error(err.response);
       }
     },
-    toggleActive() {
-      let time = this.caucusData.motion.total_time;
-      if (this.caucusData.motion.type.toLowerCase() === 'moderated caucus') {
+    toggleActive(): void {
+      let time;
+      if (this.caucusData) time = this.caucusData.motion.total_time;
+      if (this.caucusCurrent && this.caucusData && this.caucusData.motion.type.toLowerCase() === 'moderated caucus') {
         time = this.caucusList[this.caucusCurrent].time_start;
       }
-      const data = {
+      const data: websocketType.send = {
         session: 'caucus',
+        order: 0,
       };
-      if (this.socket.state === 2) {
+      if (this.socket.state === 2 && this.caucusCurrent !== null) {
         data.command = 'start';
         data.time = time;
         data.order = this.caucusCurrent;
-      } else if (this.socket.state === 1) {
+      } else if (this.socket.state === 1 && this.caucusCurrent !== null) {
         data.command = 'resume';
         data.order = this.caucusCurrent;
-      } else {
+      } else if (this.caucusCurrent !== null) {
         data.command = 'pause';
         data.order = this.caucusCurrent;
       }
       this.$socket.send(JSON.stringify(data));
     },
-    select(i) {
+    select(i): void {
       this.selected = i;
     },
-    move(index) {
-      const j = Math.min(Math.max(parseInt(index, 10), 0), this.caucusData.queue.length - 1);
-      this.currentCountry = j;
+    move(index): void {
+      if (this.caucusData) {
+        const j = Math.min(Math.max(parseInt(index, 10), 0), this.caucusData.queue.length - 1);
+        this.currentCountry = j;
+      }
     },
-    getDelegatesID(name) {
+    getDelegatesID(name): string {
       const data = negara.filter((obj) => obj.name === name);
       if (data.length > 0) {
         return data[0].id;
       }
       return 'ad';
     },
-    sortCountry(items) {
+    sortCountry(items: any[]): any[] {
       items.sort((a, b) => {
         const nameA = a.country.toUpperCase();
         const nameB = b.country.toUpperCase();
@@ -335,7 +353,7 @@ export default {
       });
       return items;
     },
-    async updateDelegatesData() {
+    async updateDelegatesData(): Promise<void> {
       try {
         const delegates = await getAllDelegates(this.$route.params.id);
         if (delegates.data.data !== null) {
@@ -358,29 +376,22 @@ export default {
   },
   computed: {
     ...mapState({
-      socket: (state) => state.Socket.message,
-      countryList: (state) => state.Delegates.countryList,
-      caucusList: (state) => state.Delegates.caucusList,
-      widthWindow: (state) => state.Global.widthWindow,
+      socket: (state: any) => state.Socket.message,
+      countryList: (state: any) => state.Delegates.countryList,
+      caucusList: (state: any) => state.Delegates.caucusList,
+      widthWindow: (state: any) => state.Global.widthWindow,
     }),
-    noNext() {
-      if (this.nextButton.includes(this.caucusData.motion.type.toLowerCase())) return false;
+    noNext(): boolean {
+      if (this.caucusData
+      && this.nextButton.includes(this.caucusData.motion.type.toLowerCase())) return false;
       return true;
     },
-    actions() {
-      const action = {
-        Restart: true,
-        'View Notes': false,
-        'Remove From Queue': true,
-      };
-      return action;
-    },
-    moderated() {
-      if (this.caucusData.motion.type.toLowerCase() === 'moderated caucus') return true;
+    moderated(): boolean {
+      if (this.caucusData && this.caucusData.motion.type.toLowerCase() === 'moderated caucus') return true;
       return false;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

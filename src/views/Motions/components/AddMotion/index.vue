@@ -110,37 +110,41 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+// eslint-disable-next-line no-unused-vars
+import Vue, { PropType } from 'vue';
 import Autocomplete from '@/components/Autocomplete/index.vue';
 import { addMotion } from '@/api/motions';
 import { mapState } from 'vuex';
+// eslint-disable-next-line no-unused-vars
+import { motionsType } from '@/types/api';
 
-export default {
+export default Vue.extend({
   name: 'AddMotion',
   components: {
     Autocomplete,
   },
   data() {
     return {
-      proposer: '',
+      proposer: '' as string,
       motionData: {
-        name: null,
-        proposer: null,
-        speaking_time: null,
-        total_time: null,
-        type: null,
+        name: '',
+        proposer: '',
+        speaking_time: 0,
+        total_time: 0,
+        type: '',
         yes_vote: 0,
         no_vote: 0,
-      },
-      total_time: null,
-      speaking_time: null,
+      } as motionsType.addMotion,
+      total_time: null as null | number,
+      speaking_time: null as null | number,
       warn: {
         name: false,
         proposer: false,
         speaking_time: false,
         total_time: false,
         type: false,
-      },
+      } as {[key: string]: boolean},
       options: [
         'Moderated Caucus',
         'Unmoderated Caucus',
@@ -148,17 +152,18 @@ export default {
         'Continuation of The Debate',
         'Adjournment of The Meeting',
         'Consultation of The Whole',
-      ],
-      focus: false,
+      ] as string[],
+      focus: false as boolean,
       config: {
+        // @ts-ignore
         handler: this.outside,
         events: ['click'],
       },
-      sel: 0,
+      sel: 0 as number,
     };
   },
   props: {
-    data: Object,
+    data: Object as PropType<motionsType.getMotions>,
     editMotion: Function,
   },
   created() {
@@ -174,7 +179,7 @@ export default {
     window.onbeforeunload = () => {};
   },
   methods: {
-    keymap(event) {
+    keymap(event): void {
       switch (event.srcKey) {
         case 'up':
           this.sel = Math.max(this.sel - 1, 0);
@@ -191,22 +196,22 @@ export default {
           break;
       }
     },
-    outside() {
+    outside(): void {
       this.focus = false;
     },
-    exit() {
+    exit(): void {
       this.$emit('exit');
     },
-    async addMotion(data) {
+    async addMotion(data: motionsType.addMotion): Promise<void> {
       try {
         this.checkForm(data);
-        await addMotion(this.$route.params.id, JSON.stringify(data));
+        await addMotion(this.$route.params.id, data);
         this.$emit('exitSafe');
       } catch (err) {
         console.error(err);
       }
     },
-    edit(data) {
+    edit(data: motionsType.getMotions) {
       try {
         this.checkForm(data);
         this.editMotion(data);
@@ -215,8 +220,9 @@ export default {
         console.error(err);
       }
     },
-    checkForm(data) {
-      this.warn = Object.assign(...Object.keys(this.warn).map((warn) => ({ [warn]: false })));
+    checkForm(data: motionsType.addMotion) {
+      const reset = Object.keys(this.warn).map((warn) => ({ [warn]: false }));
+      this.warn = Object.assign(this.warn, ...reset);
       if (!data.type || data.type === '') {
         this.warn.type = true;
       }
@@ -226,11 +232,11 @@ export default {
       if (data.type && data.type.toLowerCase() === 'moderated caucus' && (!data.name || data.name === '')) {
         this.warn.name = true;
       }
-      if (data.type && data.type.toLowerCase() === 'moderated caucus' && (data.speaking_time === null || data.speaking_time === '')) {
+      if (data.type && data.type.toLowerCase() === 'moderated caucus' && !data.speaking_time) {
         this.warn.speaking_time = true;
       }
       if (data.type && (data.type.toLowerCase() === 'moderated caucus' || data.type.toLowerCase() === 'consultation of the whole' || data.type.toLowerCase() === 'unmoderated caucus')
-      && (data.total_time === null || data.total_time === '')) {
+      && !data.total_time) {
         this.warn.total_time = true;
       }
       if (Object.values(this.warn).filter((f) => f === true).length > 0) {
@@ -240,32 +246,32 @@ export default {
   },
   computed: {
     ...mapState({
-      countryList: (state) => state.Delegates.countryList,
-      width: (state) => state.Global.widthWindow,
+      countryList: (state: any) => state.Delegates.countryList,
+      width: (state: any) => state.Global.widthWindow as number,
     }),
-    type() {
+    type(): string {
       return this.motionData.type;
     },
-    name() {
+    name(): string {
       return this.motionData.name;
     },
-    proposerData() {
+    proposerData(): string {
       return this.motionData.proposer;
     },
   },
   watch: {
     total_time() {
       this.warn.total_time = false;
-      this.motionData.total_time = this.total_time * 60;
+      if (this.total_time !== null) this.motionData.total_time = this.total_time * 60;
     },
     speaking_time() {
       this.warn.speaking_time = false;
-      this.motionData.speaking_time = this.speaking_time;
+      if (this.speaking_time !== null) this.motionData.speaking_time = this.speaking_time;
     },
     type() {
       this.warn.type = false;
       if (this.type !== 'Moderated Caucus') {
-        this.motionData.name = null;
+        this.motionData.name = '';
         this.speaking_time = null;
       }
       if (this.type === 'Suspension of The Debate'
@@ -281,7 +287,7 @@ export default {
       this.warn.name = false;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

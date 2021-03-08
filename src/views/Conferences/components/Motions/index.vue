@@ -21,7 +21,7 @@
             <transition-group name="fade">
             <div
               v-for="(batch, index) in confData.motions.batches"
-              :key="index"
+              :key="batch.motion_id"
               class="data"
             >
             <li
@@ -78,17 +78,20 @@
   </div>
 </template>
 
-<script>
-import { negara } from '@/const/country';
+<script lang="ts">
+import Vue from 'vue';
+import negara from '@/const/country';
 import { mapState } from 'vuex';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType, motionsType } from '@/types/api';
 
-export default {
+export default Vue.extend({
   name: 'Motions',
   data() {
     return {
-      motionsData: [],
-      delegatesData: [],
-      expand: null,
+      motionsData: [] as motionsType.getMotions[],
+      delegatesData: [] as delegatesType.getAllDelegates[],
+      expand: null as null | number,
     };
   },
   props: {
@@ -96,18 +99,18 @@ export default {
   },
   computed: {
     ...mapState({
-      width: (state) => state.Global.widthWindow,
+      width: (state: any) => state.Global.widthWindow,
     }),
   },
   methods: {
-    getDelegatesID(name) {
+    getDelegatesID(name: string): string {
       const data = negara.filter((obj) => obj.name === name);
       if (data.length > 0) {
         return data[0].id;
       }
       return 'ad';
     },
-    sortMotions(items) {
+    sortMotions(items: motionsType.getMotions[]): motionsType.getMotions[] {
       items.sort((a, b) => {
         const nameA = a.name.toUpperCase();
         const nameB = b.name.toUpperCase();
@@ -127,7 +130,7 @@ export default {
       this.motionsData.push(...motion.batch_motions);
     });
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

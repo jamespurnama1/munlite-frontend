@@ -35,23 +35,24 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { mapState } from 'vuex';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default {
+export default Vue.extend({
   name: 'GlobalTimer',
   computed: {
     ...mapState({
-      timer: (state) => state.Socket.message.time,
-      sess: (state) => state.Socket.message.session,
-      status: (state) => state.Socket.message.state,
-      order: (state) => state.Socket.message.order,
-      width: (state) => state.Global.widthWindow,
-      muted: (state) => state.Global.muted,
+      timer: (state: any) => state.Socket.message.time,
+      sess: (state: any) => state.Socket.message.session,
+      status: (state: any) => state.Socket.message.state,
+      order: (state: any) => state.Socket.message.order,
+      width: (state: any) => state.Global.widthWindow,
+      muted: (state: any) => state.Global.muted,
     }),
     timerReadable() {
       let mins;
@@ -72,7 +73,7 @@ export default {
         this.progress = 100 - (this.timer / 0.9);
         if (!this.muted && this.status === 0) {
           if (this.timer === 5) {
-            document.getElementById('warn').play();
+            (document.getElementById('warn') as HTMLAudioElement).play();
             gsap.to('.read', {
               rotate: '+=20deg',
               color: '#FF5F5F',
@@ -92,7 +93,7 @@ export default {
             });
           }
         } else if (!this.muted && this.timer === 0) {
-          document.getElementById('ding').play();
+          (document.getElementById('ding') as HTMLAudioElement).play();
         }
       },
       immediate: true,
@@ -154,7 +155,7 @@ export default {
       this.$socket.send(JSON.stringify(next));
     },
     toggleActive() {
-      const data = {
+      const data: {[key: string]: any} = {
         session: 'gsl',
       };
       if (this.status === 2) {
@@ -172,7 +173,7 @@ export default {
       this.$store.commit('toggleMute');
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
