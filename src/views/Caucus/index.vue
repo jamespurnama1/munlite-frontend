@@ -1,120 +1,149 @@
 <template>
-<div class="wrap">
-  <div class="gsl" v-if="delegatesData.length > 0 && caucusData">
-    <div class="upper">
-      <span>
-        <h1 v-if="caucusData.motion.name" class="title">{{ caucusData.motion.name }}</h1>
-        <h1 v-else class="title">{{ caucusData.motion.type }}</h1>
-        <!-- <p v-if="widthWindow > 960">Scroll or drag the cards to view the rest of the queue.</p>
-        <p v-else>Swipe the cards to view the rest of the queue.</p> -->
-        <p v-if="widthWindow > 960 && moderated">
-          Right click the cards for more options.
-        </p>
-        <p v-else-if="moderated">
-          Long press the cards for more options.
-        </p>
-      </span>
-      <button
-        :disabled="caucusData.length
-          >= (caucusData.motion.total_time / caucusData.motion.speaking_time)"
-        @click="showQueue = true"
-        v-if="widthWindow <= 960 && moderated"
-      >
-        <font-awesome-icon :icon="['fas', 'plus']"/>
-      </button>
-    </div>
-    <div class="wrapper">
-      <Timer
-        v-if="widthWindow <= 960
-        && socket"
-        class="time"
-        :class="{solo: !moderated}"
-        :next="noNext"
-        @active="toggleActive()"
-        @update="updateCaucus()"
-        @restart="restart()"
-        @next="next"
-      />
-      <div class="cards" v-if="moderated">
-        <CardStack
-          v-if="caucusList.length > 0"
-          :key="caucusList.length"
-          :delegates="caucusList"
-          :active="socket.state === 0"
-          :isActive="caucusCurrent"
-          :display="currentCountry"
-          :actions="actions"
-          :prevent="prevent"
-          @move="move"
+  <div class="wrap">
+    <div class="gsl" v-if="delegatesData.length > 0 && caucusData">
+      <div class="upper">
+        <span>
+          <h1 v-if="caucusData.motion.name" class="title">{{ caucusData.motion.name }}</h1>
+          <h1 v-else class="title">{{ caucusData.motion.type }}</h1>
+          <!-- <p v-if="widthWindow > 960">
+            Scroll or drag the cards to view the rest of the queue.
+          </p>
+          <p v-else>Swipe the cards to view the rest of the queue.</p> -->
+          <p v-if="widthWindow > 960 && moderated">
+            Right click the cards for more options.
+          </p>
+          <p v-else-if="moderated">
+            Long press the cards for more options.
+          </p>
+        </span>
+        <button
+          :disabled="caucusData.length
+            >= (caucusData.motion.total_time / caucusData.motion.speaking_time)"
+          @click="showQueue = true"
+          v-if="widthWindow <= 960 && moderated"
+        >
+          <font-awesome-icon :icon="['fas', 'plus']"/>
+        </button>
+      </div>
+      <div class="wrapper">
+        <Timer
+          v-if="widthWindow <= 960
+          && socket"
+          class="time"
+          :class="{solo: !moderated}"
+          :next="noNext"
+          @active="() => {
+            if(socket.session === 'gsl' && socket.state === 1) showConfirm = true
+            else toggleActive()
+          }"
+          @update="updateCaucus()"
+          @restart="restart()"
+          @next="next"
+          :time_left="caucusList[caucusCurrent].time_left"
         />
-      <div v-else>
-        <h3>No delegates in queue</h3>
-        <p v-if="widthWindow <= 960">Add delegates from the plus button</p>
-        <p v-else>Start by typing a country name on the right</p>
-      </div>
-      </div>
-      <div class="options">
-        <transition-group name="fade">
-          <div
-            key="1"
-            class="top"
-            v-if="widthWindow > 960"
-            :class="{solo: !moderated}"
-          >
-            <Timer
-              v-if="socket"
-              class="time"
-              :next="noNext"
-              @active="toggleActive()"
-              @update="updateCaucus()"
-              @restart="restart()"
-              @next="next"
-            />
-          </div>
-          <Queue
-            key="2"
-            v-else-if="widthWindow <= 960
-            && countryList && showQueue"
-            class="queue"
-            :items="countryList"
-            @add="addQueue"
-            :disable="caucusData.length
-              >= (caucusData.motion.total_time / caucusData.motion.speaking_time)"
-            v-click-outside="config"
-            :defaultTime="caucusData.motion.speaking_time"
+        <div class="cards" v-if="moderated">
+          <CardStack
+            v-if="caucusList.length > 0"
+            :key="caucusList.length"
+            :delegates="caucusList"
+            :active="socket.state === 0"
+            :isActive="caucusCurrent"
+            :display="currentCountry"
+            :actions="actions"
+            :prevent="prevent"
+            @move="move"
           />
-          <div
-            key="3"
-            class="bottom"
-            v-if="widthWindow > 960"
-            v-click-outside="config"
-          >
+          <div v-else>
+            <h3>No delegates in queue</h3>
+            <p v-if="widthWindow <= 960">Add delegates from the plus button</p>
+            <p v-else>Start by typing a country name on the right</p>
+          </div>
+        </div>
+        <div class="options">
+          <transition-group name="fade">
+            <div
+              key="1"
+              class="top"
+              v-if="widthWindow > 960"
+              :class="{solo: !moderated}"
+            >
+              <Timer
+                v-if="socket"
+                class="time"
+                :next="noNext"
+                @active="() => {
+                  if(socket.session === 'gsl' && socket.state === 1) showConfirm = true
+                  else toggleActive()
+                }"
+                @update="updateCaucus()"
+                @restart="restart()"
+                @next="next"
+                :time_left="caucusList[caucusCurrent].time_left"
+              />
+            </div>
             <Queue
-              v-if="countryList && moderated"
+              key="2"
+              v-else-if="widthWindow <= 960
+              && countryList && showQueue"
               class="queue"
               :items="countryList"
               @add="addQueue"
+              v-click-outside="{
+                handler() { showQueue = false; },
+                events: ['click'],
+              }"
               :disable="caucusData.length
                 >= (caucusData.motion.total_time / caucusData.motion.speaking_time)"
               :defaultTime="caucusData.motion.speaking_time"
             />
-          </div>
-          <div key="4" class="overlay" v-if="widthWindow <= 960
-            && countryList && showQueue"
-          />
-        </transition-group>
+            <div
+              key="3"
+              class="bottom"
+              v-if="widthWindow > 960"
+            >
+              <Queue
+                v-if="countryList && moderated"
+                class="queue"
+                :items="countryList"
+                @add="addQueue"
+                :disable="caucusData.length
+                  >= (caucusData.motion.total_time / caucusData.motion.speaking_time)"
+                :defaultTime="caucusData.motion.speaking_time"
+              />
+            </div>
+            <div key="4" class="overlay" v-if="widthWindow <= 960
+              && countryList && showQueue"
+            />
+          </transition-group>
+        </div>
       </div>
     </div>
+    <div v-else-if="delegatesData.length === 0" class="noDelegates">
+      <h1>No Present Delegates</h1>
+      <p>Add delegates &amp; start a roll call from the delegates tab.</p>
+    </div>
+    <div v-else-if="!caucusData" class="noCaucus">
+      <h1>No Caucus</h1>
+      <p>Start a caucus from the motions tab.</p>
+    </div>
+    <transition-group name="fade">
+      <Confirmation
+        content="GSL is still in progress. Stop GSL?"
+        :action="stopGSL"
+        :negative="true"
+        button="Stop"
+        v-click-outside="{
+          handler() { showConfirm = false; },
+          events: ['click'],
+        }"
+        whiteButton="Cancel"
+        v-if="showConfirm"
+        @exit="() => { showConfirm = false; }"
+        :key="`${showConfirm}Modal`"
+      />
+      <div class="overlay modal" :key="showConfirm" v-if="showConfirm" />
+    </transition-group>
   </div>
-  <div v-else-if="delegatesData.length === 0" class="noDelegates">
-    <h1>No Present Delegates</h1>
-    <p>Add delegates &amp; start a roll call from the delegates tab.</p>
-  </div>
-  <div v-else-if="!caucusData" class="noCaucus">
-    <h1>No Caucus</h1>
-    <p>Start a caucus from the motions tab.</p>
-  </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -127,6 +156,7 @@ import negara from '@/const/country';
 import { getAllDelegates } from '@/api/delegates';
 // eslint-disable-next-line no-unused-vars
 import { delegatesType, caucusType, websocketType } from '@/types/api';
+import Confirmation from '@/components/Confirmation/index.vue';
 import CardStack from '@/components/CardStack/index.vue';
 import Timer from '@/components/Timer/index.vue';
 import Queue from '@/components/Queue/index.vue';
@@ -137,6 +167,7 @@ export default Vue.extend({
     CardStack,
     Timer,
     Queue,
+    Confirmation,
   },
   data() {
     return {
@@ -144,16 +175,12 @@ export default Vue.extend({
       caucusData: null as caucusType.currentCaucus | null,
       currentCountry: 0 as number, // cardstacks display
       selected: null as number | null,
+      showConfirm: false as boolean,
       showInput: false as boolean,
       caucusCurrent: null as number | null, // current in GET caucus
       newArr: [] as {}[],
       showQueue: false as boolean,
       prevent: false as boolean,
-      config: {
-        // @ts-ignore
-        handler: this.outside,
-        events: ['click'],
-      },
       actions: {
         Restart: true as boolean,
         'View Notes': false as boolean,
@@ -166,8 +193,17 @@ export default Vue.extend({
     };
   },
   methods: {
-    outside(): void {
-      this.showQueue = false;
+    stopGSL(): void {
+      const stop = {
+        session: 'gsl',
+        command: 'stop',
+      };
+      const vue = this;
+      this.$socket.send(JSON.stringify(stop));
+      vue.$socket.addEventListener('message', function onmessage() {
+        vue.$socket.removeEventListener('message', onmessage);
+        vue.toggleActive();
+      });
     },
     context([action, , , index]: any[] = []): void {
       switch (action) {
@@ -175,7 +211,7 @@ export default Vue.extend({
           this.deleteTurn(index);
           break;
         case 'View Notes':
-          // TODO:view notes
+          // TODO: view notes
           break;
         case 'Restart':
           this.restart();
@@ -200,14 +236,14 @@ export default Vue.extend({
 
       this.$store.commit('countryList', list);
     },
-    newCaucusList(l): void {
+    newCaucusList(caucus: caucusType.currentCaucus): void {
       this.newArr.length = 0;
       let data;
-      for (let i = 0; i < l.queue.length; i += 1) {
-        [data] = this.delegatesData.filter((e) => e._id === l.queue[i].delegate_id);
+      for (let i = 0; i < caucus.queue.length; i += 1) {
+        [data] = this.delegatesData.filter((e) => e._id === caucus.queue[i].delegate_id);
         if (data) {
-          data.time_start = l.queue[i].time_start;
-          data.time_left = l.queue[i].time_left;
+          data.time_start = caucus.queue[i].time_start;
+          data.time_left = caucus.queue[i].time_left;
           data = { ...data };
           this.newArr.push(data);
         }
@@ -244,10 +280,10 @@ export default Vue.extend({
       this.$socket.send(JSON.stringify(data));
       let time: number;
       if (this.caucusData) time = this.caucusData.motion.total_time;
-      if (this.caucusData && this.caucusCurrent && this.caucusData.motion.type.toLowerCase() === 'moderated caucus') {
+      if (this.caucusData && this.caucusCurrent !== null && this.caucusData.motion.type.toLowerCase() === 'moderated caucus') {
         time = this.caucusList[this.caucusCurrent].time_start;
       }
-      await setTimeout(() => {
+      setTimeout(() => {
         const play = {
           session: 'caucus',
           command: 'start',
@@ -257,15 +293,15 @@ export default Vue.extend({
         this.$socket.send(JSON.stringify(play));
       }, 1000);
     },
-    async deleteTurn(i): Promise<void> {
+    async deleteTurn(index: number): Promise<void> {
       try {
-        await delTurn(this.$route.params.id, i + 1);
+        await delTurn(this.$route.params.id, index + 1);
         this.updateCaucus();
       } catch (err) {
         console.error(err.response);
       }
     },
-    async addQueue([country, time]): Promise<void> {
+    async addQueue([country, time]: [string, number]): Promise<void> {
       try {
         const [id] = this.delegatesData.filter((obj) => obj.country === country);
         const data = {
@@ -301,16 +337,16 @@ export default Vue.extend({
       }
     },
     toggleActive(): void {
-      let time;
-      if (this.caucusData) time = this.caucusData.motion.total_time;
-      if (this.caucusCurrent && this.caucusData && this.caucusData.motion.type.toLowerCase() === 'moderated caucus') {
+      let time: number = 0;
+      if (this.caucusData && this.caucusData.motion.type.toLowerCase() !== 'moderated caucus') time = this.caucusData.motion.total_time;
+      if (this.caucusCurrent !== null && this.caucusData && this.caucusData.motion.type.toLowerCase() === 'moderated caucus') {
         time = this.caucusList[this.caucusCurrent].time_start;
       }
       const data: websocketType.send = {
         session: 'caucus',
         order: 0,
       };
-      if (this.socket.state === 2 && this.caucusCurrent !== null) {
+      if ((this.socket.session === 'gsl' || this.socket.state === 2) && this.caucusCurrent !== null) {
         data.command = 'start';
         data.time = time;
         data.order = this.caucusCurrent;
@@ -323,16 +359,17 @@ export default Vue.extend({
       }
       this.$socket.send(JSON.stringify(data));
     },
-    select(i): void {
-      this.selected = i;
+    select(index: number): void {
+      this.selected = index;
     },
-    move(index): void {
+    move(index: number): void {
       if (this.caucusData) {
-        const j = Math.min(Math.max(parseInt(index, 10), 0), this.caucusData.queue.length - 1);
+        const j = Math.min(Math.max(parseInt(index.toString(), 10), 0),
+          this.caucusData.queue.length - 1);
         this.currentCountry = j;
       }
     },
-    getDelegatesID(name): string {
+    getDelegatesID(name: string): string {
       const data = negara.filter((obj) => obj.name === name);
       if (data.length > 0) {
         return data[0].id;

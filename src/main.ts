@@ -64,13 +64,13 @@ Vue.use(Vue2TouchEvents, {
   .component('font-awesome-icon', FontAwesomeIcon);
 
 router.afterEach((to) => {
-  if (to.params.id) {
+  if (to.params.id && !(store as any).state.Socket.isConnected) {
     vm.$connect(`wss://dev.api.munlite.co/ws/:${to.params.id}`);
-  } else {
+  } else if (!to.params.id) {
     vm.$disconnect();
   }
 });
 
 vm.$mount('#app');
 
-if (window.Cypress) window.store = store;
+if ((window as any).Cypress) (window as any).store = store;

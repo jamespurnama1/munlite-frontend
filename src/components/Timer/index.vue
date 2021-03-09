@@ -5,19 +5,20 @@
       <h1 class="read">{{ timerReadable }}</h1>
       <div class="controls">
         <button
+          :disabled="otherSession"
           :class="{blue: status !== 0, large: !next}"
           @click="debounce(toggleActive(), 1000, true)"
         >
           <font-awesome-icon v-if="status === 0" :icon="['fas', 'pause']" />
           <font-awesome-icon v-else-if="status !== 0" :icon="['fas', 'play']" />
         </button>
-        <button @click="debounce(redo(), 1000, true)">
+        <button :disabled="otherSession" @click="debounce(redo(), 1000, true)">
           <font-awesome-icon class="redo" :icon="['fas', 'redo']" />
         </button>
-        <button v-if="next" @click="debounce(skip(), 1000, true)">
+        <button :disabled="otherSession" v-if="next" @click="debounce(skip(), 1000, true)">
           <font-awesome-icon class="skip" :icon="['fas', 'step-forward']" />
         </button>
-        <button :class="{red: muted}" @click="toggleSound()">
+        <button :disabled="otherSession" :class="{red: muted}" @click="toggleSound()">
           <font-awesome-icon v-if="!muted" :icon="['fas', 'volume-up']" />
           <font-awesome-icon v-else-if="muted" :icon="['fas', 'volume-mute']" />
         </button>
@@ -41,20 +42,30 @@ export default Vue.extend({
       type: Boolean,
       default: true,
     },
+    time_left: Number,
   },
   computed: {
     ...mapState({
       timer: (state: any) => state.Socket.message.time,
+      session: (state: any) => state.Socket.message.session,
       status: (state: any) => state.Socket.message.state,
       order: (state: any) => state.Socket.message.order,
       muted: (state: any) => state.Global.muted,
     }),
+    otherSession() {
+      return this.status === 0 && this.session !== this.$route.name?.toLowerCase();
+    },
     timerReadable() {
       let mins;
       let seconds;
-      if (this.timer >= 0 && this.status !== 2) {
+      if (this.timer >= 0 && this.status !== 2
+      && this.session === this.$route.name?.toLowerCase()) {
         mins = Math.floor(this.timer / 60);
         seconds = String(this.timer - mins * 60).padStart(2, '0');
+      } else if (this.time_left
+      && (this.status === 2 || this.session !== this.$route.name?.toLowerCase())) {
+        mins = Math.floor(this.time_left / 60);
+        seconds = String(this.time_left - mins * 60).padStart(2, '0');
       } else {
         mins = 0;
         seconds = '00';

@@ -313,4 +313,8 @@
   .noDelegates {
     background: url('~@/assets/img/bg3.png') 90% 110%/40% no-repeat;
   }
+
+  .overlay {
+    z-index: 199;
+  }
 }

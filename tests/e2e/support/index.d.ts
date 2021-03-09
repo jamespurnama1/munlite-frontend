@@ -7,6 +7,7 @@ declare namespace Cypress {
      * @example cy.dataCy('greeting')
      */
     login(): Cypress.Chainable<void>;
+    getConfID(): Cypress.Chainable<string>;
     isInViewport(element: HTMLElement): Cypress.Chainable<void>;
   }
 }

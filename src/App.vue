@@ -91,193 +91,226 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Watch, Component } from 'vue-property-decorator';
+import { State } from 'vuex-class';
 import { logout } from '@/api/user';
-import { mapState } from 'vuex';
 import Context from '@/components/Context/index.vue';
 import GlobalTimer from '@/components/Global Timer/index.vue';
 
-export default Vue.extend({
-  name: 'MUN',
+@Component({
   components: {
     GlobalTimer,
     Context,
   },
-  data() {
-    return {
-      border: {
-        left: 0,
-        width: 0,
-        height: 0,
-      },
-      off: false,
-      borderTemp: null,
-      open: false,
-      conference: ['overview', 'delegates', 'gsl', 'motions', 'caucus', 'crisis'],
-      general: ['home', 'conferences', 'connections', 'files', 'account'],
-      state: false,
-      config: {
-        handler: () => { this.$store.dispatch('resetContext'); },
-        events: ['click'],
-      },
-    };
-  },
-  computed: {
-    ...mapState({
-      isConnected: (state: any) => state.Socket.isConnected,
-      noAuth: (state: any) => state.Global.notAuthorized,
-      generic: (state: any) => state.Global.genericError,
-      widthWindow: (state: any) => state.Global.widthWindow,
-      showContext: (state: any) => state.Global.showContext,
-      contextPos: (state: any) => state.Global.contextPos,
-    }),
-    // borderStyles() {
-    //   return this.borderTemp == null ? this.border : this.borderTemp;
-    // },
-    showNavBar(): boolean {
-      return this.widthWindow > 960 || this.open;
-    },
-    pathCheckConference(): boolean {
-      if (this.$route.path === '/') {
-        return false;
-      }
-      return this.conference.includes(this.$route.path.split('/')[1]);
-    },
-    pathCheckGeneral(): boolean {
-      if (this.$route.path === '/') {
-        return true;
-      }
-      return this.general.includes(this.$route.path.split('/')[1]);
-    },
-  },
+})
+export default class App extends Vue {
+  // =============================================================================
+  // Vue Hooks
+  // =============================================================================
+
   async created() {
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
     window.addEventListener('storage', this.logout);
     window.addEventListener('online', () => { this.off = false; });
     window.addEventListener('offline', () => { this.off = true; });
-  },
+  }
+
   beforeUpdate() {
     if (!this.open) {
       this.onTabClick();
     }
-  },
+  }
+
   beforeMount() {
     this.onTabClick();
-  },
-  watch: {
-    isConnected() {
-      this.offline();
-    },
-    async noAuth() {
-      let timeout;
-      if (this.noAuth === true) {
-        timeout = await setTimeout(() => {
-          this.$store.commit('noAuth', false);
-        }, 3000);
-      } else {
-        clearTimeout(timeout);
-      }
-    },
-    async generic() {
-      let timeout;
-      if (this.generic === true) {
-        timeout = await setTimeout(() => {
-          this.$store.commit('error', false);
-        }, 3000);
-      } else {
-        clearTimeout(timeout);
-      }
-    },
-  },
-  methods: {
-    async offline() {
-      let timeout;
-      if (this.state !== !this.isConnected) {
-        timeout = await setTimeout(() => {
-          this.state = !this.isConnected;
-        }, 1000);
-      } else {
-        clearTimeout(timeout);
-      }
-      return this.state;
-    },
-    onTabClick(): void {
-      if (this.$route.path.split('/')[1] === '') {
-        const styles = {
-          left: 32,
-          width: 59,
-          height: 28,
-        };
-        this.border = styles;
-      } else if (this.$route.path.split('/')[1] === 'overview') {
-        const styles = {
-          left: 32,
-          width: 88,
-          height: 28,
-        };
-        this.border = styles;
-      } else {
-        const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
-        const styles = {
-          left: (tab as HTMLElement).offsetLeft + 32,
-          width: (tab as HTMLElement).offsetWidth + 2,
-          height: (tab as HTMLElement).offsetHeight,
-        };
-        this.border = styles;
-      }
+  }
+
+  goToHome() {
+    this.$router.push('/').catch(() => {});
+    this.onTabClick();
+  }
+
+  // =============================================================================
+  // Window Width
+  // =============================================================================
+
+  @State((state) => state.Global.widthWindow) widthWindow?: number
+
+  checkMobileView() {
+    this.$store.commit('getWidth', window.innerWidth);
+    this.$store.commit('getHeight', window.innerHeight);
+    this.onTabClick();
+  }
+
+  // =============================================================================
+  // Navbar
+  // =============================================================================
+
+  open = false
+
+  border = {
+    left: 0,
+    width: 0,
+    height: 0,
+  }
+
+  get showNavBar(): Boolean {
+    return (this.widthWindow || 0) > 960 || this.open;
+  }
+
+  onTabClick() {
+    if (this.$route.path.split('/')[1] === '') {
+      const styles = {
+        left: 32,
+        width: 59,
+        height: 28,
+      };
+      this.border = styles;
+    } else if (this.$route.path.split('/')[1] === 'overview') {
+      const styles = {
+        left: 32,
+        width: 88,
+        height: 28,
+      };
+      this.border = styles;
+    } else {
+      const tab = this.$route.path.split('/')[1] === '' ? document.getElementById('home') : document.getElementById(this.$route.path.split('/')[1]);
+      const styles = {
+        left: (tab as HTMLElement).offsetLeft + 32,
+        width: (tab as HTMLElement).offsetWidth + 2,
+        height: (tab as HTMLElement).offsetHeight,
+      };
+      this.border = styles;
+    }
+    document.body.style.overflow = 'visible';
+    this.open = false;
+  }
+
+  toggleMenu() {
+    if (this.open) {
       document.body.style.overflow = 'visible';
+    } else {
+      document.body.style.overflow = 'hidden';
+    }
+    this.open = !this.open;
+  }
+
+  capitalize = (string: string): string => {
+    if (string === 'gsl') {
+      return string.toUpperCase();
+    }
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  // =============================================================================
+  // General / Conference
+  // =============================================================================
+
+  conference = ['overview', 'delegates', 'gsl', 'motions', 'caucus', 'crisis'] as string[];
+
+  general = ['home', 'conferences', 'connections', 'files', 'account'] as string[];
+
+  routeGeneral = (string: string) => (string === 'home' ? '' : string);
+
+  get pathCheckConference() {
+    if (this.$route.path === '/') {
+      return false;
+    }
+    return this.conference.includes(this.$route.path.split('/')[1]);
+  }
+
+  get pathCheckGeneral(): Boolean {
+    if (this.$route.path === '/') {
+      return true;
+    }
+    return this.general.includes(this.$route.path.split('/')[1]);
+  }
+
+  // =============================================================================
+  // Logout
+  // =============================================================================
+
+  async logout(event: StorageEvent): Promise<void> {
+    if (event.key === 'logout') {
       this.open = false;
-    },
-    async logout(event: StorageEvent) {
-      if (event.key === 'logout') {
-        this.open = false;
-        try {
-          await logout();
-          this.$store.dispatch('logout');
-          if (!localStorage.getItem('logout')) window.localStorage.setItem('logout', Date.now().toString());
-          this.$router.push('/login');
-        } catch (err) {
-          console.error(err);
-        }
+      try {
+        await logout();
+        this.$store.dispatch('logout');
+        if (!localStorage.getItem('logout')) window.localStorage.setItem('logout', Date.now().toString());
+        this.$router.push('/login');
+      } catch (err) {
+        console.error(err);
       }
-    },
-    toggleMenu() {
-      if (this.open) {
-        document.body.style.overflow = 'visible';
-      } else {
-        document.body.style.overflow = 'hidden';
-      }
-      this.open = !this.open;
-    },
-    checkMobileView() {
-      this.$store.commit('getWidth', window.innerWidth);
-      this.$store.commit('getHeight', window.innerHeight);
-      this.onTabClick();
-    },
-    capitalize(string) {
-      if (string === 'gsl') {
-        return string.toUpperCase();
-      }
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    },
-    routeGeneral(string) {
-      return string === 'home' ? '' : string;
-    },
-    goToHome() {
-      this.$router.push('/').catch(() => {});
-      this.onTabClick();
-    },
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.checkMobileView);
-    window.removeEventListener('storage', this.logout);
-    // window.removeEventListener('online');
-    // window.removeEventListener('offline');
-  },
-});
+    }
+  }
+
+  // =============================================================================
+  // Context Menu
+  // =============================================================================
+
+  @State((state) => state.Global.showContext) showContext?: boolean
+
+  @State((state) => state.Global.contextPos) contextPos?: Array<number>
+
+  config = {
+    handler: () => { this.$store.dispatch('resetContext'); },
+    events: ['click'],
+  }
+
+  // =============================================================================
+  // Notifications
+  // =============================================================================
+
+  @State((state) => state.Global.notAuthorized) noAuth?: boolean
+
+  @State((state) => state.Global.genericError) generic?: boolean
+
+  @State((state) => state.socket.isConnected) isConnected?: boolean
+
+  state = false as boolean
+
+  off = false as Boolean
+
+  @Watch('isConnected')
+  async offline(): Promise<boolean> {
+    let timeout;
+    if (this.state !== !this.isConnected) {
+      timeout = await setTimeout(() => {
+        this.state = !this.isConnected;
+      }, 1000);
+    } else {
+      clearTimeout(timeout);
+    }
+    return this.state;
+  }
+
+  @Watch('noAuth')
+  async onNoAuth() {
+    let timeout;
+    if (this.noAuth === true) {
+      timeout = await setTimeout(() => {
+        this.$store.commit('noAuth', false);
+      }, 3000);
+    } else {
+      clearTimeout(timeout);
+    }
+  }
+
+  @Watch('generic')
+  async onGeneric() {
+    let timeout;
+    if (this.generic === true) {
+      timeout = await setTimeout(() => {
+        this.$store.commit('error', false);
+      }, 3000);
+    } else {
+      clearTimeout(timeout);
+    }
+  }
+}
 </script>
 
 <style lang="scss">
-@import './App.scss';
+@import './App.scss'
 </style>

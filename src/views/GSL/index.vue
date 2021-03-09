@@ -27,6 +27,7 @@
         @update="updateGSL()"
         @restart="restart()"
         @next="next"
+        :time_left="gslList[gslCurrent].time_left"
       />
       <div class="cards">
         <CardStack
@@ -56,6 +57,7 @@
               @update="updateGSL()"
               @restart="restart()"
               @next="next"
+              :time_left="gslList[gslCurrent].time_left"
             />
             <Queue
               v-if="countryList"

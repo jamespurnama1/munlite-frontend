@@ -292,7 +292,7 @@ export default Vue.extend({
         const name = data.name ? data.name : data.type;
         this.$store.dispatch('context', [
           [name, data._id, index],
-          { Edit: true, 'Start Caucus': true, Delete: true },
+          { Edit: true, 'Start Caucus': this.canStart(data._id), Delete: true },
           [event.clientX, event.clientY],
         ]);
       }
@@ -303,7 +303,7 @@ export default Vue.extend({
           const name = data.name ? data.name : data.type;
           this.$store.dispatch('context', [
             [name, data._id, index],
-            { Edit: true, 'Start Caucus': true, Delete: true },
+            { Edit: true, 'Start Caucus': this.canStart(data._id), Delete: true },
             [event.touches[0].clientX, event.touches[0].clientY],
           ]);
         }

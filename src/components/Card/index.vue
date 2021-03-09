@@ -64,16 +64,10 @@ export default {
       if (this.desc === 'presence') {
         this.dsc = this.del.status;
       } else if (this.time_left) {
-        let t;
-        if (this.isActive && this.active) {
-          t = this.timer;
-        } else {
-          t = this.time_left;
-        }
         if (this.del.yield && this.$route.name === 'GSL') {
-          this.dsc = `${t} sec → ${this.delYield}`;
+          this.dsc = `${this.cardTime} sec → ${this.delYield}`;
         } else {
-          this.dsc = `${t} sec`;
+          this.dsc = `${this.cardTime} sec`;
         }
       } else {
         this.dsc = this.desc;
@@ -107,33 +101,21 @@ export default {
   watch: {
     timer: {
       handler() {
-        let t;
-        if (this.isActive && this.active) {
-          t = this.timer;
-        } else {
-          t = this.time_left;
-        }
-        this.progress = Math.min(Math.max((t / this.time_start) * 100, 0), 125);
+        this.progress = Math.min(Math.max((this.cardTime / this.time_start) * 100, 0), 125);
         if (this.delYield && this.$route.name === 'GSL') {
-          this.dsc = `${t} sec → ${this.delYield}`;
+          this.dsc = `${this.cardTime} sec → ${this.delYield}`;
         } else {
-          this.dsc = `${t} sec`;
+          this.dsc = `${this.cardTime} sec`;
         }
         this.pos();
       },
       immediate: true,
     },
     delYield() {
-      let t;
-      if (this.isActive && this.active) {
-        t = this.timer;
-      } else {
-        t = this.time_left;
-      }
       if (this.delYield && this.$route.name === 'GSL') {
-        this.dsc = `${t} sec → ${this.delYield}`;
+        this.dsc = `${this.cardTime} sec → ${this.delYield}`;
       } else {
-        this.dsc = `${t} sec`;
+        this.dsc = `${this.cardTime} sec`;
       }
     },
     del: {
@@ -148,9 +130,16 @@ export default {
       gslList: (state) => state.Delegates.gslList,
       caucusList: (state) => state.Delegates.caucusList,
       timer: (state) => state.Socket.message.time,
+      session: (state) => state.Socket.message.session,
       status: (state) => state.Socket.message.state,
       order: (state) => state.Socket.message.order,
     }),
+    cardTime() {
+      if (this.isActive && this.active && this.session === this.$route.name?.toLowerCase()) {
+        return this.timer;
+      }
+      return this.time_left;
+    },
     time_start() {
       if (this.$route.name === 'GSL') return this.gslList[this.number].time_start;
       return this.caucusList[this.number].time_start;

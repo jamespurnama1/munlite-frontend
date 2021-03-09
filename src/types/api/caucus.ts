@@ -9,16 +9,17 @@ export interface caucusLog {
     type: string;
     yes_vote: number;
     no_vote: number;
-  }
+  };
   current: number;
   length: number;
   queue: [
     {
       order: number;
       delegate_id: string;
-      time: number;
-    }
-  ]
+      time_start: number;
+      time_left: number;
+    },
+  ];
 }
 
 export interface createCaucus {
