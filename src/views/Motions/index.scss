@@ -236,17 +236,22 @@
                 }
               }
 
-              button {
-                display: flex;
-                align-items: center;
-                opacity: 0.2;
+              .start {
                 cursor: not-allowed;
 
                 p {
                   margin-right: 10px;
                 }
 
-                &.blue {
+                button {
+                  opacity: 0.2;
+                  pointer-events: none;
+                  display: flex;
+                  align-items: center;
+                }
+
+                &.blue button {
+                  pointer-events: initial;
                   color: white;
                   background-color: $blue;
                   border: 1px solid $blue;
@@ -258,7 +263,7 @@
                   }
                 }
 
-                &.red {
+                &.red button {
                   color: white;
                   background-color: $red;
                   border: 1px solid $red;

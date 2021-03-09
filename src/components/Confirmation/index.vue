@@ -20,7 +20,7 @@ export default Vue.extend({
     action: Function,
     button: String,
     whiteButton: {
-      type: String || Boolean,
+      type: [String, Boolean],
       default: 'Cancel',
     },
     content: String,

@@ -1,5 +1,9 @@
+/<!-- eslint-disable vue/valid-v-on -->
 <template>
-  <div class="motionModal">
+  <div class="motionModal"
+    v-shortkey="{enter: ['enter']}"
+    @shortkey.propagate="onEnter"
+  >
     <span class="upper">
       <h1 v-if="!data || Object.keys(data).length === 0">New Motion</h1>
       <h1 v-else>Edit Motion</h1>
@@ -15,7 +19,7 @@
         class="options"
         v-if="focus"
         v-shortkey="{up: ['arrowup'], down: ['arrowdown'], enter: ['enter']}"
-        @shortkey="keymap"
+        @shortkey.propagate="keymap"
         v-click-outside="config">
         <ul>
           <li
@@ -92,19 +96,9 @@
       <button @click="exit()">
         Cancel
       </button>
-      <button
-        class="blue"
-        @click="addMotion(motionData)"
-        v-if="!data || Object.keys(data).length === 0"
-      >
-        Create
-      </button>
-      <button
-        class="blue"
-        @click="edit(motionData)"
-        v-else
-      >
-        Save
+      <button class="blue" @click="addMotion(motionData)">
+        <p v-if="!data || Object.keys(data).length === 0">Create</p>
+        <p v-else>Edit</p>
       </button>
     </span>
   </div>
@@ -149,7 +143,7 @@ export default Vue.extend({
         'Moderated Caucus',
         'Unmoderated Caucus',
         'Suspension of The Debate',
-        'Continuation of The Debate',
+        'Resumption of The Debate',
         'Adjournment of The Meeting',
         'Consultation of The Whole',
       ] as string[],
@@ -179,21 +173,26 @@ export default Vue.extend({
     window.onbeforeunload = () => {};
   },
   methods: {
+    onEnter(event): void {
+      if (!this.focus && event.srcKey === 'enter') this.addMotion(this.motionData);
+    },
     keymap(event): void {
-      switch (event.srcKey) {
-        case 'up':
-          this.sel = Math.max(this.sel - 1, 0);
-          break;
-        case 'down':
-          this.sel = Math.min(this.sel + 1, this.options.length - 1);
-          break;
-        case 'enter':
-          this.motionData.type = this.options[this.sel];
-          this.outside();
-          break;
-        default:
-          console.error(event);
-          break;
+      if (this.focus) {
+        switch (event.srcKey) {
+          case 'up':
+            this.sel = Math.max(this.sel - 1, 0);
+            break;
+          case 'down':
+            this.sel = Math.min(this.sel + 1, this.options.length - 1);
+            break;
+          case 'enter':
+            this.motionData.type = this.options[this.sel];
+            this.outside();
+            break;
+          default:
+            console.error(event);
+            break;
+        }
       }
     },
     outside(): void {
@@ -203,24 +202,25 @@ export default Vue.extend({
       this.$emit('exit');
     },
     async addMotion(data: motionsType.addMotion): Promise<void> {
-      try {
-        this.checkForm(data);
-        await addMotion(this.$route.params.id, data);
-        this.$emit('exitSafe');
-      } catch (err) {
-        console.error(err);
+      if (!this.data) {
+        try {
+          this.checkForm(data);
+          await addMotion(this.$route.params.id, data);
+          this.$emit('exitSafe');
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        try {
+          this.checkForm(data);
+          await this.editMotion(data);
+          this.$emit('exitSafe');
+        } catch (err) {
+          console.error(err);
+        }
       }
     },
-    edit(data: motionsType.getMotions) {
-      try {
-        this.checkForm(data);
-        this.editMotion(data);
-        this.$emit('exitSafe');
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    checkForm(data: motionsType.addMotion) {
+    checkForm(data: motionsType.addMotion): void {
       const reset = Object.keys(this.warn).map((warn) => ({ [warn]: false }));
       this.warn = Object.assign(this.warn, ...reset);
       if (!data.type || data.type === '') {
@@ -275,7 +275,7 @@ export default Vue.extend({
         this.speaking_time = null;
       }
       if (this.type === 'Suspension of The Debate'
-      || this.type === 'Continuation of The Debate'
+      || this.type === 'Resumption of The Debate'
       || this.type === 'Adjournment of The Meeting') {
         this.total_time = null;
       }

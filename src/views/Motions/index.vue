@@ -46,68 +46,69 @@
                 :icon="['fas', 'chevron-down']"
                 @click="expand === index ? expand = null : expand = index" />
               <span class="extra" v-if="width > 960 || expand === index">
-              <p class="time">
-                <b>{{ parseFloat((motion.total_time / 60).toFixed(1)) }}</b>
-                <span class="caption"> minutes</span>
-                <span v-if="motion.speaking_time !== 0">
-                  <br>
-                  <b>{{ motion.speaking_time }}</b>
-                  <span class="caption"> seconds / individual</span>
+                <p class="time">
+                  <b>{{ parseFloat((motion.total_time / 60).toFixed(1)) }}</b>
+                  <span class="caption"> minutes</span>
+                  <span v-if="motion.speaking_time !== 0">
+                    <br>
+                    <b>{{ motion.speaking_time }}</b>
+                    <span class="caption"> seconds / individual</span>
+                  </span>
+                </p>
+                <div class="input vote">
+                  <input
+                    @change="editMotion(motion)"
+                    min="0"
+                    :max="delegatesData.length - motion.no_vote"
+                    type="number"
+                    placeholder=" "
+                    v-model.number="motion.yes_vote"
+                  >
+                  <label v-if="width <= 960">Yes Vote</label>
+                </div>
+                <div class="input vote">
+                  <input
+                    @change="editMotion(motion)"
+                    min="0"
+                    :max="delegatesData.length - motion.yes_vote"
+                    type="number"
+                    placeholder=" "
+                    v-model.number="motion.no_vote"
+                  >
+                  <label v-if="width <= 960">No Vote</label>
+                </div>
+                <span
+                  class="start"
+                  :class="{
+                      red: motion.no_vote > motion.yes_vote,
+                      blue: canStart(motion._id),
+                    }"
+                  >
+                  <button @click="showConfirm = index">
+                    <p v-if="canStart(motion._id)">Start Caucus</p>
+                    <p v-else-if="motion.no_vote > motion.yes_vote">Voting Failed</p>
+                    <p v-else>Insufficient Votes</p>
+                    <font-awesome-icon :icon="['fas', 'chevron-right']" />
+                  </button>
                 </span>
-              </p>
-              <div class="input vote">
-                <input
-                  @change="editMotion(motion)"
-                  min="0"
-                  :max="delegatesData.length - motion.no_vote"
-                  type="number"
-                  placeholder=" "
-                  v-model.number="motion.yes_vote"
-                >
-                <label v-if="width <= 960">Yes Vote</label>
-              </div>
-              <div class="input vote">
-                <input
-                  @change="editMotion(motion)"
-                  min="0"
-                  :max="delegatesData.length - motion.yes_vote"
-                  type="number"
-                  placeholder=" "
-                  v-model.number="motion.no_vote"
-                >
-                <label v-if="width <= 960">No Vote</label>
-              </div>
-              <button
-                @click="showConfirm = index"
-                :class="{
-                  red: motion.no_vote > motion.yes_vote,
-                  blue: canStart(motion._id),
-                }">
-                <p v-if="canStart(motion._id)">Start Caucus</p>
-                <p v-else-if="motion.no_vote > motion.yes_vote">Voting Failed</p>
-                <p v-else>No Votes</p>
-                <font-awesome-icon :icon="['fas', 'chevron-right']" />
-              </button>
               </span>
               <Confirmation
-                :content="`Are you sure you want to delete ${motion.name
-                ? motion.name : motion.type.toLowerCase()}?`"
+                content="Are you sure you want to delete this motion?"
                 :action="deleteMotionsData"
                 :negative="true"
                 :id="motion._id"
                 button="Delete"
-                v-if="showConfirm !== null && showConfirm === `del ${index}`"
+                v-if="showConfirm === `del ${index}`"
                 v-click-outside="config"
                 @exit="exit"
               />
               <Confirmation
-                :content="`Start the ${motion.name
-                ? motion.name : motion.type.toLowerCase()}?`"
+                :content="confirm(motion.type.toLowerCase())"
                 :action="startMotion"
                 :negative="false"
                 :id="motion._id"
                 button="Start"
-                v-else-if="showConfirm !== null && showConfirm === index"
+                v-else-if="showConfirm === index"
                 v-click-outside="config"
                 @exit="exit"
               />
@@ -120,8 +121,8 @@
     </div>
     <transition-group name="fade">
     <Confirmation
-      :content="`${temp} started!`"
-      :action="function() {showOkay = false; temp = null;}"
+      :content="temp"
+      :action="function() {showOkay = false}"
       :negative="false"
       button="Okay"
       :whiteButton="false"
@@ -150,7 +151,7 @@
       v-click-outside="configAdd"
       key="3"
     />
-    <div class="overlay" key="4" v-if="showModal|| showConfirm || showOkay" />
+    <div class="overlay" key="4" v-if="showModal|| showConfirm !== false || showOkay" />
     </transition-group>
   </div>
 </template>
@@ -184,7 +185,7 @@ export default Vue.extend({
       showModal: false as boolean,
       showConfirm: false as boolean | string,
       showOkay: false as boolean | string,
-      temp: null as null | string,
+      temp: '' as string,
       motionsData: [] as motionsType.getMotions[],
       config: {
         // @ts-ignore
@@ -196,7 +197,7 @@ export default Vue.extend({
           // @ts-ignore
           this.showOkay = false;
           // @ts-ignore
-          this.temp = null;
+          // this.temp = null;
         },
         events: ['click'],
       },
@@ -220,7 +221,7 @@ export default Vue.extend({
       majority: 0 as number,
       noTimer: [
         'Suspension of The Debate',
-        'Continuation of The Debate',
+        'Resumption of The Debate',
         'Adjournment of The Meeting',
       ] as string[],
     };
@@ -232,6 +233,12 @@ export default Vue.extend({
     }),
   },
   methods: {
+    confirm(type: string): string {
+      if (type === 'suspension of the debate') return 'Suspend the debate?';
+      if (type === 'resumption of the debate') return 'Resume the debate?';
+      if (type === 'adjournment of the meeting') return 'Adjourn the meeting?';
+      return `Start the ${type}?`;
+    },
     canStart(id: string): boolean {
       const [motion]: motionsType.getMotions[] = this.motionsData.filter((m) => m._id === id);
       const bool: boolean = (motion.no_vote + motion.yes_vote >= this.majority)
@@ -314,8 +321,6 @@ export default Vue.extend({
     },
     sortMotions(items: motionsType.getMotions[]): motionsType.getMotions[] {
       items.sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
         if (a.type.toLowerCase() === 'unmoderated caucus' && b.type.toLowerCase() !== 'unmoderated caucus') {
           return -1;
         }
@@ -334,10 +339,10 @@ export default Vue.extend({
         if (a.type.toLowerCase() !== 'moderated caucus' && b.type.toLowerCase() === 'moderated caucus') {
           return 1;
         }
-        if (a.type === b.type && b.type === 'moderated caucus' && nameA < nameB) {
+        if (a.type === b.type && b.type && a.total_time > b.total_time) {
           return -1;
         }
-        if (a.type === b.type && b.type === 'moderated caucus' && nameA > nameB) {
+        if (a.type === b.type && b.type && a.total_time > b.total_time) {
           return 1;
         }
         return 0;
@@ -406,7 +411,9 @@ export default Vue.extend({
         startCaucus(this.$route.params.id, data);
         if (this.canStart(id) && this.noTimer.includes(motion.type)) {
           this.showOkay = id;
-          this.temp = motion.type.toString();
+          if (motion.type.toLowerCase() === 'adjournment of the meeting') this.temp = 'The meeting has been officially adjourned!';
+          else if (motion.type.toLowerCase() === 'resumption of the debate') this.temp = 'The debate has been officially resumed!';
+          else this.temp = 'The debate has been officially suspended!';
         } else if (this.canStart(id)) {
           const ws = {
             session: 'caucus',
@@ -417,7 +424,7 @@ export default Vue.extend({
           this.$router.push(`/caucus/${this.$route.params.id}`).catch(() => {});
         }
       } catch (err) {
-        // console.error(err);
+        console.error(err);
       }
     },
     newCountryList(): void {
