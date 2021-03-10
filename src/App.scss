@@ -112,7 +112,7 @@ h1 {
     }
 
     div.disabled {
-      opacity: 50%;
+      opacity: 0.5;
       cursor: not-allowed;
       
       a {
@@ -302,7 +302,7 @@ button {
   flex-grow: 1;
 
   &.disabled {
-    opacity: 50%;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
