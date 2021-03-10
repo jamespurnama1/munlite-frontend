@@ -28,7 +28,7 @@
       <div class="wrapper">
         <Timer
           v-if="widthWindow <= 960
-          && socket && caucusList[caucusCurrent]"
+          && socket && (caucusData.motion.type !== 'moderated caucus' || caucusList[caucusCurrent])"
           class="time"
           :class="{solo: !moderated}"
           :next="noNext"
@@ -68,7 +68,7 @@
               :class="{solo: !moderated}"
             >
               <Timer
-                v-if="socket && caucusList[caucusCurrent]"
+                v-if="socket && caucusList[caucusCurrent] && (caucusData.motion.type !== 'moderated caucus' || caucusList[caucusCurrent])"
                 class="time"
                 :next="noNext"
                 @active="() => {
