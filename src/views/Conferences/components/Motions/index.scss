@@ -83,8 +83,6 @@
           &.empty-data {
             color: gray;
           }
-    
-          .data {
 
             hr {
               border: none;
@@ -102,7 +100,6 @@
 
               @include max-media(tablet) {
                 grid-template-columns: 1fr 1fr .1fr;
-                border-bottom: 1px solid $light-grey;
               }
 
               @include max-media(small-mobile) {
@@ -113,8 +110,12 @@
                 }
               }
 
-              &.pass:first-child {
+              &.pass {
                 background-color: rgba(95,120,255,0.2);
+              }
+
+              &.last {
+                border-bottom: 1px solid $light-grey;
               }
             }
 
@@ -174,7 +175,6 @@
                 }
               }
             }
-          }
         }
       }
     }

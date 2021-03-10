@@ -77,10 +77,10 @@ export default Vue.extend({
     async addNewCountry(): Promise<void> {
       try {
         if (this.newCountry.name.length > 0) {
-          const data: delegatesType.addDelegates = {
+          const data: delegatesType.addDelegates[] = [{
             country: this.newCountry.name,
             status: 'N/A',
-          };
+          }];
           await addDelegates(this.$route.params.id, data);
           this.$emit('update');
 

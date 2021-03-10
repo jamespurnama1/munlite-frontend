@@ -1,5 +1,5 @@
 <template>
-  <div class="gsl" v-if="delegatesData">
+  <div class="gsl" v-if="delegatesData.length > 0">
     <div class="upper">
       <span>
         <h1 v-if="widthWindow > 960" class="title">General Speakers List</h1>
@@ -21,7 +21,7 @@
     <div class="wrapper">
       <Timer
         v-if="widthWindow <= 960
-        && socket"
+        && socket && gslList[gslCurrent]"
         class="time"
         @active="toggleActive()"
         @update="updateGSL()"
@@ -51,7 +51,7 @@
         <transition-group name="fade">
           <div key="1" class="top" v-if="widthWindow > 960">
             <Timer
-              v-if="socket"
+              v-if="socket && gslList[gslCurrent]"
               class="time"
               @active="toggleActive()"
               @update="updateGSL()"
@@ -161,7 +161,7 @@ export default Vue.extend({
       config: {
         // @ts-ignore
         handler: this.outside,
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       actions: {
         Restart: true as boolean,
@@ -283,7 +283,9 @@ export default Vue.extend({
             order,
             time_left: this.socket.time,
           });
-          await nextGSL(this.$route.params.id);
+          if (this.gslCurrent as number < this.gslList.length - 1) {
+            await nextGSL(this.$route.params.id);
+          }
         }
         this.updateGSL();
       } catch (err) {
@@ -304,7 +306,7 @@ export default Vue.extend({
             order: this.gslCurrent + 1,
             time_left: this.socket.time,
           });
-          await nextGSL(this.$route.params.id);
+          if (this.gslCurrent < this.gslList.length - 1) await nextGSL(this.$route.params.id);
           this.updateGSL();
         }
       } catch (err) {
@@ -464,9 +466,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 @import './index.scss';
-</style>
 
-<style lang="scss">
 body {
   overflow: hidden !important;
 }

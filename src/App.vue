@@ -255,7 +255,7 @@ export default class App extends Vue {
 
   config = {
     handler: () => { this.$store.dispatch('resetContext'); },
-    events: ['click'],
+    events: ['click', 'touchstart', 'touchmove'],
   }
 
   // =============================================================================

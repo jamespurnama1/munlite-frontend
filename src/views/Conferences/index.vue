@@ -184,7 +184,7 @@ export default Vue.extend({
       config: {
         // @ts-ignore
         handler: this.outside,
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       configAdd: {
         handler: () => {
@@ -192,7 +192,7 @@ export default Vue.extend({
           this.showConfirm = 'add';
         },
         middleware: (event) => event.target.className !== 'cancel' && event.target.className !== 'list',
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       motions: null,
       error: null,

@@ -96,7 +96,7 @@ export default Vue.extend({
           this.showConfirm = 'add';
         },
         middleware: (event) => event.target.className !== 'cancel',
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       showConf: false as boolean,
       showConfirm: false as boolean,

@@ -241,7 +241,7 @@ export default Vue.extend({
         // @ts-ignore
         handler: this.outside,
         middleware: (event) => event.target.className !== 'list',
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       warn: {
         title: false,

@@ -36,7 +36,7 @@ service.interceptors.request.use(
     return temp;
   },
   (error) => {
-    console.error(error); // for debug
+    console.error(error, 'testerror'); // for debug
     return Promise.reject(error);
   },
 );
@@ -49,13 +49,14 @@ service.interceptors.response.use(
   },
   (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       return store.dispatch('fetchJWT')
         .then(() => service(originalRequest));
     }
     console.error(error); // for debug
-    if (error.response.status === 401) router.push('/login');
+    if (error.response && error.response.status === 401) router.push('/login');
+    store.commit('error', true);
     return Promise.reject(error);
   },
 );

@@ -151,7 +151,7 @@ export default Vue.extend({
       config: {
         // @ts-ignore
         handler: this.outside,
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       sel: 0 as number,
     };

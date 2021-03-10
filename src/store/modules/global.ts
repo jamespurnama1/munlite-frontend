@@ -1,44 +1,45 @@
+import { profileType } from '@/types/api';
 import axios from 'axios';
 
 const global = {
   state: {
-    widthWindow: 0,
-    heightWindow: 0,
-    notAuthorized: false,
-    genericError: false,
-    muted: false,
-    showContext: null,
-    item: [],
-    contextPos: [0, 0],
-    me: {},
+    widthWindow: 0 as number,
+    heightWindow: 0 as number,
+    notAuthorized: false as boolean,
+    genericError: false as boolean,
+    muted: false as boolean,
+    showContext: false as boolean,
+    item: [] as any[],
+    contextPos: [0, 0] as number[],
+    me: {} as profileType.getUserData,
   },
 
   mutations: {
-    updateMe(state, i) {
+    updateMe(state, i: profileType.getUserData) {
       state.me = i;
     },
     toggleMute(state) {
       state.muted = !state.muted;
     },
-    getWidth(state, i) {
+    getWidth(state, i: number) {
       state.widthWindow = i;
     },
-    getHeight(state, i) {
+    getHeight(state, i: number) {
       state.heightWindow = i;
     },
-    noAuth(state, i) {
+    noAuth(state, i: boolean) {
       state.notAuthorized = i;
     },
-    error(state, i) {
+    error(state, i: boolean) {
       state.genericError = i;
     },
-    setContext(state, i) {
+    setContext(state, i: boolean) {
       state.showContext = i;
     },
-    setContextPos(state, i) {
+    setContextPos(state, i: number[]) {
       state.contextPos = i;
     },
-    setItem(state, i) {
+    setItem(state, i: any[]) {
       state.item = i;
     },
   },

@@ -93,7 +93,7 @@ import AddConference from '@/components/AddConference/index.vue';
 ```js
 config: {
   handler: method,
-  events: ['click'],
+  events: ['click', 'touchstart', 'touchmove'],
 },
 ```
 
@@ -232,7 +232,7 @@ import Confirmation from '@/components/confirmation/index.vue';
 ```js
 config: {
   handler: method,
-  events: ['click'],
+  events: ['click', 'touchstart', 'touchmove'],
 },
 ```
 

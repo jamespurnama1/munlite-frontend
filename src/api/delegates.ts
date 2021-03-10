@@ -6,7 +6,7 @@ export async function getAllDelegates(id: string) {
   return resp;
 }
 
-export async function addDelegates(id: string, data: delegatesType.addDelegates) {
+export async function addDelegates(id: string, data: delegatesType.addDelegates[]) {
   const res = await request.post(
     `/api/conference/${id}/delegates`,
     JSON.stringify(data),

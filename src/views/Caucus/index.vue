@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <div class="gsl" v-if="delegatesData.length > 0 && caucusData">
+    <div class="gsl" v-if="delegatesData.length > 0 && typeof caucusData === 'object'">
       <div class="upper">
         <span>
           <h1 v-if="caucusData.motion.name" class="title">{{ caucusData.motion.name }}</h1>
@@ -28,7 +28,7 @@
       <div class="wrapper">
         <Timer
           v-if="widthWindow <= 960
-          && socket"
+          && socket && caucusList[caucusCurrent]"
           class="time"
           :class="{solo: !moderated}"
           :next="noNext"
@@ -68,7 +68,7 @@
               :class="{solo: !moderated}"
             >
               <Timer
-                v-if="socket"
+                v-if="socket && caucusList[caucusCurrent]"
                 class="time"
                 :next="noNext"
                 @active="() => {
@@ -90,7 +90,7 @@
               @add="addQueue"
               v-click-outside="{
                 handler() { showQueue = false; },
-                events: ['click'],
+                events: ['click', 'touchstart', 'touchmove'],
               }"
               :disable="caucusData.length
                 >= (caucusData.motion.total_time / caucusData.motion.speaking_time)"
@@ -122,7 +122,7 @@
       <h1>No Present Delegates</h1>
       <p>Add delegates &amp; start a roll call from the delegates tab.</p>
     </div>
-    <div v-else-if="!caucusData" class="noCaucus">
+    <div v-else-if="!typeof caucusData === 'object'" class="noCaucus">
       <h1>No Caucus</h1>
       <p>Start a caucus from the motions tab.</p>
     </div>
@@ -134,7 +134,7 @@
         button="Stop"
         v-click-outside="{
           handler() { showConfirm = false; },
-          events: ['click'],
+          events: ['click', 'touchstart', 'touchmove'],
         }"
         whiteButton="Cancel"
         v-if="showConfirm"
@@ -265,7 +265,9 @@ export default Vue.extend({
             time_left: this.socket.time,
           });
         }
-        await nextCaucus(this.$route.params.id);
+        if (this.caucusCurrent as number < this.caucusList.length - 1) {
+          await nextCaucus(this.$route.params.id);
+        }
         this.updateCaucus();
       } catch (err) {
         console.error(err);
@@ -396,6 +398,7 @@ export default Vue.extend({
         if (delegates.data.data !== null) {
           this.delegatesData = this.sortCountry(delegates.data.data.filter((f) => f.status.toLowerCase() === 'present' || f.status.toLowerCase() === 'present & voting'));
           this.newCountryList();
+          this.$forceUpdate();
         }
       } catch (err) {
         console.error(err.response);
@@ -406,7 +409,8 @@ export default Vue.extend({
     this.$root.$on('context', (...args) => this.context(...args));
     try {
       await this.updateDelegatesData();
-      this.updateCaucus();
+      await this.updateCaucus();
+      console.log(this.delegatesData);
     } catch (err) {
       console.error(err);
     }
@@ -433,9 +437,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 @import './index.scss';
-</style>
 
-<style lang="scss">
 body {
   overflow: hidden !important;
 }

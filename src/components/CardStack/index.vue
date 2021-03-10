@@ -255,7 +255,7 @@ export default Vue.extend({
         scroller: '.stackOverflow',
         pin: '.stack-cards',
         anticipatePin: 1,
-        pinType: 'fixed',
+        // pinType: 'fixed',
         start: 0,
         end: `+=${this.cards.length * 100}`,
         onUpdate: ((self) => {
@@ -291,6 +291,7 @@ export default Vue.extend({
       ease: 'power3',
       paused: true,
     });
+    await this.$nextTick();
     this.init();
   },
   computed: {

@@ -85,12 +85,12 @@ export default Vue.extend({
       config: {
         // @ts-ignore
         handler: this.outside,
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       configF: {
         // @ts-ignore
         handler: this.outsideF,
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       search: '' as string,
       prevSearch: '' as string,

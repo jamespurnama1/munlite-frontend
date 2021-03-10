@@ -190,7 +190,7 @@ export default Vue.extend({
       config: {
         // @ts-ignore
         handler: this.exit,
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       configOK: {
         handler: () => {
@@ -199,7 +199,7 @@ export default Vue.extend({
           // @ts-ignore
           // this.temp = null;
         },
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       configAdd: {
         handler: () => {
@@ -207,7 +207,7 @@ export default Vue.extend({
           this.showConfirm = 'add';
         },
         middleware: (event) => event.target.className !== 'cancel',
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       edit: null as null | motionsType.updateMotion,
       delegatesData: [] as delegatesType.getAllDelegates[],

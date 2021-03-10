@@ -51,6 +51,8 @@
     box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
     width: fit-content;
     transform-origin: top right;
+    max-height: 30vh;
+    overflow: auto;
   }
 
   .sort {
@@ -62,6 +64,8 @@
     box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
     width: fit-content;
     transform-origin: top center;
+    max-height: 30vh;
+    overflow: auto;
   }
 
   li {

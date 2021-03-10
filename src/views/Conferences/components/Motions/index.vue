@@ -18,58 +18,59 @@
         </div>
         <div class="content">
           <div class="table-data" v-if="motionsData.length > 0">
-            <transition-group name="fade">
-            <div
+            <transition name="fade">
+            <!-- <div
               v-for="(batch, index) in confData.motions.batches"
               :key="batch.motion_id"
               class="data"
-            >
-            <li
-              v-for="(motion) in batch.batch_motions"
-              :key="motion._id"
-              :class="{pass: motion.yes_vote > motion.no_vote}"
-            >
-              <span>
-                <p class="name" v-if="motion.name !== ''">
-                  <b>{{ motion.name }}</b>
-                </p>
-                <p class="caption">
-                  {{ motion.type }}
-                </p>
-              </span>
-              <p>
-                <span
-                  :class="`flag-icon img flag-icon-${getDelegatesID(motion.proposer)
-                    .toLowerCase()}`"
-                />
-                {{ motion.proposer }}
-              </p>
-              <font-awesome-icon
-                :class="{rotate: expand === index}"
-                v-if="width <= 960"
-                :icon="['fas', 'chevron-down']"
-                @click="expand === index ? expand = null : expand = index" />
-              <span class="extra" v-if="width > 960 || expand === index">
-              <p class="time">
-                <b>{{ parseFloat((motion.total_time / 60).toFixed(1)) }}</b>
-                <span class="caption"> minutes</span>
-                <span v-if="motion.speaking_time !== 0">
-                  <br>
-                  <b>{{ motion.speaking_time }}</b>
-                  <span class="caption"> seconds / individual</span>
+            > -->
+            <ul>
+              <li
+                v-for="(motion, index) in motionsData"
+                :key="motion._id"
+                :class="{pass: motion.passed, last: motion.last}"
+              >
+                <span>
+                  <p class="name" v-if="motion.name !== ''">
+                    <b>{{ motion.name }}</b>
+                  </p>
+                  <p class="caption">
+                    {{ motion.type }}
+                  </p>
                 </span>
-              </p>
-              <div class="vote">
-                <p>{{ motion.yes_vote }}</p>
-              </div>
-              <div class="vote">
-                <p>{{ motion.no_vote }}</p>
-              </div>
-              </span>
-            </li>
-            <hr>
-            </div>
-            </transition-group>
+                <p>
+                  <span
+                    :class="`flag-icon img flag-icon-${getDelegatesID(motion.proposer)
+                      .toLowerCase()}`"
+                  />
+                  {{ motion.proposer }}
+                </p>
+                <font-awesome-icon
+                  :class="{rotate: expand === index}"
+                  v-if="width <= 960"
+                  :icon="['fas', 'chevron-down']"
+                  @click="expand === index ? expand = null : expand = index" />
+                <span class="extra" v-if="width > 960 || expand === index">
+                <p class="time">
+                  <b>{{ parseFloat((motion.total_time / 60).toFixed(1)) }}</b>
+                  <span class="caption"> minutes</span>
+                  <span v-if="motion.speaking_time !== 0">
+                    <br>
+                    <b>{{ motion.speaking_time }}</b>
+                    <span class="caption"> seconds / individual</span>
+                  </span>
+                </p>
+                <div class="vote">
+                  <p>{{ motion.yes_vote }}</p>
+                </div>
+                <div class="vote">
+                  <p>{{ motion.no_vote }}</p>
+                </div>
+                </span>
+              </li>
+            </ul>
+            <!-- </div> -->
+            </transition>
           </div>
           <div class="table-data empty-data" v-else>No Motions in the list</div>
         </div>
@@ -91,7 +92,7 @@ export default Vue.extend({
     return {
       motionsData: [] as motionsType.getMotions[],
       delegatesData: [] as delegatesType.getAllDelegates[],
-      expand: null as null | number,
+      expand: null as null | string,
     };
   },
   props: {
@@ -103,6 +104,36 @@ export default Vue.extend({
     }),
   },
   methods: {
+    sortMotions(items: motionsType.getMotions[]): motionsType.getMotions[] {
+      items.sort((a, b) => {
+        if (a.type.toLowerCase() === 'unmoderated caucus' && b.type.toLowerCase() !== 'unmoderated caucus') {
+          return -1;
+        }
+        if (a.type.toLowerCase() !== 'unmoderated caucus' && b.type.toLowerCase() === 'unmoderated caucus') {
+          return 1;
+        }
+        if (a.type.toLowerCase() === 'consultation of the whole' && b.type.toLowerCase() !== 'consultation of the whole') {
+          return -1;
+        }
+        if (a.type.toLowerCase() !== 'consultation of the whole' && b.type.toLowerCase() === 'consultation of the whole') {
+          return 1;
+        }
+        if (a.type.toLowerCase() === 'moderated caucus' && b.type.toLowerCase() !== 'moderated caucus') {
+          return -1;
+        }
+        if (a.type.toLowerCase() !== 'moderated caucus' && b.type.toLowerCase() === 'moderated caucus') {
+          return 1;
+        }
+        if (a.type === b.type && b.type && a.total_time > b.total_time) {
+          return -1;
+        }
+        if (a.type === b.type && b.type && a.total_time > b.total_time) {
+          return 1;
+        }
+        return 0;
+      });
+      return items;
+    },
     getDelegatesID(name: string): string {
       const data = negara.filter((obj) => obj.name === name);
       if (data.length > 0) {
@@ -110,24 +141,15 @@ export default Vue.extend({
       }
       return 'ad';
     },
-    sortMotions(items: motionsType.getMotions[]): motionsType.getMotions[] {
-      items.sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-        return 0;
-      });
-      return items;
-    },
   },
   created() {
-    this.confData.motions.batches.forEach((motion) => {
-      this.motionsData.push(...motion.batch_motions);
+    // this.confData.motions.batches;
+    this.confData.motions.batches.forEach((motionBatch) => {
+      const sorted: motionsType.getMotions[] = this.sortMotions(motionBatch.batch_motions);
+      const passed = sorted.findIndex((motion) => motion.yes_vote > motion.no_vote);
+      sorted[passed].passed = true;
+      sorted[sorted.length - 1].last = true;
+      this.motionsData.push(...sorted);
     });
   },
 });

@@ -159,6 +159,7 @@ export default Vue.extend({
   },
   data() {
     return {
+      negara,
       showOverlay: false as boolean,
       showInput: false as boolean,
       newCountry: '' as string,
@@ -170,7 +171,7 @@ export default Vue.extend({
       config: {
         // @ts-ignore
         handler: this.exit,
-        events: ['click'],
+        events: ['click', 'touchstart', 'touchmove'],
       },
       key: 0 as number,
       infoHeight: 0 as number,
