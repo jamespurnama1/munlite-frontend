@@ -147,7 +147,9 @@ export default Vue.extend({
     this.confData.motions.batches.forEach((motionBatch) => {
       const sorted: motionsType.getMotions[] = this.sortMotions(motionBatch.batch_motions);
       const passed = sorted.findIndex((motion) => motion.yes_vote > motion.no_vote);
+      // @ts-ignore
       sorted[passed].passed = true;
+      // @ts-ignore
       sorted[sorted.length - 1].last = true;
       this.motionsData.push(...sorted);
     });
