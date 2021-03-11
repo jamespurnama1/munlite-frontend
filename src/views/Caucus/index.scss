@@ -10,10 +10,6 @@
     display: flex;
     flex-direction: column;
 
-    @include max-media(mobile) {
-      // height: 70vh;
-    }
-
     .upper {
       display: flex;
       justify-content: space-between;
@@ -307,11 +303,11 @@
     margin-left: auto;
     flex-direction: column;
     justify-content: center;
-    background: url('~@/assets/img/bg.png') 90% 110%/40% no-repeat;
+    background: url('~@/assets/img/bg.png') 121% 80%/40%no-repeat;
   }
 
   .noDelegates {
-    background: url('~@/assets/img/bg3.png') 90% 110%/40% no-repeat;
+    background: url('~@/assets/img/bg3.png') 121% 80%/40% no-repeat;
   }
 
   .overlay {

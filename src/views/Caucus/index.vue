@@ -1,14 +1,12 @@
 <template>
   <div class="wrap">
-    <div class="gsl" v-if="delegatesData.length > 0 && typeof caucusData === 'object'">
+    <div class="gsl" v-if="delegatesData.length > 0 && typeof caucusData === 'object'
+      && !noTimer.includes(caucusData.motion.type)"
+    >
       <div class="upper">
         <span>
           <h1 v-if="caucusData.motion.name" class="title">{{ caucusData.motion.name }}</h1>
           <h1 v-else class="title">{{ caucusData.motion.type }}</h1>
-          <!-- <p v-if="widthWindow > 960">
-            Scroll or drag the cards to view the rest of the queue.
-          </p>
-          <p v-else>Swipe the cards to view the rest of the queue.</p> -->
           <p v-if="widthWindow > 960 && moderated">
             Right click the cards for more options.
           </p>
@@ -27,7 +25,7 @@
       </div>
       <div class="wrapper">
         <Timer
-          v-if="widthWindow <= 960 && timerBool "
+          v-if="widthWindow <= 960 && timerBool"
           class="time"
           :class="{solo: !moderated}"
           :next="noNext"
@@ -123,7 +121,7 @@
       <h1>No Present Delegates</h1>
       <p>Add delegates &amp; start a roll call from the delegates tab.</p>
     </div>
-    <div v-else-if="!typeof caucusData === 'object'" class="noCaucus">
+    <div v-else class="noCaucus">
       <h1>No Caucus</h1>
       <p>Start a caucus from the motions tab.</p>
     </div>
@@ -190,6 +188,11 @@ export default Vue.extend({
       nextButton: [
         'consultation of the whole',
         'unmoderated caucus',
+      ] as string[],
+      noTimer: [
+        'Suspension of The Debate',
+        'Resumption of The Debate',
+        'Adjournment of The Meeting',
       ] as string[],
     };
   },

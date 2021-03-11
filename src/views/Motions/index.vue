@@ -131,7 +131,7 @@
       :key="showOkay"
     />
     <Confirmation
-      content="Discard adding motion?"
+      content="Discard motion?"
       :action="exitAdd"
       :negative="true"
       button="Discard"

@@ -1,122 +1,131 @@
 <template>
-  <div class="gsl" v-if="delegatesData.length > 0">
-    <div class="upper">
-      <span>
-        <h1 v-if="widthWindow > 960" class="title">General Speakers List</h1>
-        <h1 v-else-if="widthWindow <= 960" class="title">GSL</h1>
-        <!-- <p v-if="widthWindow > 960">Scroll or drag the cards to view the rest of the queue.</p>
-        <p v-else>Swipe the cards to view the rest of the queue.</p> -->
-        <p v-if="widthWindow > 960">Right click the cards for more options.</p>
-        <p v-else>Long press the cards for more options.</p>
-      </span>
-      <div class="button" v-if="widthWindow <= 960">
-        <button @click="showYield = true" >
-          <h3>Yield To</h3>
-        </button>
-        <button @click="showQueue = true">
-          <font-awesome-icon :icon="['fas', 'plus']"/>
-        </button>
-      </div>
-    </div>
-    <div class="wrapper">
-      <Timer
-        v-if="widthWindow <= 960
-        && socket && gslList[gslCurrent]"
-        class="time"
-        @active="toggleActive()"
-        @update="updateGSL()"
-        @restart="restart()"
-        @next="next"
-        :time_left="gslList[gslCurrent].time_left"
-      />
-      <div class="cards">
-        <CardStack
-          :key="gslList.length"
-          v-if="gslList.length > 0"
-          :delegates="gslList"
-          :active="socket.state === 0"
-          :isActive="gslCurrent"
-          :display="currentCountry"
-          :actions="actions"
-          :prevent="prevent"
-          @move="move"
-        />
-        <div class="noQueue" v-else>
-          <h3>No delegates in queue</h3>
-          <p v-if="widthWindow <= 960">Add delegates from the plus button</p>
-          <p v-else>Start by typing a country name on the right</p>
+  <div class="wrap">
+    <div class="gsl" v-if="delegatesData.length > 0">
+      <div class="upper">
+        <span>
+          <h1 v-if="widthWindow > 960" class="title">General Speakers List</h1>
+          <h1 v-else-if="widthWindow <= 960" class="title">GSL</h1>
+          <p v-if="widthWindow > 960">Right click the cards for more options.</p>
+          <p v-else>Long press the cards for more options.</p>
+        </span>
+        <div class="button" v-if="widthWindow <= 960">
+          <button @click="showYield = true" >
+            <h3>Yield To</h3>
+          </button>
+          <button @click="showQueue = true">
+            <font-awesome-icon :icon="['fas', 'plus']"/>
+          </button>
         </div>
       </div>
-      <div class="options">
-        <transition-group name="fade">
-          <div key="1" class="top" v-if="widthWindow > 960">
-            <Timer
-              v-if="socket && gslList[gslCurrent]"
-              class="time"
-              @active="toggleActive()"
-              @update="updateGSL()"
-              @restart="restart()"
-              @next="next"
-              :time_left="gslList[gslCurrent].time_left"
-            />
+      <div class="wrapper">
+        <Timer
+          v-if="widthWindow <= 960
+          && socket && gslList[gslCurrent]"
+          class="time"
+          @active="toggleActive()"
+          @update="updateGSL()"
+          @restart="restart()"
+          @next="next"
+          :time_left="gslList[gslCurrent].time_left"
+        />
+        <div class="cards">
+          <CardStack
+            :key="gslList.length"
+            v-if="gslList.length > 0"
+            :delegates="gslList"
+            :active="socket.state === 0"
+            :isActive="gslCurrent"
+            :display="currentCountry"
+            :actions="actions"
+            :prevent="prevent"
+            @move="move"
+          />
+          <div class="noQueue" v-else>
+            <h3>No delegates in queue</h3>
+            <p v-if="widthWindow <= 960">Add delegates from the plus button</p>
+            <p v-else>Start by typing a country name on the right</p>
+          </div>
+        </div>
+        <div class="options">
+          <transition-group name="fade">
+            <div key="1" class="top" v-if="widthWindow > 960">
+              <Timer
+                v-if="socket && gslList[gslCurrent]"
+                class="time"
+                @active="toggleActive()"
+                @update="updateGSL()"
+                @restart="restart()"
+                @next="next"
+                :time_left="gslList[gslCurrent].time_left"
+              />
+              <Queue
+                v-if="countryList"
+                class="queue"
+                :items="countryList"
+                @add="addQueue"
+              />
+            </div>
             <Queue
-              v-if="countryList"
+              key="2"
+              v-else-if="widthWindow <= 960
+              && countryList && showQueue"
               class="queue"
               :items="countryList"
               @add="addQueue"
+              v-click-outside="config"
             />
-          </div>
-          <Queue
-            key="2"
-            v-else-if="widthWindow <= 960
-            && countryList && showQueue"
-            class="queue"
-            :items="countryList"
-            @add="addQueue"
-            v-click-outside="config"
-          />
-          <div
-            key="3"
-            class="bottom"
-            v-if="widthWindow > 960 || showYield"
-            v-click-outside="config"
-          >
-            <h3>Yield To:</h3>
-            <div class="choice">
-              <span class="ChairQ">
-                <button :class="{ selected: selected === 1 }" @click="select(1)">Chair</button>
-                <button :class="{ selected: selected === 2 }" @click="select(2)">Questions</button>
-              </span>
-              <div class="yieldCountry" :class="{filled: selected === 3}">
-                <Autocomplete
-                  v-if="countryList"
-                  :items="countryList"
-                  :class="{show: showInput == true}"
-                  @onchangeCountry="yieldInput"
-                  placeholder="Delegate"
-                  @focus="selected = null; prevent = true"
-                  :country="yieldCountry"
-                />
+            <div
+              key="3"
+              class="bottom"
+              v-if="widthWindow > 960 || showYield"
+              v-click-outside="config"
+            >
+              <h3>Yield To:</h3>
+              <div class="choice">
+                <span class="ChairQ">
+                  <button :class="{ selected: selected === 1 }" @click="select(1)">
+                    Chair
+                  </button>
+                  <button :class="{ selected: selected === 2 }" @click="select(2)">
+                    Questions
+                  </button>
+                </span>
+                <div class="yieldCountry" :class="{filled: selected === 3}">
+                  <Autocomplete
+                    v-if="countryList"
+                    :items="countryList"
+                    :class="{show: showInput == true}"
+                    @onchangeCountry="yieldInput"
+                    placeholder="Delegate"
+                    @focus="selected = null; prevent = true"
+                    @enter="changeYield(selected); prevent = false"
+                    :country="yieldCountry"
+                  />
+                </div>
+                <transition name="fade">
+                  <div
+                    class="selection"
+                    :class="{two: selected === 2, three: selected === 3}"
+                    v-show="selected"
+                  />
+                </transition>
               </div>
-              <transition name="fade">
-                <div
-                  class="selection"
-                  :class="{two: selected === 2, three: selected === 3}"
-                  v-show="selected"
-                />
-              </transition>
+              <div class="yield">
+                <button @click="changeYield(selected); prevent = false" :disabled="!selected">
+                  Yield
+                </button>
+              </div>
             </div>
-            <div class="yield">
-              <button @click="changeYield(selected); prevent = false" :disabled="!selected">
-                Yield
-              </button>
-            </div>
-          </div>
-          <div key="4" class="overlay" v-if="widthWindow <= 960
-            && countryList && (showQueue || showYield)"
-          />
-        </transition-group>
+            <div key="4" class="overlay" v-if="widthWindow <= 960
+              && countryList && (showQueue || showYield)"
+            />
+          </transition-group>
+        </div>
       </div>
+    </div>
+    <div v-else-if="delegatesData.length === 0" class="noDelegates">
+      <h1>No Delegates</h1>
+      <p>Add delegates &amp; start a roll call from the delegates tab.</p>
     </div>
   </div>
 </template>

@@ -1,10 +1,14 @@
+<!-- eslint-disable vue/valid-v-on -->
 <template>
   <div
     class="addConf"
     :class="{
       scrollTop: scrollTop,
       scrollBottom: scrollBottom,
-    }">
+    }"
+    v-shortkey="{enter: ['enter']}"
+    @shortkey="onEnter"
+  >
   <div class="confModal"
   @touchmove="scrollTop = confModal.scrollTop > 0;
   scrollBottom = confModal.scrollHeight - confModal.scrollTop !== confModal.clientHeight">
@@ -103,11 +107,15 @@
                   placeholder=" "
                   type="email"
                   v-model="email"
-                  @keyup.enter="addChair()">
+                  v-shortkey="{enter: ['enter']}"
+                  @shortkey.stop="() => { if (focus) addChair() }"
+                  @focusin="focus = true"
+                  @blur="focus = false"
+                >
                 <label>E-mail</label>
                 <p class="err" v-if="warn.email">{{ warn.email }}</p>
               </div>
-              <button @keyup.enter="addChair()" @click="addChair()">
+              <button @click="addChair()">
                 <font-awesome-icon :icon="['fas', 'plus']"/>
               </button>
             </span>
@@ -224,6 +232,7 @@ export default Vue.extend({
   },
   data() {
     return {
+      focus: false as boolean,
       showConfirm: null as string | boolean | null,
       scrollTop: false as boolean,
       scrollBottom: false as boolean,
@@ -266,6 +275,11 @@ export default Vue.extend({
     Confirmation,
   },
   methods: {
+    onEnter(event): void {
+      // TODO: fix event only works once
+      if (!this.focus && event.srcKey === 'enter' && Object.keys(this.conf).length === 0) this.addNewConf();
+      else if (!this.focus && event.srcKey === 'enter') this.editConf();
+    },
     removeChairman(email): void {
       this.newConf.chairman = this.newConf.chairman.filter((chair) => chair !== email);
       this.showConfirm = null;
@@ -295,7 +309,7 @@ export default Vue.extend({
       };
     },
     context([, , email]: any[] = []): void {
-      if (email) this.showConfirm = email; console.log(email);
+      if (email) this.showConfirm = email;
     },
     append(string: string): void {
       if (this.newConf && this.newConf[string] !== '' && !this.newConf[string].match(/del/i)) {
@@ -344,7 +358,8 @@ export default Vue.extend({
         .catch((err) => console.error(err));
     },
     editConf(): void {
-      const difference = this.newConf.chairman.filter((x) => !this.conf.chairman.includes(x));
+      const difference = this.newConf.chairman
+        .filter((chair) => !this.conf.chairman.map((old) => old.email).includes(chair));
       if (difference.length > 0) {
         try {
           for (let i = 0; i < difference.length; i += 1) {
@@ -362,8 +377,9 @@ export default Vue.extend({
       }
 
       let diff;
-      diff = this.conf.chairman.filter((x) => !this.newConf!.chairman!.includes(x.email));
-      diff = diff.filter((x) => this.me.email !== x.email);
+      diff = this.conf.chairman
+        .filter((chair) => !this.newConf!.chairman!.includes(chair.email));
+      diff = diff.filter((chair) => this.me.email !== chair.email);
       if (diff.length > 0) {
         try {
           for (let i = 0; i < diff.length; i += 1) {
@@ -382,7 +398,9 @@ export default Vue.extend({
 
       const data: conferenceType.updateConference = (({ chairman, ...o }) => o)(this.newConf);
       this.checkForm(data);
-      if (Object.values(this.warn).every((bool) => bool === false || bool === '')) {
+      const warnings: {[key: string]: boolean | string } = { ...this.warn };
+      delete warnings.email;
+      if (Object.values(warnings).every((bool) => bool === false || bool === '')) {
         updateConference(this.conf._id, data)
           .then(() => {
             this.$emit('update');
@@ -392,7 +410,9 @@ export default Vue.extend({
     },
     addNewConf(): void {
       this.checkForm(this.newConf as conferenceType.createConference);
-      if (Object.values(this.warn).every((bool) => bool === false || bool === '')) {
+      const warnings: {[key: string]: boolean | string } = { ...this.warn };
+      delete warnings.email;
+      if (Object.values(warnings).every((bool) => bool === false)) {
         createConference(this.newConf)
           .then(() => {
             this.$emit('update');

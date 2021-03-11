@@ -9,6 +9,7 @@
           @onchangeCountry="(n) => newCountry = n"
           placeholder="Delegate"
           :country="newCountry"
+          @enter="toggleInput()"
         />
         <p class="err" v-if="warn.country">Please select a delegate</p>
       </div>
@@ -19,6 +20,7 @@
             v-model.number="time"
             type="number"
             min="0"
+            @shortkey.stop="toggleInput"
           >
           <label>Time (seconds)</label>
         <p class="err" v-if="warn.time">Please enter speaking time</p>

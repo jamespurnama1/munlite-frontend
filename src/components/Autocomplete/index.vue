@@ -8,13 +8,14 @@
         @focusin="focus = true; fillAutocomplete(); $emit('focus')"
         @input="fillAutocomplete"
         @change="emitData"
-        placeholder=" ">
-      <label>{{ placeholder }}</label>
-    </div>
-    <div class="results" v-if="focus">
-      <ul
+        placeholder=" "
         v-shortkey="{up: ['arrowup'], down: ['arrowdown'], enter: ['enter']}"
         @shortkey="keymap"
+      >
+      <label>{{ placeholder }}</label>
+    </div>
+    <div class="results" v-if="focus && update">
+      <ul
         v-show="isOpen"
         class="autocomplete-results"
       >
@@ -55,6 +56,7 @@ export default Vue.extend({
   },
   watch: {
     newCountry() {
+      this.update = true;
       this.emitData();
     },
     country() {
@@ -63,6 +65,7 @@ export default Vue.extend({
   },
   data() {
     return {
+      update: true as boolean,
       newCountry: '' as string,
       results: [] as Array<any>,
       isOpen: false as boolean,
@@ -82,7 +85,12 @@ export default Vue.extend({
           this.sel = Math.min(this.sel + 1, this.items.length - 1);
           break;
         case 'enter':
-          this.setResult(this.results[this.sel]);
+          if (this.focus && this.update) {
+            this.setResult(this.results[this.sel]);
+            this.update = false;
+          } else {
+            this.$emit('enter', event);
+          }
           break;
         default:
           console.error(event);

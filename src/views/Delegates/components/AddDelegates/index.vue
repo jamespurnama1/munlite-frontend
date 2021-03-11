@@ -8,12 +8,18 @@
     </div>
     <div class="mid">
       <div class="left">
-        <div class="profile-pic">
+        <div class="profile-pic" :class="{ noBG: getDelegatesID(newCountry.name) !== 'none'}">
           <span class="cam-logo">
             <font-awesome-icon :icon="['fas', 'camera']" size="lg" />
           </span>
           <span>Change Image</span>
           <input type="file" name="myImage" accept="image/*" class="inputimage"/>
+          <transition name="fade">
+            <span
+              v-if="getDelegatesID(newCountry.name) !== 'none'"
+              :class="`flag-icon img flag-icon-${getDelegatesID(newCountry.name).toLowerCase()}`"
+            />
+          </transition>
         </div>
       </div>
       <div class="right">
@@ -21,12 +27,15 @@
           :class="{error: err}"
           :items="items"
           @onchangeCountry="onchangeCountry"
+          @enter="addNewCountry()"
           class="country"/>
         <p class="err" v-if="err">{{ err }}</p>
         <div class="input">
           <input
             placeholder=" "
             v-model="newCountry.short"
+            v-shortkey="{enter: ['enter']}"
+            @shortkey.stop="addNewCountry"
           >
           <label>Short Name</label>
         </div>
@@ -38,6 +47,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import negara from '@/const/country';
 import { addDelegates } from '@/api/delegates';
 // eslint-disable-next-line no-unused-vars
 import { delegatesType } from '@/types/api';
@@ -67,6 +77,13 @@ export default Vue.extend({
   //   },
   // },
   methods: {
+    getDelegatesID(name: string): string {
+      const data = negara.filter((obj) => obj.name === name);
+      if (data.length > 0) {
+        return data[0].id;
+      }
+      return 'none';
+    },
     exit(): void {
       this.$emit('exit');
     },

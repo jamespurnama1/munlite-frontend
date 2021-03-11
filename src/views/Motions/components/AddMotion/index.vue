@@ -1,4 +1,4 @@
-/<!-- eslint-disable vue/valid-v-on -->
+<!-- eslint-disable vue/valid-v-on -->
 <template>
   <div class="motionModal"
     v-shortkey="{enter: ['enter']}"
