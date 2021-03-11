@@ -30,119 +30,122 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { mapState } from 'vuex';
+import {
+  Vue,
+  Watch,
+  Component,
+  Prop,
+} from 'vue-property-decorator';
+import { State } from 'vuex-class';
 import { gsap } from 'gsap';
 import { debounce } from 'debounce';
 
-export default Vue.extend({
-  name: 'Timer',
-  props: {
-    next: {
-      type: Boolean,
-      default: true,
-    },
-    time_left: {
-      type: Number,
-      default: 0,
-    },
-  },
-  data() {
-    return {
-      tl: null as GSAPTimeline | null,
-      delay: false as boolean,
-      debounce,
-    };
-  },
-  computed: {
-    ...mapState({
-      timer: (state: any) => state.Socket.message.time,
-      session: (state: any) => state.Socket.message.session,
-      status: (state: any) => state.Socket.message.state,
-      order: (state: any) => state.Socket.message.order,
-      muted: (state: any) => state.Global.muted,
-    }),
-    otherSession() {
-      return this.status === 0 && this.session !== this.$route.name?.toLowerCase();
-    },
-    timerReadable() {
-      let mins;
-      let seconds;
-      if (this.timer >= 0 && this.status !== 2
-      && this.session === this.$route.name?.toLowerCase()) {
-        mins = Math.floor(this.timer / 60);
-        seconds = String(this.timer - mins * 60).padStart(2, '0');
-      } else if (this.time_left
-      && (this.status === 2 || this.session !== this.$route.name?.toLowerCase())) {
-        mins = Math.floor(this.time_left / 60);
-        seconds = String(this.time_left - mins * 60).padStart(2, '0');
-      } else {
-        mins = 0;
-        seconds = '00';
-      }
-      return `${mins}:${seconds}`;
-    },
-  },
+@Component
+export default class Timer extends Vue {
+  @Prop({ type: Boolean, default: true }) next!: boolean
+
+  @Prop({ type: Number, default: 0 }) time_left!: number
+
+  @State((state) => state.Socket.message.time) timer!: number
+
+  @State((state) => state.Socket.message.session) session!: string
+
+  @State((state) => state.Socket.message.state) status!: number
+
+  @State((state) => state.Socket.message.order) order!: number
+
+  @State((state) => state.Global.muted) muted!: boolean
+
+  delay = false as boolean
+
+  tl = null as GSAPTimeline | null
+
+  debounce = debounce
+
+  get otherSession(): boolean {
+    return this.status === 0 && this.session !== this.$route.name?.toLowerCase();
+  }
+
+  get timerReadable(): string {
+    let mins;
+    let seconds;
+    if (this.timer >= 0 && this.status !== 2
+    && this.session === this.$route.name?.toLowerCase()) {
+      mins = Math.floor(this.timer / 60);
+      seconds = String(this.timer - mins * 60).padStart(2, '0');
+    } else if (this.time_left
+    && (this.status === 2 || this.session !== this.$route.name?.toLowerCase())) {
+      mins = Math.floor(this.time_left / 60);
+      seconds = String(this.time_left - mins * 60).padStart(2, '0');
+    } else {
+      mins = 0;
+      seconds = '00';
+    }
+    return `${mins}:${seconds}`;
+  }
+
   mounted() {
     setTimeout(() => {
       this.delay = true;
     }, 1200);
-  },
-  watch: {
-    timer() {
-      if (!this.muted && this.status === 0 && this.delay && this.timer === 5) {
-        (document.getElementById('warn') as HTMLAudioElement).play();
-        gsap.to('.read', {
-          rotate: '+=20deg',
-          color: '#FF5F5F',
-          yoyo: true,
-          repeat: 5,
-          duration: 0.1,
-        });
-        gsap.to('.read', {
-          rotate: '-=20deg',
-          yoyo: true,
-          repeat: 5,
-          duration: 0.1,
-        });
-        gsap.to('.read', {
-          clearProps: 'all',
-          delay: 0.4,
-        });
-      } else if (!this.muted && this.timer === 0 && this.delay) {
-        (document.getElementById('ding') as HTMLAudioElement).play();
-      }
-    },
-  },
-  methods: {
-    redo(): void {
-      gsap.to('.redo', {
-        rotate: '-=360deg',
-        color: '#5f78ff',
-        repeat: 1,
+  }
+
+  @Watch('timer')
+  onTimer() {
+    if (!this.muted && this.delay && this.status === 0 && this.timer === 5) {
+      (document.getElementById('warn') as HTMLAudioElement).play();
+      gsap.to('.read', {
+        rotate: '+=20deg',
+        color: '#FF5F5F',
         yoyo: true,
-        ease: 'power2',
-        duration: 1,
+        repeat: 5,
+        duration: 0.1,
       });
-      this.$emit('restart');
-    },
-    skip(): void {
-      gsap.to('.skip', {
-        color: '#5f78ff',
-        repeat: 3,
+      gsap.to('.read', {
+        rotate: '-=20deg',
         yoyo: true,
-        duration: 0.2,
+        repeat: 5,
+        duration: 0.1,
       });
-      this.$emit('next');
-    },
-    toggleActive(): void {
-      this.$emit('active');
-    },
-    toggleSound(): void {
-      this.$store.commit('toggleMute');
-    },
-  },
-});
+      gsap.to('.read', {
+        clearProps: 'all',
+        delay: 0.4,
+      });
+    } else if (!this.muted && this.delay && this.timer === 0) {
+      (document.getElementById('ding') as HTMLAudioElement).play();
+    }
+  }
+
+  redo(): void {
+    gsap.to('.redo', {
+      rotate: '-=360deg',
+      color: '#5f78ff',
+      repeat: 1,
+      yoyo: true,
+      ease: 'power2',
+      duration: 1,
+    });
+    this.$emit('restart');
+  }
+
+  skip(): void {
+    gsap.to('.skip', {
+      color: '#5f78ff',
+      repeat: 3,
+      yoyo: true,
+      duration: 0.2,
+    });
+    this.$emit('next');
+  }
+
+  toggleActive(): void {
+    this.$emit('active');
+  }
+
+  toggleSound(): void {
+    this.$store.commit('toggleMute');
+  }
+}
 </script>
 
 <style lang="scss" scoped>
