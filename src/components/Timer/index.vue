@@ -42,7 +42,17 @@ export default Vue.extend({
       type: Boolean,
       default: true,
     },
-    time_left: Number,
+    time_left: {
+      type: Number,
+      default: 0,
+    },
+  },
+  data() {
+    return {
+      tl: null as GSAPTimeline | null,
+      delay: false as boolean,
+      debounce,
+    };
   },
   computed: {
     ...mapState({
@@ -73,39 +83,36 @@ export default Vue.extend({
       return `${mins}:${seconds}`;
     },
   },
+  mounted() {
+    setTimeout(() => {
+      this.delay = true;
+    }, 1200);
+  },
   watch: {
     timer() {
-      if (!this.muted && this.status === 0) {
-        if (this.timer === 5) {
-          (document.getElementById('warn') as HTMLAudioElement).play();
-          gsap.to('.read', {
-            rotate: '+=20deg',
-            color: '#FF5F5F',
-            yoyo: true,
-            repeat: 5,
-            duration: 0.1,
-          });
-          gsap.to('.read', {
-            rotate: '-=20deg',
-            yoyo: true,
-            repeat: 5,
-            duration: 0.1,
-          });
-          gsap.to('.read', {
-            clearProps: 'all',
-            delay: 0.4,
-          });
-        }
-      } else if (!this.muted && this.timer === 0) {
+      if (!this.muted && this.status === 0 && this.delay && this.timer === 5) {
+        (document.getElementById('warn') as HTMLAudioElement).play();
+        gsap.to('.read', {
+          rotate: '+=20deg',
+          color: '#FF5F5F',
+          yoyo: true,
+          repeat: 5,
+          duration: 0.1,
+        });
+        gsap.to('.read', {
+          rotate: '-=20deg',
+          yoyo: true,
+          repeat: 5,
+          duration: 0.1,
+        });
+        gsap.to('.read', {
+          clearProps: 'all',
+          delay: 0.4,
+        });
+      } else if (!this.muted && this.timer === 0 && this.delay) {
         (document.getElementById('ding') as HTMLAudioElement).play();
       }
     },
-  },
-  data() {
-    return {
-      tl: null as GSAPTimeline | null,
-      debounce,
-    };
   },
   methods: {
     redo(): void {

@@ -67,32 +67,35 @@ export default Vue.extend({
       return `${mins}:${seconds}`;
     },
   },
+  mounted() {
+    setTimeout(() => {
+      this.delay = true;
+    }, 1200);
+  },
   watch: {
     timer: {
       handler() {
         this.progress = 100 - (this.timer / 0.9);
-        if (!this.muted && this.status === 0) {
-          if (this.timer === 5) {
-            (document.getElementById('warn') as HTMLAudioElement).play();
-            gsap.to('.read', {
-              rotate: '+=20deg',
-              color: '#FF5F5F',
-              yoyo: true,
-              repeat: 5,
-              duration: 0.1,
-            });
-            gsap.to('.read', {
-              rotate: '-=20deg',
-              yoyo: true,
-              repeat: 5,
-              duration: 0.1,
-            });
-            gsap.to('.read', {
-              clearProps: 'all',
-              delay: 0.4,
-            });
-          }
-        } else if (!this.muted && this.timer === 0) {
+        if (!this.muted && this.status === 0 && this.delay && this.timer === 5) {
+          (document.getElementById('warn') as HTMLAudioElement).play();
+          gsap.to('.read', {
+            rotate: '+=20deg',
+            color: '#FF5F5F',
+            yoyo: true,
+            repeat: 5,
+            duration: 0.1,
+          });
+          gsap.to('.read', {
+            rotate: '-=20deg',
+            yoyo: true,
+            repeat: 5,
+            duration: 0.1,
+          });
+          gsap.to('.read', {
+            clearProps: 'all',
+            delay: 0.4,
+          });
+        } else if (!this.muted && this.timer === 0 && this.delay) {
           (document.getElementById('ding') as HTMLAudioElement).play();
         }
       },
@@ -104,6 +107,7 @@ export default Vue.extend({
       interval: null,
       tl: null,
       progress: 0,
+      delay: false,
     };
   },
   methods: {

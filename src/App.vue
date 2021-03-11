@@ -85,7 +85,7 @@
     <div class="overlay-nav" @click="open = false" v-if="open"></div>
     <transition name="slide-up">
     <GlobalTimer
-      v-if="$route.params.id && $route.name !== 'GSL' && $route.name !== 'Caucus'"/>
+      v-if="$route.params.id && $route.name.toLowerCase() !== session"/>
     </transition>
   </div>
 </template>
@@ -104,6 +104,8 @@ import GlobalTimer from '@/components/Global Timer/index.vue';
   },
 })
 export default class App extends Vue {
+  @State((state) => state.Socket.message.session) session?: string
+
   // =============================================================================
   // Vue Hooks
   // =============================================================================
@@ -266,7 +268,7 @@ export default class App extends Vue {
 
   @State((state) => state.Global.genericError) generic?: boolean
 
-  @State((state) => state.socket.isConnected) isConnected?: boolean
+  @State((state) => state.Socket.isConnected) isConnected?: boolean
 
   state = false as boolean
 

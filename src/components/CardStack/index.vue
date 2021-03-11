@@ -263,7 +263,8 @@ export default Vue.extend({
           const timer = this.timer(300);
           if (label && label !== this.prevLabel && this.mount) {
             timer.start().then(() => {
-              this.click(parseInt(this.rawSequence.currentLabel().replace(/label/, ''), 10)); this.prevLabel = label;
+              if (this.rawSequence.currentLabel()) this.click(parseInt(this.rawSequence.currentLabel().replace(/label/, ''), 10));
+              this.prevLabel = label;
             });
           }
           if (this.scrub) {

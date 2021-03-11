@@ -248,7 +248,11 @@ export default Vue.extend({
     },
     voteLogic(): void {
       let { majority } = this.rules;
-      if (majority.match(/(\*|\+|-|\/)\s*(del)/i)) {
+      if (majority.match(/\d\s?(\+|-)\s?\d/i)) {
+        const { index } = /\+|-/.exec(majority) as RegExpExecArray;
+        majority = majority.replace(/delegates/i, '');
+        majority = `${majority.substring(0, index)} * ${this.delegatesData.length} ${majority.substring(index, majority.length)}`;// watchout for sum operators
+      } else if (majority.match(/(\*|\+|-|\/)\s*(del)/i)) {
         majority = majority.replace(/delegates/i, `${this.delegatesData.length}`); // replace suffix with actual number
       } else {
         majority = majority.replace(/delegates/i, `* ${this.delegatesData.length}`); // if there was no operator, assume multiplication

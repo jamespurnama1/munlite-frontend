@@ -287,6 +287,13 @@ export default Vue.extend({
             await nextGSL(this.$route.params.id);
           }
         }
+        if (selected === 2) {
+          this.$socket.send(JSON.stringify({
+            session: 'gsl',
+            command: 'pause',
+            order,
+          }));
+        }
         this.updateGSL();
       } catch (err) {
         console.error(err);
@@ -332,9 +339,9 @@ export default Vue.extend({
         }
       }, 500);
     },
-    async deleteTurn(i: number): Promise<void> {
+    async deleteTurn(index: number): Promise<void> {
       try {
-        await delTurn(this.$route.params.id, i + 1);
+        await delTurn(this.$route.params.id, index + 1);
         this.updateGSL();
       } catch (err) {
         console.error(err);

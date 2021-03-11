@@ -30,14 +30,13 @@ export default {
     desc: String,
     prgrs: {
       type: [String, Number],
-      default: 100,
     },
     color: {
       type: String,
       default: '#5F78FF',
     },
-    active: Boolean,
-    isActive: Boolean,
+    active: Boolean, // timer
+    isActive: Boolean, // current
     number: {
       type: Number,
       required: true,
@@ -99,8 +98,9 @@ export default {
     },
   },
   watch: {
-    timer: {
+    cardTime: {
       handler() {
+        // TODO: max to 100 not 125 with rounding
         this.progress = Math.min(Math.max((this.cardTime / this.time_start) * 100, 0), 125);
         if (this.delYield && this.$route.name === 'GSL') {
           this.dsc = `${this.cardTime} sec → ${this.delYield}`;
@@ -135,7 +135,8 @@ export default {
       order: (state) => state.Socket.message.order,
     }),
     cardTime() {
-      if (this.isActive && this.active && this.session === this.$route.name?.toLowerCase()) {
+      if (this.isActive && this.session === this.$route.name?.toLowerCase()
+      && this.order === this.number) {
         return this.timer;
       }
       return this.time_left;

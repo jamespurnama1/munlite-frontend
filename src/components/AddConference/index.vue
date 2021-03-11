@@ -116,9 +116,6 @@
       </ul>
     </div>
     <h3>Rules</h3>
-    <p class="err">
-      Note that <b>1/2 delegates + 1</b> is not the same as <b>1/2 + 1 delegates</b>
-    </p>
     <div class="rules">
       <div class="input">
           <input

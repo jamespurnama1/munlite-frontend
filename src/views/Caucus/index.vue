@@ -27,8 +27,7 @@
       </div>
       <div class="wrapper">
         <Timer
-          v-if="widthWindow <= 960
-          && socket && (caucusData.motion.type !== 'moderated caucus' || caucusList[caucusCurrent])"
+          v-if="widthWindow <= 960 && timerBool "
           class="time"
           :class="{solo: !moderated}"
           :next="noNext"
@@ -39,7 +38,8 @@
           @update="updateCaucus()"
           @restart="restart()"
           @next="next"
-          :time_left="caucusList[caucusCurrent].time_left"
+          :time_left="caucusList[caucusCurrent]
+            ? caucusList[caucusCurrent].time_left : caucusData.motion.total_time"
         />
         <div class="cards" v-if="moderated">
           <CardStack
@@ -68,7 +68,7 @@
               :class="{solo: !moderated}"
             >
               <Timer
-                v-if="socket && caucusList[caucusCurrent] && (caucusData.motion.type !== 'moderated caucus' || caucusList[caucusCurrent])"
+                v-if="timerBool"
                 class="time"
                 :next="noNext"
                 @active="() => {
@@ -78,7 +78,8 @@
                 @update="updateCaucus()"
                 @restart="restart()"
                 @next="next"
-                :time_left="caucusList[caucusCurrent].time_left"
+                :time_left="caucusList[caucusCurrent]
+                  ? caucusList[caucusCurrent].time_left : caucusData.motion.total_time"
               />
             </div>
             <Queue
@@ -259,7 +260,7 @@ export default Vue.extend({
           order: this.caucusCurrent,
         };
         this.$socket.send(JSON.stringify(next));
-        if (this.caucusCurrent) {
+        if (this.caucusCurrent !== null) {
           await timeLeft(this.$route.params.id, {
             order: this.caucusCurrent + 1,
             time_left: this.socket.time,
@@ -348,7 +349,7 @@ export default Vue.extend({
         session: 'caucus',
         order: 0,
       };
-      if ((this.socket.session === 'gsl' || this.socket.state === 2) && this.caucusCurrent !== null) {
+      if ((this.socket.session === 'gsl' || this.socket.state === 2) && this.caucusCurrent !== null && this.socket.state !== 0) {
         data.command = 'start';
         data.time = time;
         data.order = this.caucusCurrent;
@@ -410,7 +411,6 @@ export default Vue.extend({
     try {
       await this.updateDelegatesData();
       await this.updateCaucus();
-      console.log(this.delegatesData);
     } catch (err) {
       console.error(err);
     }
@@ -421,6 +421,7 @@ export default Vue.extend({
       countryList: (state: any) => state.Delegates.countryList,
       caucusList: (state: any) => state.Delegates.caucusList,
       widthWindow: (state: any) => state.Global.widthWindow,
+      order: (state: any) => state.Socket.message.order,
     }),
     noNext(): boolean {
       if (this.caucusData
@@ -430,6 +431,19 @@ export default Vue.extend({
     moderated(): boolean {
       if (this.caucusData && this.caucusData.motion.type.toLowerCase() === 'moderated caucus') return true;
       return false;
+    },
+    timerBool(): boolean {
+      if (typeof this.socket === 'object' && typeof this.caucusList === 'object' && typeof this.caucusData === 'object') {
+        if (this.caucusData!.motion.type === 'moderated caucus' && !this.caucusList[this.caucusCurrent as number]) return false;
+        return true;
+      }
+      return true;
+    },
+  },
+  watch: {
+    async order() {
+      await this.updateDelegatesData();
+      await this.updateCaucus();
     },
   },
 });

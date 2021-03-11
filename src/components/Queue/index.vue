@@ -18,6 +18,7 @@
             placeholder=" "
             v-model.number="time"
             type="number"
+            min="0"
           >
           <label>Time (seconds)</label>
         <p class="err" v-if="warn.time">Please enter speaking time</p>
