@@ -84,8 +84,10 @@
     </transition>
     <div class="overlay-nav" @click="open = false" v-if="open"></div>
     <transition name="slide-up">
+      <keep-alive>
     <GlobalTimer
       v-if="$route.params.id && $route.name.toLowerCase() !== session"/>
+      </keep-alive>
     </transition>
   </div>
 </template>

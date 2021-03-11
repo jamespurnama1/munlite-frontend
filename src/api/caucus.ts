@@ -41,7 +41,7 @@ export async function addTurn(id: string, data: caucusType.addTurn) {
   return res;
 }
 
-export async function timeLeft(id: string, time: caucusType.timeLeft) {
+export async function timeLeftCaucus(id: string, time: caucusType.timeLeft) {
   const res = await request.patch(
     `/api/conference/${id}/caucus/turn`,
     JSON.stringify(time),

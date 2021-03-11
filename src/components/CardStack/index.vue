@@ -29,7 +29,6 @@
 </template>
 
 <script lang="ts">
-// eslint-disable-next-line no-unused-vars
 import Vue from 'vue';
 import { gsap } from 'gsap';
 import { mapState } from 'vuex';

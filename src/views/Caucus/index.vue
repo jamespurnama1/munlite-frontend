@@ -148,7 +148,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {
-  addTurn, currentCaucus, delTurn, nextCaucus, timeLeft,
+  addTurn, currentCaucus, delTurn, nextCaucus, timeLeftCaucus,
 } from '@/api/caucus';
 import { mapState } from 'vuex';
 import negara from '@/const/country';
@@ -264,7 +264,7 @@ export default Vue.extend({
         };
         this.$socket.send(JSON.stringify(next));
         if (this.caucusCurrent !== null) {
-          await timeLeft(this.$route.params.id, {
+          await timeLeftCaucus(this.$route.params.id, {
             order: this.caucusCurrent + 1,
             time_left: this.socket.time,
           });

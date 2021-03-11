@@ -37,7 +37,7 @@ export async function nextGSL(id: string) {
   return res;
 }
 
-export async function timeLeft(id: string, time: gslType.timeLeft) {
+export async function timeLeftGSL(id: string, time: gslType.timeLeft) {
   const res = await request.patch(
     `/api/conference/${id}/gsl/time`,
     JSON.stringify(time),

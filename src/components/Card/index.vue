@@ -47,26 +47,23 @@ export default {
       progress: this.prgrs,
       dsc: null,
       clr: null,
-      int: null,
     };
   },
   methods: {
     pos() {
-      if (!this.time_left) {
-        const country = document.querySelectorAll('.max.card .country');
-        for (let i = 0; i < country.length; i += 1) {
-          country[i].style.cssText = 'right: -35%; transform: translate(0, 0) scale(0.3)';
-        }
+      const country = document.querySelectorAll('.max.card .country');
+      for (let i = 0; i < country.length; i += 1) {
+        country[i].style.cssText = 'right: -35%; transform: translate(0, 0) scale(0.3)';
       }
     },
     defaults() {
       if (this.desc === 'presence') {
         this.dsc = this.del.status;
-      } else if (this.time_left) {
+      } else if (this.cardTime !== null) {
         if (this.del.yield && this.$route.name === 'GSL') {
-          this.dsc = `${this.cardTime} sec → ${this.delYield}`;
+          this.dsc = `${this.cardTime.toString()} sec → ${this.delYield}`;
         } else {
-          this.dsc = `${this.cardTime} sec`;
+          this.dsc = `${this.cardTime.toString()} sec`;
         }
       } else {
         this.dsc = this.desc;
@@ -81,8 +78,6 @@ export default {
         if (this.del.status.toLowerCase() === 'not present') {
           this.clr = '#FF5F5F';
         }
-      } else if (!this.prgrs && !this.time_left) {
-        this.progress = 0;
       }
     },
     countryId(name) {
@@ -103,9 +98,9 @@ export default {
         // TODO: max to 100 not 125 with rounding
         this.progress = Math.min(Math.max((this.cardTime / this.time_start) * 100, 0), 125);
         if (this.delYield && this.$route.name === 'GSL') {
-          this.dsc = `${this.cardTime} sec → ${this.delYield}`;
+          this.dsc = `${this.cardTime.toString()} sec → ${this.delYield}`;
         } else {
-          this.dsc = `${this.cardTime} sec`;
+          this.dsc = `${this.cardTime.toString()} sec`;
         }
         this.pos();
       },
@@ -113,9 +108,9 @@ export default {
     },
     delYield() {
       if (this.delYield && this.$route.name === 'GSL') {
-        this.dsc = `${this.cardTime} sec → ${this.delYield}`;
+        this.dsc = `${this.cardTime.toString()} sec → ${this.delYield}`;
       } else {
-        this.dsc = `${this.cardTime} sec`;
+        this.dsc = `${this.cardTime.toString()} sec`;
       }
     },
     del: {

@@ -133,7 +133,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {
-  addTurn, getGSL, delTurn, yieldGSL, nextGSL, timeLeft,
+  addTurn, getGSL, delTurn, yieldGSL, nextGSL, timeLeftGSL,
 } from '@/api/gsl';
 import { mapState } from 'vuex';
 import negara from '@/const/country';
@@ -288,7 +288,7 @@ export default Vue.extend({
             command: 'stop',
             order,
           }));
-          await timeLeft(this.$route.params.id, {
+          await timeLeftGSL(this.$route.params.id, {
             order,
             time_left: this.socket.time,
           });
@@ -318,7 +318,7 @@ export default Vue.extend({
         };
         this.$socket.send(JSON.stringify(next));
         if (this.gslCurrent !== null) {
-          await timeLeft(this.$route.params.id, {
+          await timeLeftGSL(this.$route.params.id, {
             order: this.gslCurrent + 1,
             time_left: this.socket.time,
           });
