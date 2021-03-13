@@ -24,16 +24,16 @@ describe('Roll Call Modal Test', () => {
   it('Roll call then proceed to vote', () => {
     cy.get('button#continue').contains('Continue');
     // let dataLength = window.store.state.delegates.delegates;
-    for (let i = 0; i < 8; i += 1) {
-      cy.wait(2000);
+    for (let i = 0; i < 53; i += 1) {
+      cy.wait(500);
       cy.get('button').contains('Present').click();
     }
     cy.wait(850);
     cy.get('button').contains('Continue').click();
-    cy.get('#select .selection:first-child .input').type((8 - 1).toString());
+    cy.get('#select .selection:first-child .input').type((52).toString());
     cy.get('.input.red').type('1');
     cy.get('button').contains('Pass').click();
     cy.wait(1000);
-    cy.url().should('eq', `/gsl/${id}`);
+    cy.url().should('contain', `/gsl/${id}`);
     });
   });

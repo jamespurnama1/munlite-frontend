@@ -8,12 +8,13 @@
     <div id='call'>
       <div id="wrapper">
         <CardStack
-        :progress="`presence`"
-        :desc="`presence`"
-        :delegates="delegatesData"
-        :display="currentCountry"
-        @move="move"
-        class="left" />
+          :progress="`presence`"
+          :desc="`presence`"
+          :delegates="delegatesData"
+          :display="currentCountry"
+          @move="move"
+          class="left"
+        />
       </div>
       <div id='selection'>
         <div id='select'>

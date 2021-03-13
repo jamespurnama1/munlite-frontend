@@ -22,7 +22,10 @@
           v-if="widthWindow <= 960
           && socket && gslList[gslCurrent]"
           class="time"
-          @active="toggleActive()"
+          @active="() => {
+            if (socket.session === 'caucus' && socket.state === 1) showConfirm = true
+            else toggleActive()
+          }"
           @update="updateGSL()"
           @restart="restart()"
           @next="next"
@@ -52,7 +55,10 @@
               <Timer
                 v-if="socket && gslList[gslCurrent]"
                 class="time"
-                @active="toggleActive()"
+                @active="() => {
+                  if (socket.session === 'caucus' && socket.state === 1) showConfirm = true
+                  else toggleActive()
+                }"
                 @update="updateGSL()"
                 @restart="restart()"
                 @next="next"
@@ -127,6 +133,23 @@
       <h1>No Delegates</h1>
       <p>Add delegates &amp; start a roll call from the delegates tab.</p>
     </div>
+    <transition-group name="fade">
+      <Confirmation
+        content="Caucus is in progress. Stop Caucus?"
+        :action="stopCaucus"
+        :negative="true"
+        button="Stop"
+        v-click-outside="{
+          handler() { showConfirm = false; },
+          events: ['click', 'touchstart', 'touchmove'],
+        }"
+        whiteButton="Cancel"
+        v-if="showConfirm"
+        @exit="() => { showConfirm = false; }"
+        :key="`${showConfirm}Modal`"
+      />
+      <div class="overlay modal" :key="showConfirm" v-if="showConfirm" />
+    </transition-group>
   </div>
 </template>
 
@@ -142,6 +165,7 @@ import Autocomplete from '@/components/Autocomplete/index.vue';
 import CardStack from '@/components/CardStack/index.vue';
 import Timer from '@/components/Timer/index.vue';
 import Queue from '@/components/Queue/index.vue';
+import Confirmation from '@/components/Confirmation/index.vue';
 // eslint-disable-next-line no-unused-vars
 import { delegatesType, gslType, websocketType } from '@/types/api';
 
@@ -152,6 +176,7 @@ export default Vue.extend({
     Timer,
     Queue,
     Autocomplete,
+    Confirmation,
   },
   data() {
     return {
@@ -161,6 +186,7 @@ export default Vue.extend({
       selected: null as 0 | 1 | 2 | 3 | null,
       yieldDelegate: '' as string,
       yieldCountry: '' as string,
+      showConfirm: false as boolean,
       showInput: false as boolean,
       gslCurrent: null as number | null, // current in GET gsl
       newArr: [] as unknown as (delegatesType.getAllDelegates & Partial<gslType.getTurn>)[],
@@ -181,6 +207,18 @@ export default Vue.extend({
     };
   },
   methods: {
+    stopCaucus(): void {
+      const stop = {
+        session: 'caucus',
+        command: 'stop',
+      };
+      const vue = this;
+      this.$socket.send(JSON.stringify(stop));
+      vue.$socket.addEventListener('message', function onmessage() {
+        vue.$socket.removeEventListener('message', onmessage);
+        vue.toggleActive();
+      });
+    },
     outside(): void {
       this.showYield = false;
       this.showQueue = false;
@@ -476,6 +514,12 @@ export default Vue.extend({
       gslList: (state: any) => state.Delegates.gslList,
       widthWindow: (state: any) => state.Global.widthWindow,
     }),
+  },
+  beforeCreate() {
+    document.body.style.overflow = 'hidden';
+  },
+  beforeDestroy() {
+    document.body.style.overflow = 'auto';
   },
 });
 </script>

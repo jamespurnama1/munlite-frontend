@@ -425,6 +425,7 @@
       }
     }
   }
+
   .noDelegates {
     display: flex;
     width: 90%;
@@ -433,5 +434,9 @@
     flex-direction: column;
     justify-content: center;
     background: url('~@/assets/img/bg3.png') 121% 80%/40% no-repeat;
+  }
+
+  .overlay {
+    z-index: 199;
   }
 }

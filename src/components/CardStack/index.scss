@@ -16,6 +16,7 @@
   }
 
   .stack-cards {
+    pointer-events: none;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -25,47 +26,26 @@
     width: 100%;
     list-style-type: none;
     backface-visibility: hidden;
-    // pointer-events: none;
+
+    @supports not (aspect-ratio: 16 / 9) { 
+      height: 0;
+      padding-top: 56.25%;
+    }
   
     .stack-cards__item {
+      pointer-events: initial;
       position: absolute;
       aspect-ratio: 16 / 9;
-      width: 99%;
+      width: calc(100% - 40px);
+      margin: 0 20px;
       height: auto;
-      // min-height: 3em;
       top: 0;
       left: 0;
       backface-visibility: hidden;
-      // pointer-events: initial;
-      // transform: translate(-50%, -50%);
 
       @supports not (aspect-ratio: 16 / 9) { 
         height: 0;
         padding-top: 56.25%;
-      }
-
-      @include max-media(mobile-landscape) {
-        // width: 90%;
-        // min-height: 125px;
-        // max-width: 300px;
-      }
-
-      &.active {
-        // transform: translate(-50%, -50%) scale(1) !important;
-      }
-
-      // > * {
-      //   position: relative;
-      //   top: 0;
-      //   left: 0;
-      //   height: 100%;
-      //   width: 100%;
-      //   will-change: transform, opacity;
-      // }
-
-      @include min-media(tablet) {
-        // height: 35%;
-        // min-height: 250px;
       }
     }
   }

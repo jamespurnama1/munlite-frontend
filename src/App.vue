@@ -187,12 +187,12 @@ export default class App extends Vue {
       };
       this.border = styles;
     }
-    document.body.style.overflow = 'visible';
+    if (this.$route.name !== 'GSL' && this.$route.name !== 'Caucus') document.body.style.overflow = 'visible';
     this.open = false;
   }
 
   toggleMenu() {
-    if (this.open) {
+    if (this.open && this.$route.name !== 'GSL' && this.$route.name !== 'Caucus') {
       document.body.style.overflow = 'visible';
     } else {
       document.body.style.overflow = 'hidden';

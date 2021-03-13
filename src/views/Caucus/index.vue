@@ -30,7 +30,7 @@
           :class="{solo: !moderated}"
           :next="noNext"
           @active="() => {
-            if(socket.session === 'gsl' && socket.state === 1) showConfirm = true
+            if (socket.session === 'gsl' && socket.state === 1) showConfirm = true
             else toggleActive()
           }"
           @update="updateCaucus()"
@@ -70,7 +70,7 @@
                 class="time"
                 :next="noNext"
                 @active="() => {
-                  if(socket.session === 'gsl' && socket.state === 1) showConfirm = true
+                  if (socket.session === 'gsl' && socket.state === 1) showConfirm = true
                   else toggleActive()
                 }"
                 @update="updateCaucus()"
@@ -127,7 +127,7 @@
     </div>
     <transition-group name="fade">
       <Confirmation
-        content="GSL is still in progress. Stop GSL?"
+        content="GSL is in progress. Stop GSL?"
         :action="stopGSL"
         :negative="true"
         button="Stop"
@@ -448,6 +448,12 @@ export default Vue.extend({
       await this.updateDelegatesData();
       await this.updateCaucus();
     },
+  },
+  beforeCreate() {
+    document.body.style.overflow = 'hidden';
+  },
+  beforeDestroy() {
+    document.body.style.overflow = 'auto';
   },
 });
 </script>
