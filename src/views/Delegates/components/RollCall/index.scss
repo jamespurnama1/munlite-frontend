@@ -44,9 +44,8 @@
 
     #wrapper {
       position: relative;
-      width: 60%;
+      width: 70%;
       height: 100%;
-      padding: 0 1rem;
       box-sizing: border-box;
 
       @include max-media(mobile-landscape) {

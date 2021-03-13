@@ -85,8 +85,7 @@ export default Vue.extend({
       } catch (err) {
         console.error(err);
       }
-      // @ts-ignore
-      this.$children[0].goNext();
+      this.move(this.currentCountry + 1);
     },
     move(index: number): void {
       const j = Math.min(Math.max(parseInt(index.toString(), 10), 0),
