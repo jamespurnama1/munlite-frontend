@@ -17,7 +17,7 @@
         <button @click="redo()" v-if="width > 960">
           <font-awesome-icon class="redo" :icon="['fas', 'redo']" />
         </button>
-        <button @click="skip()" v-if="width > 960">
+        <button @click="skip()" v-if="width > 960 && next">
           <font-awesome-icon class="skip" :icon="['fas', 'step-forward']" />
         </button>
         <button :class="{red: muted}" @click="toggleSound()">
@@ -53,6 +53,13 @@ gsap.registerPlugin(ScrollTrigger);
 
 @Component
 export default class GlobalTimer extends Vue {
+  get next() {
+    if (this.sess === 'caucus' && this.caucusList.motion.type.toLowerCase() !== 'moderated caucus') return false;
+    if (this.gslList.current === this.gslList.length - 1) return false;
+    if (this.caucusList.current === this.caucusList.length - 1) return false;
+    return true;
+  }
+
   @State((state) => state.Socket.message.time) timer!: number
 
   @State((state) => state.Socket.message.session) sess!: string
@@ -82,6 +89,11 @@ export default class GlobalTimer extends Vue {
     setTimeout(() => {
       this.delay = true;
     }, 1200);
+    this.update();
+  }
+
+  @Watch('status')
+  onStatus() {
     this.update();
   }
 
@@ -226,7 +238,6 @@ export default class GlobalTimer extends Vue {
     try {
       const list = await getGSL(this.$route.params.id);
       if (list.data.data !== null) {
-        // this.newGSLList(list.data.data);
         this.gslCurrent = list.data.data.current;
         this.gslList = list.data.data;
       }
@@ -235,13 +246,12 @@ export default class GlobalTimer extends Vue {
     }
   }
 
-  caucusList: gslType.getGSL | {[key:string]: any} = {}
+  caucusList: caucusType.currentCaucus | {[key:string]: any} = {}
 
   async updateCaucus(): Promise<void> {
     try {
       const list = await currentCaucus(this.$route.params.id);
       if (list.data.data !== null) {
-        // this.newCaucusList(list.data.data);
         this.caucusCurrent = list.data.data.current;
         this.caucusList = list.data.data;
       }

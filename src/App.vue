@@ -11,7 +11,6 @@
         <img
           key="2"
           v-else-if="logo"
-          class="glow"
           src="@/assets/img/logo_alt.png"
           @click="goToHome()"
         />
@@ -133,7 +132,7 @@ export default class App extends Vue {
   async created() {
     this.checkMobileView();
     window.addEventListener('resize', this.checkMobileView);
-    window.addEventListener('storage', this.logout);
+    window.addEventListener('storage', (event) => { if (event.key === 'logout') this.logout(); });
     window.addEventListener('online', () => { this.off = false; });
     window.addEventListener('offline', () => { this.off = true; });
   }
@@ -261,17 +260,15 @@ export default class App extends Vue {
   // Logout
   // =============================================================================
 
-  async logout(event: StorageEvent): Promise<void> {
-    if (event.key === 'logout') {
-      this.open = false;
-      try {
-        await logout();
-        this.$store.dispatch('logout');
-        if (!localStorage.getItem('logout')) window.localStorage.setItem('logout', Date.now().toString());
-        this.$router.push('/login');
-      } catch (err) {
-        console.error(err);
-      }
+  async logout(): Promise<void> {
+    this.open = false;
+    try {
+      await logout();
+      this.$store.dispatch('logout');
+      window.localStorage.setItem('logout', Date.now().toString());
+      this.$router.push('/login');
+    } catch (err) {
+      console.error(err);
     }
   }
 

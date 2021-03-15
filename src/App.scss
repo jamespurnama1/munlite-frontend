@@ -64,17 +64,9 @@ h1 {
 
     img {
       position: absolute;
-
-      // width: 20%;
-      // max-width: 100%;
-      // min-width: 45px;
       max-height: 120%;
       height: 120%;
       cursor: pointer;
-
-      &.glow {
-        filter: drop-shadow(0 0 5px rgba(95,120,255,0.7));
-      }
 
       @include min-media(tablet) {
         left: 50%;

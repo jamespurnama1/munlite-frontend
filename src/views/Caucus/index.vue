@@ -206,7 +206,9 @@ export default Vue.extend({
       this.$socket.send(JSON.stringify(stop));
       vue.$socket.addEventListener('message', function onmessage() {
         vue.$socket.removeEventListener('message', onmessage);
-        vue.toggleActive();
+        setTimeout(() => {
+          vue.toggleActive();
+        }, 1000);
       });
     },
     context(): void {
