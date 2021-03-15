@@ -156,10 +156,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import {
-  addTurn, getGSL, delTurn, yieldGSL, nextGSL, timeLeftGSL,
+  addTurnGSL, getGSL, delTurnGSL, yieldGSL, nextGSL, timeLeftGSL,
 } from '@/api/gsl';
 import { mapState } from 'vuex';
-import negara from '@/const/country';
+import negara from '@/const/country.json';
 import { getAllDelegates } from '@/api/delegates';
 import Autocomplete from '@/components/Autocomplete/index.vue';
 import CardStack from '@/components/CardStack/index.vue';
@@ -223,10 +223,10 @@ export default Vue.extend({
       this.showYield = false;
       this.showQueue = false;
     },
-    context([action, , , index]: any[] = []): void {
-      switch (action) {
+    context(): void {
+      switch (this.contextData.action) {
         case 'Remove From Queue':
-          this.deleteTurn(index);
+          this.deleteTurn(this.contextData.index);
           break;
         case 'Clear Yield':
           this.changeYield(0);
@@ -243,7 +243,7 @@ export default Vue.extend({
     newCountryList(): void {
       const list: { name: string }[] = [];
       this.delegatesData.forEach((item) => {
-        let data: { name: string } = negara.filter((e) => e.name === item.country)[0];
+        let data: any = negara.find((e) => e.name === item.country);
         if (data) {
           list.push(data);
         } else {
@@ -388,7 +388,7 @@ export default Vue.extend({
     },
     async deleteTurn(index: number): Promise<void> {
       try {
-        await delTurn(this.$route.params.id, index + 1);
+        await delTurnGSL(this.$route.params.id, index + 1);
         this.updateGSL();
       } catch (err) {
         console.error(err);
@@ -404,7 +404,7 @@ export default Vue.extend({
           yield: '',
         };
         if (id) {
-          await addTurn(this.$route.params.id, data);
+          await addTurnGSL(this.$route.params.id, data);
           this.updateGSL();
         }
         this.showQueue = false;
@@ -466,10 +466,8 @@ export default Vue.extend({
       this.yieldCountry = country;
     },
     getDelegatesID(name: string): string {
-      const data = negara.filter((obj) => obj.name === name);
-      if (data.length > 0) {
-        return data[0].id;
-      }
+      const data = negara.find((obj) => obj.name === name);
+      if (data) return data['alpha-2'];
       return 'ad';
     },
     sortCountry(items: delegatesType.getAllDelegates[]): delegatesType.getAllDelegates[] {
@@ -499,7 +497,7 @@ export default Vue.extend({
     },
   },
   async created() {
-    this.$root.$on('context', (...args) => this.context(...args));
+    this.$root.$on('context', this.context);
     try {
       await this.updateDelegatesData();
       this.updateGSL();
@@ -513,6 +511,7 @@ export default Vue.extend({
       countryList: (state: any) => state.Delegates.countryList,
       gslList: (state: any) => state.Delegates.gslList,
       widthWindow: (state: any) => state.Global.widthWindow,
+      contextData: (state: any) => state.Global.contextData,
     }),
   },
   beforeCreate() {
@@ -520,6 +519,7 @@ export default Vue.extend({
   },
   beforeDestroy() {
     document.body.style.overflow = 'auto';
+    this.$root.$off('context', this.context);
   },
 });
 </script>

@@ -329,13 +329,13 @@ export default Vue.extend({
         }
       };
     },
-    context([item, name, id, index]: any[] = []): void {
-      if (!this.showInput && item === 'Delete') {
-        this.showConfirm = name;
+    context(): void {
+      if (!this.showInput && this.contextData.action === 'Delete') {
+        this.showConfirm = this.contextData.name;
       } else if (!this.showInput) {
         this.showInput = true;
-        this.editData = this.filteredData[index];
-        this.sel = this.conferencesData.findIndex((i) => i._id === id);
+        this.editData = this.filteredData[this.contextData.index];
+        this.sel = this.conferencesData.findIndex((i) => i._id === this.contextData.id);
       }
     },
     select(i: number): void {
@@ -415,13 +415,17 @@ export default Vue.extend({
   },
   created() {
     this.updateConferencesData();
-    this.$root.$on('context', (...args) => this.context(...args));
+    this.$root.$on('context', this.context);
+  },
+  beforeDestroy() {
+    this.$root.$off('context', this.context);
   },
   computed: {
     ...mapState({
       width: (state: any) => state.Global.widthWindow,
       notAuthorized: (state: any) => state.Global.notAuthorized,
       me: (state: any) => state.Global.me,
+      contextData: (state: any) => state.Global.contextData,
     }),
     transName() {
       if (this.width > 960) return 'fade';

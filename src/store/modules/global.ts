@@ -12,9 +12,18 @@ const global = {
     item: [] as any[],
     contextPos: [0, 0] as number[],
     me: {} as profileType.getUserData,
+    contextData: {
+      action: '',
+      name: '',
+      id: '',
+      index: 0,
+    } as {action: string, name: string, id: string, index: number},
   },
 
   mutations: {
+    clickedContext(state, items) {
+      state.contextData = { ...items };
+    },
     updateMe(state, i: profileType.getUserData) {
       state.me = i;
     },

@@ -33,7 +33,7 @@ export async function updateCaucus(id: string, data: caucusType.updateCaucus) {
   return resp;
 }
 
-export async function addTurn(id: string, data: caucusType.addTurn) {
+export async function addTurnCaucus(id: string, data: caucusType.addTurn) {
   const res = await request.post(
     `/api/conference/${id}/caucus/turn`,
     JSON.stringify(data),
@@ -54,7 +54,7 @@ export async function nextCaucus(id: string) {
   return res;
 }
 
-export async function delTurn(id: string, index: string | number) {
+export async function delTurnCaucus(id: string, index: string | number) {
   const res = await request.delete(`/api/conference/${id}/caucus/turn/${index}`);
   return res;
 }

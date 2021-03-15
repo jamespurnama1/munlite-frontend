@@ -20,9 +20,8 @@
         ['Asia',
         'Americas',
         'Africa',
-        'Western Europe',
-        'Central & Eastern Europe',
-        'Middle East']]"
+        'Europe',
+        'Oceania']]"
         @sortedData="(data) => {
           delegatesData = data;
         }"
@@ -66,7 +65,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import negara from '@/const/country';
+import negara from '@/const/country.json';
 import { mapState } from 'vuex';
 import Search from '@/components/Search/index.vue';
 // eslint-disable-next-line no-unused-vars
@@ -93,10 +92,8 @@ export default Vue.extend({
   },
   methods: {
     getDelegatesID(name: string): string {
-      const data = negara.filter((obj) => obj.name === name);
-      if (data.length > 0) {
-        return data[0].id;
-      }
+      const data = negara.find((obj) => obj.name === name);
+      if (data) return data['alpha-2'];
       return 'ad';
     },
     sortMethod(
@@ -134,9 +131,20 @@ export default Vue.extend({
       search: string,
     ): delegatesType.getAllDelegates[] {
       let list = items;
+      list.forEach((l: delegatesType.getAllDelegates & {region?: string}) => {
+        const match = negara.find((n) => l.country === n.name);
+        // eslint-disable-next-line no-param-reassign
+        l.region = match?.region;
+        // eslint-disable-next-line no-param-reassign
+        l['alpha-2'] = match!['alpha-2'];
+        // eslint-disable-next-line no-param-reassign
+        l['alpha-3'] = match!['alpha-3'];
+      });
       if (search !== '') {
         list = list.filter(
-          (item) => item.country.toLowerCase().indexOf(search.toLowerCase()) > -1,
+          (item) => item.country.toLowerCase().indexOf(search.toLowerCase()) > -1
+          || item['alpha-2'].toLowerCase().indexOf(search.toLowerCase()) > -1
+          || item['alpha-3'].toLowerCase().indexOf(search.toLowerCase()) > -1,
         );
       }
       if (tags.includes('Present')) {
@@ -147,6 +155,21 @@ export default Vue.extend({
       }
       if (tags.includes('Present & Voting')) {
         list = list.filter((item) => item.status.toLowerCase() === 'present & voting');
+      }
+      if (tags.includes('Asia')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'asia');
+      }
+      if (tags.includes('Africa')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'africa');
+      }
+      if (tags.includes('Americas')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'americas');
+      }
+      if (tags.includes('Europe')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'europe');
+      }
+      if (tags.includes('Oceania')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'oceania');
       }
       return list;
     },

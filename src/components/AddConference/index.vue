@@ -308,8 +308,10 @@ export default Vue.extend({
         // }
       };
     },
-    context([, , email]: any[] = []): void {
-      if (email) this.showConfirm = email;
+    context(): void {
+      if (this.$store.state.Global.contextData.id) {
+        this.showConfirm = this.$store.state.Global.contextData.id;
+      }
     },
     append(string: string): void {
       if (this.newConf && this.newConf[string] !== '' && !this.newConf[string].match(/del/i)) {
@@ -503,10 +505,11 @@ export default Vue.extend({
   },
   created(): void {
     window.onbeforeunload = () => 'Are you sure?';
-    this.$root.$on('context', (...args) => this.context(...args));
+    this.$root.$on('context', this.context);
   },
   beforeDestroy() {
     window.onbeforeunload = () => {};
+    this.$root.$off('context', this.context);
   },
   watch: {
     round: {

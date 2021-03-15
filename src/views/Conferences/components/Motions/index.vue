@@ -81,7 +81,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import negara from '@/const/country';
+import negara from '@/const/country.json';
 import { mapState } from 'vuex';
 // eslint-disable-next-line no-unused-vars
 import { delegatesType, motionsType } from '@/types/api';
@@ -135,10 +135,8 @@ export default Vue.extend({
       return items;
     },
     getDelegatesID(name: string): string {
-      const data = negara.filter((obj) => obj.name === name);
-      if (data.length > 0) {
-        return data[0].id;
-      }
+      const data = negara.find((obj) => obj.name === name);
+      if (data) return data['alpha-2'];
       return 'ad';
     },
   },

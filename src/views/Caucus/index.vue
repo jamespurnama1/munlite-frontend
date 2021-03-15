@@ -148,10 +148,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import {
-  addTurn, currentCaucus, delTurn, nextCaucus, timeLeftCaucus,
+  addTurnCaucus, currentCaucus, delTurnCaucus, nextCaucus, timeLeftCaucus,
 } from '@/api/caucus';
 import { mapState } from 'vuex';
-import negara from '@/const/country';
+import negara from '@/const/country.json';
 import { getAllDelegates } from '@/api/delegates';
 // eslint-disable-next-line no-unused-vars
 import { delegatesType, caucusType, websocketType } from '@/types/api';
@@ -209,10 +209,10 @@ export default Vue.extend({
         vue.toggleActive();
       });
     },
-    context([action, , , index]: any[] = []): void {
-      switch (action) {
+    context(): void {
+      switch (this.contextData.action) {
         case 'Remove From Queue':
-          this.deleteTurn(index);
+          this.deleteTurn(this.contextData.index);
           break;
         case 'View Notes':
           // TODO: view notes
@@ -226,7 +226,7 @@ export default Vue.extend({
     newCountryList(): void {
       const list: any[] = [];
       this.delegatesData.forEach((item) => {
-        let data = negara.filter((e) => e.name === item.country)[0];
+        let data: any = negara.find((e) => e.name === item.country);
         if (data) {
           list.push(data);
         } else {
@@ -300,8 +300,9 @@ export default Vue.extend({
       }, 1000);
     },
     async deleteTurn(index: number): Promise<void> {
+      console.log('deleting turn');
       try {
-        await delTurn(this.$route.params.id, index + 1);
+        await delTurnCaucus(this.$route.params.id, index + 1);
         this.updateCaucus();
       } catch (err) {
         console.error(err.response);
@@ -319,7 +320,7 @@ export default Vue.extend({
         && this.caucusData
         && this.caucusData.length
         < (this.caucusData.motion.total_time / this.caucusData.motion.speaking_time)) {
-          await addTurn(this.$route.params.id, data);
+          await addTurnCaucus(this.$route.params.id, data);
           this.updateCaucus();
         }
         this.showQueue = false;
@@ -376,10 +377,8 @@ export default Vue.extend({
       }
     },
     getDelegatesID(name: string): string {
-      const data = negara.filter((obj) => obj.name === name);
-      if (data.length > 0) {
-        return data[0].id;
-      }
+      const data = negara.find((obj) => obj.name === name);
+      if (data) return data['alpha-2'];
       return 'ad';
     },
     sortCountry(items: any[]): any[] {
@@ -410,7 +409,7 @@ export default Vue.extend({
     },
   },
   async created() {
-    this.$root.$on('context', (...args) => this.context(...args));
+    this.$root.$on('context', this.context);
     try {
       await this.updateDelegatesData();
       await this.updateCaucus();
@@ -425,6 +424,7 @@ export default Vue.extend({
       caucusList: (state: any) => state.Delegates.caucusList,
       widthWindow: (state: any) => state.Global.widthWindow,
       order: (state: any) => state.Socket.message.order,
+      contextData: (state: any) => state.Global.contextData,
     }),
     noNext(): boolean {
       if (this.caucusData
@@ -454,6 +454,7 @@ export default Vue.extend({
   },
   beforeDestroy() {
     document.body.style.overflow = 'auto';
+    this.$root.$off('context', this.context);
   },
 });
 </script>

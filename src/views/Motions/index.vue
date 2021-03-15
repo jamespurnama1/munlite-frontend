@@ -158,7 +158,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import negara from '@/const/country';
+import negara from '@/const/country.json';
 import {
   getMotions,
   deleteMotion,
@@ -230,6 +230,7 @@ export default Vue.extend({
     ...mapState({
       width: (state: any) => state.Global.widthWindow,
       countryList: (state: any) => state.Delegates.countryList,
+      contextData: (state: any) => state.Global.contextData,
     }),
   },
   methods: {
@@ -272,17 +273,17 @@ export default Vue.extend({
       if (this.rules.rounding.match(/up/i)) this.majority = Math.ceil(evaluate(majority));
       else this.majority = Math.floor(evaluate(majority));
     },
-    context([action, , , index]: any[] = []): void {
-      switch (action) {
+    context(): void {
+      switch (this.contextData.action) {
         case 'Start Caucus':
-          this.showConfirm = index;
+          this.showConfirm = this.contextData.index;
           break;
         case 'Edit':
-          this.edit = this.motionsData[index];
+          this.edit = this.motionsData[this.contextData.index];
           this.showModal = true;
           break;
         case 'Delete':
-          this.showConfirm = `del ${index}`;
+          this.showConfirm = `del ${this.contextData.index}`;
           break;
         default:
       }
@@ -317,10 +318,8 @@ export default Vue.extend({
       this.showModal = !this.showModal;
     },
     getDelegatesID(name: string): string {
-      const data = negara.filter((obj) => obj.name === name);
-      if (data.length > 0) {
-        return data[0].id;
-      }
+      const data = negara.find((obj) => obj.name === name);
+      if (data) return data['alpha-2'];
       return 'ad';
     },
     sortMotions(items: motionsType.getMotions[]): motionsType.getMotions[] {
@@ -434,7 +433,7 @@ export default Vue.extend({
     newCountryList(): void {
       const list: { name: string }[] = [];
       this.delegatesData.forEach((item) => {
-        let data: { name: string } = negara.filter((e) => e.name === item.country)[0];
+        let data: any = negara.find((e) => e.name === item.country);
         if (data) {
           list.push(data);
         } else {
@@ -459,9 +458,12 @@ export default Vue.extend({
     },
   },
   created() {
-    this.$root.$on('context', (...args) => this.context(...args));
+    this.$root.$on('context', this.context);
     this.updateMotionsData();
     this.updateConferenceData().then(() => this.updateDelegatesData());
+  },
+  beforeDestroy() {
+    this.$root.$off('context', this.context);
   },
 });
 </script>

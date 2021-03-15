@@ -14,7 +14,7 @@ export async function yieldGSL(id: string, data: gslType.yieldGSL) {
   return resp;
 }
 
-export async function addTurn(id: string, data: gslType.addTurn) {
+export async function addTurnGSL(id: string, data: gslType.addTurn) {
   const res = await request.post(
     `/api/conference/${id}/gsl`,
     JSON.stringify(data),
@@ -22,12 +22,12 @@ export async function addTurn(id: string, data: gslType.addTurn) {
   return res;
 }
 
-export async function getTurn(id: string, turn: string | number) {
+export async function getTurnGSL(id: string, turn: string | number) {
   const resp = await request.get(`/api/conference/${id}/gsl/${turn}`);
   return resp;
 }
 
-export async function delTurn(id: string, turn: string | number) {
+export async function delTurnGSL(id: string, turn: string | number) {
   const resp = await request.delete(`/api/conference/${id}/gsl/${turn}`);
   return resp;
 }

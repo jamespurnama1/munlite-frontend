@@ -29,7 +29,7 @@
 <script lang="ts">
 import { Vue, Watch, Component } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import negara from '@/const/country';
+import negara from '@/const/country.json';
 
 @Component
 export default class Context extends Vue {
@@ -60,15 +60,19 @@ export default class Context extends Vue {
   }
 
   click(item) {
-    this.$root.$emit('context', [item, this.nameItem, this.idItem, this.index]);
+    this.$store.commit('clickedContext', {
+      action: item,
+      name: this.nameItem,
+      id: this.idItem,
+      index: this.index,
+    });
+    this.$root.$emit('context');
     this.$store.dispatch('resetContext');
   }
 
   getDelegatesID = (name: string) => {
-    const data = negara.filter((obj) => obj.name === name);
-    if (data.length > 0) {
-      return data[0].id;
-    }
+    const data = negara.find((obj) => obj.name === name);
+    if (data) return data['alpha-2'];
     return 'ad';
   }
 

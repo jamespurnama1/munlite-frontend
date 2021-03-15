@@ -56,9 +56,8 @@
                 ['Asia',
                 'Americas',
                 'Africa',
-                'Western Europe',
-                'Central & Eastern Europe',
-                'Middle East']]"
+                'Europe',
+                'Oceania']]"
               @sortedData="(data) => {
                 delegatesData = data
               }"
@@ -73,7 +72,8 @@
             >
               <p class="name">
                 <span
-                :class="`flag-icon img flag-icon-${getDelegatesID(data.country).toLowerCase()}`" />
+                :class="`flag-icon img flag-icon-${getDelegatesID(data.country).toLowerCase()}`"
+                />
                 {{ data.country }}
               </p>
               <p class="presence">{{ data.status }}</p>
@@ -134,7 +134,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getAllDelegates, deleteDelegates } from '@/api/delegates';
 import { getConference } from '@/api/conference';
-import negara from '@/const/country';
+import negara from '@/const/country.json';
 import Confirmation from '@/components/Confirmation/index.vue';
 import { mapState } from 'vuex';
 import Search from '@/components/Search/index.vue';
@@ -182,6 +182,7 @@ export default Vue.extend({
     ...mapState({
       width: (state: any) => state.Global.widthWindow as number,
       delStore: (state: any) => state.Delegates.delegates as delegatesType.getAllDelegates[],
+      contextData: (state: any) => state.Global.contextData,
     }),
     info(): {[key: string]: number} {
       const present = this.delStore.filter((obj) => obj.status.toLowerCase() === 'present');
@@ -233,14 +234,25 @@ export default Vue.extend({
       });
     },
     filterMethod(
-      items: delegatesType.getAllDelegates[],
+      items: delegatesType.getAllDelegates[] & {region?: string}[],
       tags: string[],
       search: string,
     ): delegatesType.getAllDelegates[] {
       let list = items;
+      list.forEach((l: delegatesType.getAllDelegates & {region?: string}) => {
+        const match = negara.find((n) => l.country === n.name);
+        // eslint-disable-next-line no-param-reassign
+        l.region = match?.region;
+        // eslint-disable-next-line no-param-reassign
+        l['alpha-2'] = match!['alpha-2'];
+        // eslint-disable-next-line no-param-reassign
+        l['alpha-3'] = match!['alpha-3'];
+      });
       if (search !== '') {
         list = list.filter(
-          (item) => item.country.toLowerCase().indexOf(search.toLowerCase()) > -1,
+          (item) => item.country.toLowerCase().indexOf(search.toLowerCase()) > -1
+          || item['alpha-2'].toLowerCase().indexOf(search.toLowerCase()) > -1
+          || item['alpha-3'].toLowerCase().indexOf(search.toLowerCase()) > -1,
         );
       }
       if (tags.includes('Present')) {
@@ -251,6 +263,21 @@ export default Vue.extend({
       }
       if (tags.includes('Present & Voting')) {
         list = list.filter((item) => item.status.toLowerCase() === 'present & voting');
+      }
+      if (tags.includes('Asia')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'asia');
+      }
+      if (tags.includes('Africa')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'africa');
+      }
+      if (tags.includes('Americas')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'americas');
+      }
+      if (tags.includes('Europe')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'europe');
+      }
+      if (tags.includes('Oceania')) {
+        list = list.filter((item: any) => item.region.toLowerCase() === 'oceania');
       }
       return list;
     },
@@ -285,8 +312,8 @@ export default Vue.extend({
       });
       return items;
     },
-    context([action, , , index]: any[] = []): void {
-      switch (action) {
+    context(): void {
+      switch (this.contextData.action) {
         case 'Present':
           // change presence
           break;
@@ -294,7 +321,7 @@ export default Vue.extend({
           // view notes
           break;
         case 'Delete':
-          this.showConfirm = index;
+          this.showConfirm = this.contextData.index;
           break;
         default:
       }
@@ -328,10 +355,8 @@ export default Vue.extend({
       this.newCountry = '';
     },
     getDelegatesID(name: string): string {
-      const data = negara.filter((obj) => obj.name === name);
-      if (data.length > 0) {
-        return data[0].id;
-      }
+      const data = this.negara.find((obj) => obj.name === name);
+      if (data) return data['alpha-2'];
       return 'ad';
     },
     sortCountry(items: delegatesType.getAllDelegates[]): delegatesType.getAllDelegates[] {
@@ -389,7 +414,7 @@ export default Vue.extend({
     },
   },
   async created() {
-    this.$root.$on('context', (...args) => this.context(...args));
+    this.$root.$on('context', this.context);
     if (this.delStore) this.sortCountry(this.delStore); // TODO: localstorage cache & loading
     this.updateDelegatesData();
     this.key += 1;
@@ -402,6 +427,9 @@ export default Vue.extend({
     } catch (err) {
       console.error(err);
     }
+  },
+  beforeDestroy() {
+    this.$root.$off('context', this.context);
   },
   mounted() {
     if (this.$el.querySelector('.info')) this.infoHeight = this.$el.querySelector('.info')!.clientHeight;
