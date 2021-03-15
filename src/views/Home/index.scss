@@ -1,8 +1,8 @@
 #Home {
-  margin: auto;
-  width: 90%;
+  margin: 0 auto;
+  width: calc(100% - 4rem);
+  flex-grow: 1;
   padding: 3% 0;
-  margin-bottom: 4rem;
   
   .upper {
     display: flex;
@@ -76,8 +76,6 @@
       padding: 1rem;
       height: fit-content;
       border-radius: 15px;
-      -webkit-box-shadow: 0px 0px 20px 0px rgba(98,123,247,0.7);
-      -moz-box-shadow: 0px 0px 20px 0px rgba(98,123,247,0.7);
       box-shadow: 0px 0px 20px 0px rgba(98,123,247,0.7);
       cursor: pointer;
 
@@ -177,10 +175,16 @@
     }
 
     .conferences {
-      width: 40%;
+      width: 30%;
+      border: 1px solid $light-grey;
+      border-radius: 20px/20px;
+      padding: 15px;
+      min-width: 350px;
       
       @include max-media(tablet) {
         width: 100%;
+        box-sizing: border-box;
+        min-width: 0;
       }
 
       .sub-title {
@@ -188,6 +192,7 @@
         flex-direction: row;
         align-content: center;
         margin-bottom: 1rem;
+        justify-content: space-between;
 
         button {
           margin-left: 1rem;
@@ -199,6 +204,7 @@
 
           @include max-media(mobile) {
             font-size: 14px;
+            border-radius: 10px/10px;
           }
         }
       }
@@ -244,6 +250,20 @@
             display: flex;
             flex-direction: row;
             align-items: center;
+            
+            span {
+              display: flex;
+              align-items: center;
+
+              .badge {
+                margin-left: 1em;
+                border-radius: 10px/10px;
+                border: 1px solid $blue;
+                padding: 3px 5px;
+                color: $blue;
+                font-size: .5em;
+              }
+            }
           }
 
           .started-time {
@@ -274,17 +294,18 @@
         }
       }
     }
-    
+  }
 
-
+  .modal {
+    z-index: 205;
   }
 }
 
-.button {
-  padding: 5px 10px;
-  border: 1px solid $light-grey;
-  background-color: white;
-  border-radius: 15px;
-  font-family: 'Open Sans';
-  cursor: pointer;
-}
+// .button {
+//   padding: 5px 10px;
+//   border: 1px solid $light-grey;
+//   background-color: white;
+//   border-radius: 15px;
+//   font-family: 'Open Sans';
+//   cursor: pointer;
+// }

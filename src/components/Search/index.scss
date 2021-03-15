@@ -1,0 +1,98 @@
+.search {
+  position: relative;
+
+  span {
+    margin-top: 1em;
+    display: flex;
+    align-items: center;
+
+    .input {
+      flex-grow: 1;
+      margin-right: 1em;
+
+      .containBadge {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-left: 10px;
+
+        .badge {
+          margin-left: 1em;
+          border-radius: 10px/10px;
+          border: 1px solid $blue;
+          padding: 3px 5px;
+          color: $blue;
+          font-size: .5em;
+
+          &:first-child {
+            margin-left: 0;
+          }
+        }
+      }
+    }
+
+    svg {
+      margin-right: 1em;
+      cursor: pointer;
+
+      &:hover {
+        color: $blue;
+      }
+    }
+  }
+
+  .filter {
+    position: absolute;
+    right: 0;
+    z-index: 20;
+    background-color: white;
+    border-radius: 15px/15px;
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+    width: fit-content;
+    transform-origin: top right;
+    max-height: 30vh;
+    overflow: auto;
+  }
+
+  .sort {
+    position: absolute;
+    right: 1em;
+    z-index: 20;
+    background-color: white;
+    border-radius: 15px/15px;
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+    width: fit-content;
+    transform-origin: top center;
+    max-height: 30vh;
+    overflow: auto;
+  }
+
+  li {
+    cursor: pointer;
+    list-style-type: none;
+    padding: 10px;
+    @include transition(.3s, ease);
+
+    &:hover {
+      background-color: rgba(95, 120, 255, 0.2);
+    }
+
+    &:first-child {
+      border-radius: 15px 15px 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 15px 15px;
+    }
+
+    &.sel {
+      color: white;
+      background-color: $blue;
+    }
+
+    svg {
+      margin-left: 1em;
+    }
+  }
+}

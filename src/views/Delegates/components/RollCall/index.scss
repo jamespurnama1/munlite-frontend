@@ -2,14 +2,12 @@
   display: flex;
   flex-direction: column;
   width: 40vw;
-  height: 65vh;
-  min-width: 500px;
+  height: 55vh;
+  min-width: 450px;
   min-height: 375px;
   padding: 20px;
   background-color: white;
   border-radius: 20px/20px;
-  -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
 
   @include max-media(small-tablet) {
@@ -19,6 +17,7 @@
   @include max-media(mobile-landscape) {
     width: 75vw;
     min-width: 265px;
+    height: 75vh;
   }
 
   @media only screen and (max-width: 300px) {
@@ -43,15 +42,38 @@
       justify-content: space-between;
     }
 
-    .left {
-      position: absolute;
-      bottom: 13%;
-      right: 5%;
+    #wrapper {
+      position: relative;
+      width: 70%;
+      height: 100%;
+      box-sizing: border-box;
 
       @include max-media(mobile-landscape) {
-        top: 5%;
-        bottom: intial;
-        right: initial;
+        width: 100%;
+        height: 65%;
+        padding: 0;
+      }
+
+      &:before {
+        content: '';
+        background: linear-gradient(rgb(255, 255, 255), rgba(255, 255, 255, 0));
+        z-index: 6;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 25%;
+        pointer-events: none;
+      }
+
+      &:after {
+        content: '';
+        background: linear-gradient(rgba(255, 255, 255, 0), rgb(255, 255, 255));
+        z-index: 6;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 25%;
+        pointer-events: none;
       }
     }
 
@@ -72,7 +94,7 @@
           "top top top"
           "botL . botR";
         width: 100%;
-        height: 25%;
+        height: 6rem;
         margin: 0 auto;
       }
 
@@ -137,7 +159,7 @@
       font-size: 12px;
     }
     
-    @include max-media(mobile-landscape) {
+    @include max-media(mobile) {
       font-size: 10px;
     }
   }
@@ -148,9 +170,9 @@
     align-items: center;
     margin-bottom: 10px;
     border-radius: 10px/10px;
-    padding: 5px 10px;
+    padding: 10px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 20px;
+    font-size: 1rem;
     background-color: white;
     border: 1px solid $light-grey;
     cursor: pointer;
@@ -158,7 +180,7 @@
 
     @include max-media(mobile-landscape) {
       width: 30%;
-      font-size: 10px;
+      font-size: 12px;
     }
   
     @include max-media(small-tablet) {
@@ -173,6 +195,10 @@
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    &:focus {
+      outline: none;
     }
 
     &.red {
@@ -209,25 +235,6 @@
 
       &:focus {
         outline: none;
-      }
-    }
-  }
-
-  .cardList {
-    display: grid;
-    grid-template-columns: 1fr 250px;
-    grid-template-rows: 1fr;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    height: 100%;
-
-    .cardWrapper {
-      position: sticky;
-      top: 0.75em;
-      transform-origin: center top;
-
-      & ~ .cardWrapper {
-        transform: translateY(-50%);
       }
     }
   }

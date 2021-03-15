@@ -5,8 +5,8 @@
       </a>
       <h2>Roll Call</h2>
       <h3>Voting</h3>
-      <p v-if="$store.getters.getWidthWindow < 600">Swipe to view more</p>
-      <div class="info" v-if="$store.getters.getWidthWindow > 600">
+      <p v-if="width < 600">Swipe to view more</p>
+      <div class="info" v-if="width > 600">
         <PresenceInfo :info="info"/>
         <div class="line" />
         <OtherInfo :rulesData="rulesData"/>
@@ -19,13 +19,13 @@
       <div id="select">
         <div class="selection">
           <input class="input blue" type="number" min="0"
-          :max="this.delegatesData.length - this.no"
+          :max="this.info['Total Present'] - this.no"
           v-model.number="yes">
           <h2 class="blue">Yes</h2>
         </div>
         <div class="selection">
           <input class="input red" type="number" min="0"
-          :max="this.delegatesData.length - this.yes"
+          :max="this.info['Total Present'] - this.yes"
           v-model.number="no">
           <h2 class="red">No</h2>
         </div>
@@ -49,20 +49,22 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { gsap } from 'gsap';
+import { mapState } from 'vuex';
 import PresenceInfo from './components/PresenceInfo.vue';
 import OtherInfo from './components/OtherInfo.vue';
 
-export default {
+export default Vue.extend({
   components: {
     PresenceInfo,
     OtherInfo,
   },
   data() {
     return {
-      yes: 0,
-      no: 0,
+      yes: 0 as number,
+      no: 0 as number,
     };
   },
   props: {
@@ -71,22 +73,25 @@ export default {
     rulesData: Object,
   },
   computed: {
-    vote() {
+    ...mapState({
+      width: (state: any) => state.Global.widthWindow,
+    }),
+    vote(): boolean {
       if (this.no > this.yes) {
         return true;
       }
       return false;
     },
-    left() {
-      return this.delegatesData.length - (this.yes + this.no);
+    left(): number {
+      return this.info['Total Present'] - (this.yes + this.no);
     },
   },
   methods: {
-    swipeHandler(direction) {
-      const swipe = document.querySelector('.swipe:first-child');
-      const swipe2 = document.querySelector('.swipe:last-child');
+    swipeHandler(direction: string): void {
+      const swipe: HTMLElement | null = document.querySelector('.swipe:first-child');
+      const swipe2: HTMLElement | null = document.querySelector('.swipe:last-child');
       if (direction === 'left') {
-        if (swipe2.classList.contains('active')) {
+        if (swipe2 && swipe2.classList.contains('active')) {
           gsap.set(swipe, {
             x: '100%',
           });
@@ -99,7 +104,7 @@ export default {
           x: '-=100%',
         });
       } else if (direction === 'right') {
-        if (swipe2.classList.contains('active')) {
+        if (swipe2 && swipe2.classList.contains('active')) {
           gsap.set(swipe, {
             x: '-100%',
           });
@@ -112,25 +117,24 @@ export default {
           x: '+=100%',
         });
       }
-      swipe.classList.toggle('active');
-      swipe2.classList.toggle('active');
+      if (swipe) swipe.classList.toggle('active');
+      if (swipe2) swipe2.classList.toggle('active');
     },
   },
   watch: {
     left() {
       if (this.vote && this.no !== this.yes) {
-        this.$refs.indicator.style.cssText = 'opacity: 1; left: 55%; background-color: rgba(255,95,95,0.2);';
+        (this.$refs.indicator as HTMLElement).style.cssText = 'opacity: 1; left: 55%; background-color: rgba(255,95,95,0.2);';
       } else if (!this.vote && this.no !== this.yes) {
-        this.$refs.indicator.style.cssText = 'opacity: 1; left: 5%; background-color: rgba(95,120,255,0.2);';
+        (this.$refs.indicator as HTMLElement).style.cssText = 'opacity: 1; left: 5%; background-color: rgba(95,120,255,0.2);';
       } else if (this.no === this.yes) {
-        this.$refs.indicator.style.cssText = 'opacity: 0; left: 30%; background-color: rgba(255,255,255,0.2);';
+        (this.$refs.indicator as HTMLElement).style.cssText = 'opacity: 0; left: 30%; background-color: rgba(255,255,255,0.2);';
       }
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/index.scss';
 @import './index.scss';
 </style>

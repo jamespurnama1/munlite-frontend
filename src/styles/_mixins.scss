@@ -1,7 +1,19 @@
 @mixin transition($type, $duration) {
-  -webkit-transition: all $duration $type;
-  -moz-transition: all $duration $type;
-  -ms-transition: all $duration $type;
-  -o-transition: all $duration $type;
-  transition: all $duration $type;
+    transition: all $duration $type;
 }
+
+@function z($name) {
+    @if index($z-indexes, $name) {
+        @return (length($z-indexes) - index($z-indexes, $name)) + 1;
+    } @else {
+        @warn 'There is no item "#{$name}" in this list; choose one of: #{$z-indexes}';
+        @return null;
+    }
+}
+$z-indexes: (
+    "outdated-browser",
+    "modal",
+    "site-header",
+    "page-wrapper",
+    "site-footer"
+);

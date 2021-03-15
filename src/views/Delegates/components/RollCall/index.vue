@@ -6,12 +6,16 @@
     <h2>Roll Call</h2>
     <p>Scroll to move up &amp; down</p>
     <div id='call'>
-      <CardStack
-      :progress="`presence`"
-      :desc="`presence`"
-      :delegates="delegatesData"
-      :active="currentCountry"
-      @move="move" />
+      <div id="wrapper">
+        <CardStack
+          :progress="`presence`"
+          :desc="`presence`"
+          :delegates="delegatesData"
+          :display="currentCountry"
+          @move="move"
+          class="left"
+        />
+      </div>
       <div id='selection'>
         <div id='select'>
           <button @click="presence('Present')">
@@ -35,56 +39,64 @@
         <button @click="$parent.$emit('stage', 2)"
         :disabled="voteCount !== delegatesData.length"
         id="continue">
-          <p>Continue</p>
+          Continue
         </button>
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+// eslint-disable-next-line no-unused-vars
+import Vue, { PropType } from 'vue';
 import { editDelegates, getAllDelegates } from '@/api/delegates';
 import CardStack from '@/components/CardStack/index.vue';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType } from '@/types/api';
 
-export default {
+export default Vue.extend({
   components: {
     CardStack,
   },
   data() {
     return {
-      button: 'Present &amp;&nbsp;Voting',
-      voteCount: 0,
-      currentCountry: 0,
+      button: 'Present &amp;&nbsp;Voting' as string,
+      voteCount: 0 as number,
+      currentCountry: 0 as number,
     };
   },
   props: {
-    delegatesData: Array,
+    delegatesData: Array as PropType<delegatesType.getAllDelegates[]>,
   },
   methods: {
-    async presence(j) {
-      const i = this.currentCountry;
+    async presence(j: string): Promise<void> {
       try {
         const data = {
-          country: this.delegatesData[i].country,
+          country: this.delegatesData[this.currentCountry].country,
           status: j,
         };
-        await editDelegates(this.$route.params.id, data);
+        await editDelegates(
+          this.$route.params.id,
+          this.delegatesData[this.currentCountry]._id,
+          data,
+        );
         this.$emit('update');
         this.getVoteCount();
       } catch (err) {
         console.error(err);
       }
-      this.$children[0].goNext();
+      this.move(this.currentCountry + 1);
     },
-    move(index) {
-      const j = Math.min(Math.max(parseInt(index, 10), 0), this.delegatesData.length - 1);
+    move(index: number): void {
+      const j = Math.min(Math.max(parseInt(index.toString(), 10), 0),
+        this.delegatesData.length - 1);
       this.currentCountry = j;
     },
-    async getVoteCount() {
+    async getVoteCount(): Promise<void> {
       const vote = await getAllDelegates(this.$route.params.id);
-      this.voteCount = (vote.data.data.filter((obj) => obj.status !== 'N/A')).length;
+      this.voteCount = (vote.data.data.filter((obj: delegatesType.getAllDelegates) => obj.status !== 'N/A')).length;
     },
-    decoder(str) { // Vue workaround for &nbsp;
+    decoder(str: string): string { // Vue workaround for &nbsp;
       const textArea = document.createElement('textarea');
       textArea.innerHTML = str;
       return textArea.value;
@@ -93,10 +105,9 @@ export default {
   created() {
     this.getVoteCount();
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/index.scss';
 @import './index.scss'
 </style>

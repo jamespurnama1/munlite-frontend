@@ -8,30 +8,52 @@
     </div>
     <div class="mid">
       <div class="left">
-        <div class="profile-pic" :style="`background-image: url('${defImg}')`" >
+        <div class="profile-pic" :class="{ noBG: getDelegatesID(newCountry.name) !== 'none'}">
           <span class="cam-logo">
             <font-awesome-icon :icon="['fas', 'camera']" size="lg" />
           </span>
           <span>Change Image</span>
           <input type="file" name="myImage" accept="image/*" class="inputimage"/>
+          <transition name="fade">
+            <span
+              v-if="getDelegatesID(newCountry.name) !== 'none'"
+              :class="`flag-icon img flag-icon-${getDelegatesID(newCountry.name).toLowerCase()}`"
+            />
+          </transition>
         </div>
       </div>
       <div class="right">
-        <label>Name</label>
-        <Autocomplete :items="items" @onchangeCountry="onchangeCountry"/>
-        <label>Short Name</label>
-        <input type="text" placeholder="Short Name" v-model="newCountry.short"/>
+        <Autocomplete
+          :class="{error: err}"
+          :items="items"
+          @onchangeCountry="onchangeCountry"
+          @enter="addNewCountry()"
+          class="country"/>
+        <p class="err" v-if="err">{{ err }}</p>
+        <div class="input">
+          <input
+            placeholder=" "
+            v-model="newCountry.short"
+            v-shortkey="{enter: ['enter']}"
+            @shortkey.stop="addNewCountry"
+          >
+          <label>Short Name</label>
+        </div>
       </div>
     </div>
     <button @click="addNewCountry()">Add</button>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
+import negara from '@/const/country.json';
 import { addDelegates } from '@/api/delegates';
+// eslint-disable-next-line no-unused-vars
+import { delegatesType } from '@/types/api';
 import Autocomplete from '@/components/Autocomplete/index.vue';
 
-export default {
+export default Vue.extend({
   name: 'AddDelegates',
   components: {
     Autocomplete,
@@ -41,48 +63,57 @@ export default {
   },
   data() {
     return {
-      imageDel: null,
+      imageDel: null as null,
       newCountry: {
-        name: null,
-        short: null,
+        name: '' as string,
+        short: '' as string,
       },
+      err: '' as string,
     };
   },
-  computed: {
-    defImg() {
-      // eslint-disable-next-line global-require
-      return require('../../../../assets/img/home.png');
-    },
-  },
+  // computed: {
+  //   defImg() {
+  //     return require('../../../../assets/img/home.png');
+  //   },
+  // },
   methods: {
-    exit() {
+    getDelegatesID(name: string): string {
+      const data = negara.find((obj) => obj.name === name);
+      if (data) return data['alpha-2'];
+      return 'none';
+    },
+    exit(): void {
       this.$emit('exit');
     },
-    onchangeCountry(country) {
+    onchangeCountry(country): void {
+      this.err = '';
       this.newCountry.name = country;
     },
-    async addNewCountry() {
+    async addNewCountry(): Promise<void> {
       try {
         if (this.newCountry.name.length > 0) {
-          const data = [{
+          const data: delegatesType.addDelegates[] = [{
             country: this.newCountry.name,
             status: 'N/A',
           }];
           await addDelegates(this.$route.params.id, data);
           this.$emit('update');
 
-          this.newCountry = '';
+          this.newCountry = {
+            name: '',
+            short: '',
+          };
           this.$emit('exit');
         }
       } catch (err) {
-        console.error(err);
+        this.err = err.response.data.error.message;
+        console.error(err.response);
       }
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/index.scss';
 @import './index.scss';
 </style>

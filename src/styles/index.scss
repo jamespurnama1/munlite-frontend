@@ -1,52 +1,8 @@
-@import "colors";
-@import "breakpoints";
-@import "fonts";
-@import "mixins";
-@import "transitions";
-$flag-icon-css-path: '~flag-icon-css/flags';
-@import '~flag-icon-css/sass/flag-icon.scss';
-
-.overlay {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255,255,255,0.65);
-  z-index: 3;
-  -webkit-transition: .5s ease-in-out;
-  -moz-transition: .5s ease-in-out;
-  -o-transition: .5s ease-in-out;
-  transition: .5s ease-in-out;
-}
-
-// SCROLLBAR
-::-webkit-scrollbar {
-  width: 7px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #f1f1f1; 
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888; 
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555; 
-}
-
-textarea,
-input.text,
-input[type="text"],
-input[type="button"],
-input[type="submit"]{
-  -webkit-appearance: none;
-  border-radius: 0;
-}
+@forward "colors";
+@forward "breakpoints";
+@forward "fonts";
+@forward "mixins";
+@forward "transitions";
+@forward '~flag-icon-css/sass/flag-icon.scss' with (
+  $flag-icon-css-path: '~flag-icon-css/flags' !default,
+);

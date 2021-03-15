@@ -1,0 +1,328 @@
+.wrap {
+    display: flex;
+    grid-area: right;
+    width: 100%;
+    flex: 1 1 auto;
+    // border-top: 1px solid $light-grey;
+    flex-direction: column;
+
+    @include max-media(tablet) {
+      grid-area: left;
+      border: 0;
+      height: calc(100vh - 4.6em);
+    }
+
+  .upper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
+    height: 110px;
+
+    @include max-media(tablet) {
+      will-change: box-shadow transform;
+      position: absolute;
+      top: 0;
+      padding: 0 5%;
+      width: 100%;
+      z-index: 2;
+      background-color: white;
+      transform-origin: top center;
+      border-radius: 0 0 15px 15px;
+    }
+  
+    .left {
+      will-change: transform;
+      display: flex;
+      align-items: center;
+      transform-origin: top left;
+  
+      img {
+        height: 3em;
+        width: 3em;
+        border-radius: 50%;
+        margin: 0 .5em 0 1em;
+      }
+    }
+    .right {
+      will-change: opacity transform;
+      margin: 10px;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      transform-origin: top right;
+
+      &.take {
+        cursor: pointer;
+        position: absolute;
+        right: 5%;
+        flex-direction: row;
+        align-items: center;
+        transform-origin: bottom right;
+
+        svg {
+          margin-left: 5px;
+        }
+      }
+
+      button:first-child {
+        margin-bottom: .5em;
+      }
+    }
+  }
+
+  .details {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    flex-grow: 1;
+    overflow: hidden;
+    
+    @include max-media(mobile) {
+      flex-direction: column;
+      height: initial;
+    }
+
+    @include max-media(tablet) {
+      margin-top: 110px;
+      overflow: initial;
+    }
+
+    h4 {
+      font-size: 1.5em;
+    }
+
+    .ongoing {
+      will-change: transform;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      background-color: $blue;
+      display: flex;
+      width: 90%;
+      color: white;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0px 0px 20px 0px rgba(95,120,255,1);
+      padding: 10px 15px;
+      border-radius: 0 0 15px 15px;
+
+      @include max-media(tablet) {
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 0 0 10px 10px;
+      }
+
+      @include max-media(mobile) {
+        font-size: 0.8em;
+      }
+
+      .take {
+        cursor: pointer;
+      }
+    }
+
+    .offset {
+        padding-top: 3em;
+    }
+
+    .left {
+      width: 80%;
+      @include transition(.5s, ease);
+
+      @include max-media(mobile) {
+        width: 100%;
+      }
+
+      .chair {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid $light-grey;
+        border-radius: 15px/15px;
+        min-height: 250px;
+
+        @include max-media(mobile) {
+          min-height: 0;
+        }
+
+        h3 {
+          margin-bottom: 1em;
+        }
+
+        li {
+          list-style-type: none;
+          display: flex;
+          align-items: center;
+          margin: 1em 0;
+
+          img {
+            width: 2.5em;
+            height: 2.5em;
+            border-radius: 50% / 50%;
+            margin-right: .5em;
+          }
+        }
+      }
+
+      .rules {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid $light-grey;
+        border-radius: 15px/15px;
+
+        .title {
+          grid-area: title;
+          margin-bottom: .5em;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-areas:  'title title'
+                                'one two'
+                                'three four';
+          margin: 0 auto;
+          width: 70%;
+
+          @include max-media(mobile) {
+            width: 85%;
+          }
+
+          @include max-media(small-mobile) {
+            width: fit-content;
+            grid-template-areas: 'title'
+                                'one'
+                                'two'
+                                'three'
+                                'four';
+          }
+
+          div {
+            margin-bottom: 10px;
+            width: fit-content;
+
+            &:first-child {
+              grid-area: one;
+            }
+            &:nth-child(2) {
+              grid-area: two;
+            }
+            &:nth-child(3) {
+              grid-area: three;
+            }
+            &:nth-child(4) {
+              grid-area: four;
+
+              p {
+                text-align: center;
+              }
+            }
+
+            span {
+              display: flex;
+              align-items: center;
+              white-space: pre-wrap;
+            }
+          }
+        }
+      }
+    }
+
+    .right {
+      @include transition(.5s, ease);
+      
+      .exportEdit {
+        margin: 10px;
+        display: flex;
+        justify-content: space-between;
+
+        button:first-child {
+          margin-right: 1em;
+        }
+      }
+
+      .others {
+        min-height: 385px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid $light-grey;
+        border-radius: 15px/15px;
+        flex-wrap: wrap;
+
+        @include max-media(mobile) {
+          flex-direction: row;
+          margin-top: 0;
+          min-height: 0;
+        }
+
+        div {
+          white-space: pre-wrap;
+
+          @include max-media(mobile) {
+          margin: 1em;
+        }
+
+          span {
+            display: flex;
+            align-items: center;
+            margin-bottom: .5em;
+
+          }
+
+          button {
+            padding: 5px 10px;
+          }
+        }
+      }
+    }
+  }
+
+  .select {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+
+    p, h2 {
+      text-align: left;
+      width: 40%;
+    }
+
+    img {
+      position: absolute;
+      bottom: -5%;
+      right: -5%;
+      height: 35%;
+      width: auto;
+    }
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 15px;
+    background-color: white;
+    border: 1px solid $light-grey;
+    border-radius: 15px/15px;
+    cursor: pointer;
+    @include transition(.3s, ease);
+
+    svg {
+      margin-left: .5em;
+    }
+
+    &:hover {
+      border: 1px solid white;
+      box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.30);
+    }
+  }
+}

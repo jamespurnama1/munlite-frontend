@@ -12,8 +12,6 @@
   align-items: center;
   padding: 3rem 5%;
   border-radius: 15px;
-  -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
-  -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
   box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
 
   @include max-media(mobile) {
@@ -22,7 +20,8 @@
   
 
   img {
-    width: 60%;
+    width: 20vw;
+    height: auto;
     min-width: 10rem;
     max-width: 20rem;
     margin-bottom: 2rem;
@@ -35,26 +34,10 @@
     margin-bottom: 1rem;
     max-width: 400px;
 
-    input {
-      border: 1px solid #D1D1D1;
-      padding: 10px;
+    .input {
       margin-bottom: 1rem;
-      font-family: 'Open Sans';
-      font-size: 12px;
 
-      &::placeholder {
-        color: #D1D1D1;
-      }
-
-      &.checked {
-        margin-right: 10px;
-      }
-
-      @include max-media(mobile) {
-        font-size: 10px;
-      }
     }
-
     .errmsg {
       text-align: center;
       color: $red;
@@ -71,8 +54,6 @@
     flex-direction: column;
 
     input {
-      -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
-      -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
       box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.16);
       background-color: $blue;
       color: white;
@@ -86,8 +67,6 @@
       @include transition(ease, .5s);
 
       &:hover {
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.72);
-        -moz-box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.72);
         box-shadow: 0px 0px 20px 0px rgba(95,120,255,0.72);
       }
 

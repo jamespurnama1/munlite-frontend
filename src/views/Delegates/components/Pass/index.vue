@@ -5,7 +5,7 @@
     </a>
     <h1>The Motion Passes!</h1>
     <h3>The debate is now open.</h3>
-    <router-link to="/gsl">
+    <router-link :to="`/gsl/${$route.params.id}`">
       <button>
         Speakers List ({{ countdown }})
       </button>
@@ -13,15 +13,18 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
+  name: 'Pass',
   data() {
     return {
-      countdown: 5,
+      countdown: 5 as number,
     };
   },
   methods: {
-    countdownTimer() {
+    countdownTimer(): void {
       if (this.countdown > 0) {
         const cd = setTimeout(() => {
           this.countdown -= 1;
@@ -36,23 +39,22 @@ export default {
   created() {
     this.countdownTimer();
   },
-  beforeDestroyed() {
+  beforeDestroy() {
     this.$emit('clear');
   },
   watch: {
     countdown() {
       if (this.countdown === 0) {
-        document.querySelector('body').style.removeProperty('height');
-        document.querySelector('body').style.removeProperty('width');
-        document.querySelector('body').style.removeProperty('overflow');
-        this.$router.push('/gsl');
+        (document.querySelector('body') as HTMLElement).style.removeProperty('height');
+        (document.querySelector('body') as HTMLElement).style.removeProperty('width');
+        (document.querySelector('body') as HTMLElement).style.removeProperty('overflow');
+        this.$router.push(`/gsl/${this.$route.params.id}`).catch(() => {});
       }
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/index.scss';
 @import './index.scss'
 </style>

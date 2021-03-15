@@ -2,34 +2,51 @@
   <div class="regist-login">
     <img src="@/assets/img/logo_alt@2x.png" />
     <form class="form-data" @submit.prevent="formSubmission()">
+      <div class="input" v-if="$route.path != '/login' && $route.path !='signup'">
       <input
-        type="text"
-        v-if="$route.path != '/login' && $route.path !='signup'"
         v-model="formData.first"
-        placeholder="First Name"
-        required
-      />
-      <input
         type="text"
-        v-if="$route.path != '/login' && $route.path !='signup'"
+        placeholder=" "
+        autocomplete="given-name"
+        required>
+      <label>First Name</label>
+    </div>
+    <div class="input" v-if="$route.path != '/login' && $route.path !='signup'">
+      <input
         v-model="formData.last"
-        placeholder="Last Name"
-        required
-      />
+        type="text"
+        placeholder=" "
+        autocomplete="family-name"
+        required>
+      <label>Last Name</label>
+    </div>
+    <div class="input">
       <input
-        type="email"
         v-model="formData.email"
-        placeholder="E-mail"
-        required
-      />
-      <input type="password" v-model="formData.password" placeholder="Password" required/>
+        type="email"
+        placeholder=" "
+        autocomplete="email"
+        required>
+      <label>E-mail</label>
+    </div>
+    <div class="input">
       <input
+        v-model="formData.password"
         type="password"
-        v-if="$route.path != '/login' && $route.path !='signup'"
+        placeholder=" "
+        :autocomplete="pass"
+        required>
+      <label>Password</label>
+    </div>
+    <div class="input" v-if="$route.path != '/login' && $route.path !='signup'">
+      <input
         v-model="formData.confirm"
-        placeholder="Confirm Password"
-        required
-      />
+        type="password"
+        placeholder=" "
+        autocomplete="new-password"
+        required>
+      <label>Confirm Password</label>
+    </div>
       <p class="errmsg">{{ errorMessage }}</p>
       <div class="buttons">
         <input type="submit" v-if="$route.path =='/signup'" @click="signup()"
@@ -48,27 +65,41 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
   name: 'RegisterLogin',
   data() {
     return {
       formData: {
-        first: '',
-        last: '',
-        email: '',
-        password: '',
-        confirm: '',
+        first: '' as string,
+        last: '' as string,
+        email: '' as string,
+        password: '' as string,
+        confirm: '' as string,
       },
-      checked: false,
-      errorMessage: '',
-      signupButton: 'Sign Up',
-      loginButton: 'Log In',
+      errorMessage: '' as string,
+      signupButton: 'Sign Up' as string,
+      loginButton: 'Log In' as string,
     };
   },
   computed: {
-    loggedIn() {
+    loggedIn(): boolean {
       return this.$store.state.loggedIn;
+    },
+    pass(): string {
+      let p: string = '';
+      switch (this.$route.path) {
+        case '/login':
+          p = 'current-password';
+          break;
+        case '/signup':
+          p = 'new-password';
+          break;
+        default:
+      }
+      return p;
     },
   },
   created() {
@@ -77,7 +108,7 @@ export default {
     }
   },
   methods: {
-    async signup() {
+    async signup(): Promise<void> {
       if (this.formData.password !== this.formData.confirm) {
         this.errorMessage = 'Confirmed password does not match';
 
@@ -100,17 +131,17 @@ export default {
         };
         this.$store.dispatch('register', user).then(
           () => {
-            this.$router.push('/login');
+            this.login();
           },
           (error) => {
-            console.log(error);
+            console.error(error);
             this.signupButton = 'Sign Up';
             this.errorMessage = 'Failed to Register';
           },
         );
       }
     },
-    async login() {
+    async login(): Promise<void> {
       if (this.formData.email.length > 0 && this.formData.password.length > 0) {
         this.loginButton = 'Logging in...';
         const user = {
@@ -120,6 +151,7 @@ export default {
         this.$store.dispatch('login', user).then(
           () => {
             if (this.$route.query.from) {
+              // @ts-ignore
               this.$router.push(this.$route.query.from);
             } else {
               this.$router.push('/');
@@ -135,14 +167,14 @@ export default {
         this.errorMessage = 'Fill all required fields';
       }
     },
-    formSubmission() {
+    formSubmission(): void {
       if (this.$route.path === '/signup') {
         this.signup();
       } else {
         this.login();
       }
     },
-    changeRoute() {
+    changeRoute(): void {
       this.errorMessage = '';
       Object.keys(this.formData).forEach((item) => {
         this.formData[item] = '';
@@ -154,7 +186,7 @@ export default {
         this.$router.push('/login');
       }
     },
-    validateEmail(email) {
+    validateEmail(email: string): boolean {
       const mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z]+)*$/;
       if (mailformat.test(email)) {
         return true;
@@ -162,10 +194,9 @@ export default {
       return false;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/index.scss';
 @import './index.scss';
 </style>
