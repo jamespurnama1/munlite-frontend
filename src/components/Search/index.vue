@@ -135,20 +135,46 @@ export default Vue.extend({
   },
   methods: {
     extraPad(): void {
-      let padding = 10 + (parseInt(this.em().toString(), 10)
-      * parseInt(this.filterD.length.toString(), 10));
-      if (this.filterD.includes('DELEGATE')) {
-        padding += 55.48; // 55.48px + 1em of .badge width
+      let padding = 10
+      + (parseInt(this.em().toString(), 10)
+      * parseInt(this.filterD.length.toString(), 10)) * 1.3;
+      if (this.filterD.includes('Delegate')) {
+        padding += 50.48; // 55.48px + 1em of .badge width
       }
-      if (this.filterD.includes('CHAIR')) {
-        padding += 38.09; // 38.09px + 1em of .badge width
+      if (this.filterD.includes('Chair')) {
+        padding += 33.09; // 38.09px + 1em of .badge width
       }
-      if (this.filterD.includes('ONGOING')) {
-        padding += 55.2; // 55.2px + 1em of .badge width
+      if (this.filterD.includes('Ongoing')) {
+        padding += 50.2; // 55.2px + 1em of .badge width
       }
-      if (this.filterD.includes('BEST DELEGATE')) {
-        padding += 78.58; // 78.58px + 1em of .badge width
+      if (this.filterD.includes('Best Delegate')) {
+        padding += 73.58; // 78.58px + 1em of .badge width
       }
+      if (this.filterD.includes('Present')) {
+        padding += 45.48; // 55.48px + 1em of .badge width
+      }
+      if (this.filterD.includes('Present & Voting')) {
+        padding += 88.09; // 38.09px + 1em of .badge width
+      }
+      if (this.filterD.includes('Not Present')) {
+        padding += 65.2; // 55.2px + 1em of .badge width
+      }
+      if (this.filterD.includes('Asia')) {
+        padding += 24.58; // 78.58px + 1em of .badge width
+      }
+      if (this.filterD.includes('Americas')) {
+        padding += 48.09; // 38.09px + 1em of .badge width
+      }
+      if (this.filterD.includes('Africa')) {
+        padding += 36.2; // 55.2px + 1em of .badge width
+      }
+      if (this.filterD.includes('Europe')) {
+        padding += 40.58; // 78.58px + 1em of .badge width
+      }
+      if (this.filterD.includes('Oceania')) {
+        padding += 45.58; // 78.58px + 1em of .badge width
+      }
+      console.log(padding, this.filterD);
       this.extraPadding = padding;
     },
     em(): number {

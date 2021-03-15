@@ -1,9 +1,27 @@
 <template>
   <div id="app">
     <div class="nav" v-if="$route.name != 'Log In' && $route.name !='Sign Up'">
-      <div class="navLogo">
-        <img id="logo" src="@/assets/img/logo_main.png" @click="goToHome()"/>
-      </div>
+      <transition-group name="fade" tag="div" class="navLogo">
+        <img
+          key="1"
+          v-if="!$route.params.id"
+          src="@/assets/img/logo_main.png"
+          @click="goToHome()"
+        />
+        <img
+          key="2"
+          v-else-if="logo"
+          class="glow"
+          src="@/assets/img/logo_alt.png"
+          @click="goToHome()"
+        />
+        <img
+          v-else
+          key="3"
+          @click="goToHome()"
+          :src="require('@/assets/img/home@2x.png')"
+        />
+      </transition-group>
       <div class="navTab" :class="{toggle: open}">
         <div
           class="navLeft"
@@ -124,6 +142,14 @@ export default class App extends Vue {
     if (!this.open) {
       this.onTabClick();
     }
+  }
+
+  logo = true
+
+  mounted() {
+    setInterval(() => {
+      this.logo = !this.logo;
+    }, 5000);
   }
 
   beforeMount() {
