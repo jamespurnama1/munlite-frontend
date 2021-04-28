@@ -1,0 +1,8 @@
+@forward "colors";
+@forward "breakpoints";
+@forward "fonts";
+@forward "mixins";
+@forward "transitions";
+@forward '~flag-icon-css/sass/flag-icon.scss' with (
+  $flag-icon-css-path: '~flag-icon-css/flags' !default,
+);

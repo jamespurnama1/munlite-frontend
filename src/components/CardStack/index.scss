@@ -1,0 +1,52 @@
+.stackOverflow {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  cursor: grab;
+  user-select: none;
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+  backface-visibility: hidden;
+  clip: rect(auto, auto, auto, auto);
+
+  &::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+  }
+
+  .stack-cards {
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    list-style-type: none;
+    backface-visibility: hidden;
+
+    @supports not (aspect-ratio: 16 / 9) { 
+      height: 0;
+      padding-top: 56.25%;
+    }
+  
+    .stack-cards__item {
+      pointer-events: initial;
+      position: absolute;
+      aspect-ratio: 16 / 9;
+      width: calc(100% - 40px);
+      margin: 0 20px;
+      height: auto;
+      top: 0;
+      left: 0;
+      backface-visibility: hidden;
+
+      @supports not (aspect-ratio: 16 / 9) { 
+        height: 0;
+        padding-top: 56.25%;
+      }
+    }
+  }
+}

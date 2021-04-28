@@ -1,0 +1,311 @@
+#Home {
+  margin: 0 auto;
+  width: calc(100% - 4rem);
+  flex-grow: 1;
+  padding: 3% 0;
+  
+  .upper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+
+    @include max-media(mobile) {
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .profile {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+
+      @include max-media(tablet) {
+        font-size: 14px;
+      }
+      
+
+      @include max-media(mobile) {
+        margin-bottom: 1.5rem;
+        font-size: 13px;
+        flex-direction: column;
+
+        .detail {
+          text-align: center;
+        }
+      }
+
+      .img {
+        width: 8rem;
+        height: 8rem;
+        border-radius: 4rem;
+        background-color: lightgrey;
+        margin-right: 1rem;
+
+        @include max-media(tablet) {
+          width: 6rem;
+          height: 6rem;
+        }
+
+        @include max-media(mobile) {
+          width: 8rem;
+          height: 8rem;
+          margin-right: 0;
+        }
+      }
+
+      h1 {
+        font-size: 4rem;
+
+        @include max-media(tablet) {
+          font-size: 2.5rem;
+        }
+      }
+
+      a {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+
+    .ongoing {
+      background-color: $blue;
+      color: white;
+      padding: 1rem;
+      height: fit-content;
+      border-radius: 15px;
+      box-shadow: 0px 0px 20px 0px rgba(98,123,247,0.7);
+      cursor: pointer;
+
+      @include max-media(mobile) {
+        width: 60%;
+        min-width: 180px;
+      }
+
+      &-title {
+        margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: bold;
+
+        @include max-media(tablet) {
+          font-size: 1rem;
+        }
+
+        @include max-media(mobile) {
+          display: none;
+        }
+
+      }
+
+      img.conference-img {
+        width: 3.5rem;
+        height: 3.5rem;
+        margin-right: 1rem;
+
+        @include max-media(tablet) {
+          width: 2rem;
+          height: 2rem;
+          margin-right: 8px;
+        }
+      }
+
+      &-conference {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        @include max-media(mobile) {
+          justify-content: center;
+        }
+      }
+
+      .name {
+        font-weight: bold;
+        margin-bottom: 0;
+        font-size: 18px;
+
+        @include max-media(tablet) {
+          font-size: 14px;
+        }
+
+        @include max-media(mobile) {
+          margin-right: 10px;
+        }
+      }
+
+      .conference-detail {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+      }
+
+      .started-time {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-content: center;
+        font-size: 14px;
+
+        @include max-media(tablet) {
+          font-size: 12px;
+        }
+
+        img {
+          width: 1rem;
+          margin-left: 5px;
+        }
+        span.img {
+          font-size: 1rem;
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+
+  .bottom {
+    h2 {
+      font-size: 2.5rem;
+
+      @include max-media(tablet) {
+        font-size: 1.5rem;
+      }
+    }
+
+    .conferences {
+      width: 30%;
+      border: 1px solid $light-grey;
+      border-radius: 20px/20px;
+      padding: 15px;
+      min-width: 350px;
+      
+      @include max-media(tablet) {
+        width: 100%;
+        box-sizing: border-box;
+        min-width: 0;
+      }
+
+      .sub-title {
+        display: flex;
+        flex-direction: row;
+        align-content: center;
+        margin-bottom: 1rem;
+        justify-content: space-between;
+
+        button {
+          margin-left: 1rem;
+          height: fit-content;
+          font-size: 20px;
+          height: fit-content;
+          align-self: center;
+          padding: 5px 10px;
+
+          @include max-media(mobile) {
+            font-size: 14px;
+            border-radius: 10px/10px;
+          }
+        }
+      }
+
+      .list-conferences {
+        margin-bottom: 2.5rem;
+      }
+
+      .conference-data {
+        display: flex;
+        flex-direction: row;
+        font-size: 14px;
+        margin-bottom: 1rem;
+        cursor: pointer;
+
+        @include max-media(tablet) {
+          font-size: 12px;
+        }
+
+        .img {
+          width: 3rem;
+          height: 3rem;
+          background-color: lightgrey;
+          border-radius: 2rem;
+          margin-right: 1rem;
+        }
+
+        .detail {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+
+          .name {
+            font-size: 20px;
+            font-weight: bold;
+
+            @include max-media(tablet) {
+              font-size: 1rem;
+            }
+          }
+
+          .info {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            
+            span {
+              display: flex;
+              align-items: center;
+
+              .badge {
+                margin-left: 1em;
+                border-radius: 10px/10px;
+                border: 1px solid $blue;
+                padding: 3px 5px;
+                color: $blue;
+                font-size: .5em;
+              }
+            }
+          }
+
+          .started-time {
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            width: fit-content;
+            
+            img {
+              width: 20px;
+              margin-left: 8px;
+            }
+          }
+
+          .status {
+            width: fit-content;
+            color: $blue;
+            border: 1px solid $blue;
+            padding: 2px 5px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 8px;
+
+            @include max-media(tablet) {
+              font-size: 10px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .modal {
+    z-index: 205;
+  }
+}
+
+// .button {
+//   padding: 5px 10px;
+//   border: 1px solid $light-grey;
+//   background-color: white;
+//   border-radius: 15px;
+//   font-family: 'Open Sans';
+//   cursor: pointer;
+// }

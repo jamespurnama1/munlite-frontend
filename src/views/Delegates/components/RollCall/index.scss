@@ -1,0 +1,241 @@
+#rollcall {
+  display: flex;
+  flex-direction: column;
+  width: 40vw;
+  height: 55vh;
+  min-width: 450px;
+  min-height: 375px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 20px/20px;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+
+  @include max-media(small-tablet) {
+    min-height: 275px;
+  }
+
+  @include max-media(mobile-landscape) {
+    width: 75vw;
+    min-width: 265px;
+    height: 75vh;
+  }
+
+  @media only screen and (max-width: 300px) {
+      min-width: 220px;
+  }
+
+  #close {
+    position: absolute;
+    align-self: flex-end;
+    cursor: pointer;
+  }
+
+  #call {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+
+    @include max-media(mobile-landscape) {
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    #wrapper {
+      position: relative;
+      width: 70%;
+      height: 100%;
+      box-sizing: border-box;
+
+      @include max-media(mobile-landscape) {
+        width: 100%;
+        height: 65%;
+        padding: 0;
+      }
+
+      &:before {
+        content: '';
+        background: linear-gradient(rgb(255, 255, 255), rgba(255, 255, 255, 0));
+        z-index: 6;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 25%;
+        pointer-events: none;
+      }
+
+      &:after {
+        content: '';
+        background: linear-gradient(rgba(255, 255, 255, 0), rgb(255, 255, 255));
+        z-index: 6;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 25%;
+        pointer-events: none;
+      }
+    }
+
+    #selection {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      width: 30%;
+      height: 80%;
+      margin-left: auto;
+
+      @include max-media(mobile-landscape) {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 50% 50%;
+        grid-template-areas:
+          "top top top"
+          "botL . botR";
+        width: 100%;
+        height: 6rem;
+        margin: 0 auto;
+      }
+
+      #select {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        height: 30%;
+        width: 100%;
+        min-height: 170px;
+        transform: translateY(-50%);
+        display: flex;
+        grid-area: top;
+        justify-content: space-around;
+        flex-direction: column;
+        
+        @include max-media(small-tablet) {
+          min-height: 120px;
+        }
+
+        @include max-media(mobile-landscape) {
+          position: relative;
+          flex-direction: row;
+          height: 100%;
+          right: initial;
+          top: initial;
+          transform: translate(0);
+          margin: 0 auto;
+          min-height: 0;
+        }
+      }
+    }
+  }
+
+  .verdict {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    grid-area: botR;
+
+    p {
+      white-space: nowrap;
+    }
+
+    #continue {
+      background-color: $blue;
+      color: white;
+      border: 1px solid $blue;
+      width: initial;
+      margin-bottom: 0;
+
+      &:hover {
+        box-shadow: 0 0 20px 0 rgba(95, 120, 255, 0.7);
+      }
+    }
+  }
+
+  p {
+    @include max-media(small-tablet) {
+      font-size: 12px;
+    }
+    
+    @include max-media(mobile) {
+      font-size: 10px;
+    }
+  }
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    border-radius: 10px/10px;
+    padding: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    background-color: white;
+    border: 1px solid $light-grey;
+    cursor: pointer;
+    @include transition(0.3s, ease);
+
+    @include max-media(mobile-landscape) {
+      width: 30%;
+      font-size: 12px;
+    }
+  
+    @include max-media(small-tablet) {
+      font-size: 12px;
+    }
+
+    &:hover {
+      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 0, 0, 0);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &.red {
+      color: white;
+      background-color: $red;
+      border: 1px solid $red;
+      @include transition(ease, 0.3s);
+
+      &:hover {
+        box-shadow: 0 0 20px 0 rgba(255, 95, 95, 0.7);
+      }
+    }
+
+    input {
+      border: none;
+      width: 0;
+      color: $dark-grey;
+      @include transition(linear, 0.3s);
+      &.show {
+        width: 200px;
+        margin-right: 1rem;
+        padding-left: 5px;
+        font-size: 18px;
+        
+        @include max-media(small-mobile) {
+          width: 60px;
+        }
+        
+        @include max-media(mobile-landscape) {
+          width: 100px;
+          font-size: 12px;
+        }
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+}

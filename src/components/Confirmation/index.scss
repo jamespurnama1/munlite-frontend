@@ -1,0 +1,75 @@
+.confirmation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 210;
+  background-color: white;
+  color: black;
+  border-radius: 20px;
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  padding: 1.5rem;
+  max-width: 420px;
+  cursor: default;
+  text-align: center;
+
+  .buttons {
+    margin-top: 2rem;
+    width: 90%;
+    display: flex;
+    justify-content: space-evenly;
+
+    button {
+      background-color: white;
+      color: black;
+      padding: 10px;
+      width: 4.5rem;
+      border: 1px solid $light-grey;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      @include transition(ease, .5s);
+
+      &:hover {
+        box-shadow: 0 0 20px 0 rgba(0,0,0,0.15);
+      }
+
+      &.red {
+        border: 1px solid $red;
+        background-color: $red;
+        color: white;
+
+        &:hover {
+          box-shadow: 0 0 20px 0 rgba(255,95,95,0.7);
+        }
+      }
+
+      &.blue {
+        border: 1px solid $blue;
+        background-color: $blue;
+        color: white;
+  
+        &:hover {
+          box-shadow: 0 0 20px 0 rgba(95,120, 255,0.7);
+        }
+      }
+    }
+
+    .cancel {
+      color: black;
+      border: 1px solid $light-grey;
+      background-color: white;
+      box-shadow: 0;
+      margin-right: 1rem;
+
+      &:hover {
+        box-shadow: 0px 0px 20px 0px rgba(0, 0, 0,0.2);
+        border: 1px solid white;
+      }
+    }
+  }
+}

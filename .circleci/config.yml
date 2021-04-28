@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  lint-and-test:
+    docker:
+      - image: cypress/base:10
+        name: cypress
+    steps:
+      - checkout
+      # restore folders with npm dependencies and Cypress binary
+      - restore_cache:
+          keys:
+            - cache-{{ checksum "package.json" }}
+      # install npm dependencies and Cypress binary
+      # if they were cached, this step is super quick
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run: npm install wait-on
+      - run:
+          name: Linting
+          command: npm run lint
+      - run: npx cypress verify
+      # save npm dependencies and Cypress binary for future runs
+      - save_cache:
+          key: cache-{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+      # start server before starting tests
+      - run:
+          command: npx vue-cli-service serve
+          background: true
+      - run: 
+          name: Wait for localhost
+          command: npx wait-on http://localhost:8080
+      - run: npx cypress run
+
+workflows:
+  version: 2
+  lint-and-test:
+    jobs:
+      - lint-and-test
