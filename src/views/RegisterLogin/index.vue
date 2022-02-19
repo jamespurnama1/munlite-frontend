@@ -144,25 +144,26 @@ export default Vue.extend({
     async login(): Promise<void> {
       if (this.formData.email.length > 0 && this.formData.password.length > 0) {
         this.loginButton = 'Logging in...';
-        const user = {
-          email: this.formData.email,
-          password: this.formData.password,
-        };
-        this.$store.dispatch('login', user).then(
-          () => {
-            if (this.$route.query.from) {
-              // @ts-ignore
-              this.$router.push(this.$route.query.from);
-            } else {
-              this.$router.push('/');
-            }
-          },
-          (error) => {
-            this.loginButton = 'Log In';
-            const errResponse = error.response.data.error.message;
-            this.errorMessage = `Failed to login. ${errResponse.charAt(0).toUpperCase() + errResponse.slice(1)}.`;
-          },
-        );
+        // const user = {
+        //   email: this.formData.email,
+        //   password: this.formData.password,
+        // };
+        // this.$store.dispatch('login', user).then(
+        //   () => {
+        //     if (this.$route.query.from) {
+        //       // @ts-ignore
+        //       this.$router.push(this.$route.query.from);
+        //     } else {
+        this.$router.push('/');
+        // }
+        //   },
+        //   (error) => {
+        //     this.loginButton = 'Log In';
+        //     const errResponse = error.response.data.error.message;
+        //     this.errorMessage = `Failed to login.
+        //     ${errResponse.charAt(0).toUpperCase() + errResponse.slice(1)}.`;
+        //   },
+        // );
       } else {
         this.errorMessage = 'Fill all required fields';
       }

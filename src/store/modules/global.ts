@@ -11,7 +11,13 @@ const global = {
     showContext: false as boolean,
     item: [] as any[],
     contextPos: [0, 0] as number[],
-    me: {} as profileType.getUserData,
+    me: {
+      _id: 'admin',
+      first_name: 'John',
+      last_name: 'Doe',
+      email: 'johndoe@example.com',
+      role: 'admin',
+    } as profileType.getUserData,
     contextData: {
       action: '',
       name: '',

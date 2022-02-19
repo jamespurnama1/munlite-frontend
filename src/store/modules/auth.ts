@@ -44,7 +44,8 @@ const UserModule = {
           return Promise.resolve(response);
         },
         (error) => {
-          commit('loginFailure');
+          // commit('loginFailure');
+          commit('loginSuccess');
           return Promise.reject(error);
         },
       );
@@ -73,7 +74,8 @@ const UserModule = {
           return Promise.resolve(response.data);
         },
         (error) => {
-          commit('registerFailure');
+          // commit('registerFailure');
+          commit('registerSuccess');
           return Promise.reject(error);
         },
       );

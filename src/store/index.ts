@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import Global from './modules/global';
 import UserModule from './modules/auth';
 import Delegates from './modules/delegates';
+import Conference from './modules/conference';
 import Socket from './modules/websocket';
 
 Vue.use(Vuex);
@@ -13,6 +14,7 @@ const store = new Vuex.Store({
     UserModule,
     Delegates,
     Socket,
+    Conference,
   },
 });
 

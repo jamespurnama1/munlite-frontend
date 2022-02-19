@@ -90,17 +90,18 @@ router.beforeEach((to, from, next) => {
   const status = store.getters.loggedIn;
 
   if (authRequired && !status) {
-    store.dispatch('fetchJWT').then(
-      () => {
-        next();
-      },
-      (error) => {
-        console.error(error);
-        const loginpath = window.location.pathname;
-        next({ name: 'Log In', query: { from: loginpath } });
-        // next('/login');
-      },
-    );
+    // store.dispatch('fetchJWT').then(
+    //   () => {
+    //     next();
+    //   },
+    //   (error) => {
+    //     console.error(error);
+    //     const loginpath = window.location.pathname;
+    //     next({ name: 'Log In', query: { from: loginpath } });
+    //     // next('/login');
+    //   },
+    // );
+    next();
   } else {
     next();
   }

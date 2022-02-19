@@ -13,18 +13,18 @@ export interface getAllConferences {
     quorum: string;
     rounding: string;
   };
-  chairman: [
-    {
-      _id: string;
-      email: string;
-    },
-  ];
+  chairman: chairman[];
   delegates: getAllDelegates[];
   gsl?: getGSL;
   motions?: {
     current: number;
     batches: getMotionsLog[];
   }
+}
+
+interface chairman {
+  _id: string;
+  email: string;
 }
 
 export interface getConference extends getAllConferences {}

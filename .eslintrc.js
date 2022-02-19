@@ -16,6 +16,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-underscore-dangle': 'off',
     'global-require': 'off',
+    "linebreak-style": 0,
     '@typescript-eslint/camelcase': 'off',
     'camelcase': 'off',
     'import/extensions': [

@@ -173,7 +173,6 @@ export default Vue.extend({
     return {
       showConfirm: false as boolean | string,
       showInput: false as boolean,
-      conferencesData: [] as conferenceType.getAllConferences[],
       editData: {} as Partial<conferenceType.getConference>,
       filteredData: [] as conferenceType.getAllConferences[],
       // filter: '' as string,
@@ -200,6 +199,13 @@ export default Vue.extend({
     };
   },
   methods: {
+    dateFormat(d): string {
+      const sDate = new Date(d);
+      const ye = (y) => new Intl.DateTimeFormat('en', { year: 'numeric' }).format(y);
+      const mo = (m) => new Intl.DateTimeFormat('en', { month: '2-digit' }).format(m);
+      const da = (day) => new Intl.DateTimeFormat('en', { day: '2-digit' }).format(day);
+      return `${ye(sDate)}-${mo(sDate)}-${da(sDate)}`;
+    },
     exitAdd(): void {
       this.showInput = false;
     },
@@ -427,7 +433,85 @@ export default Vue.extend({
       me: (state: any) => state.Global.me,
       contextData: (state: any) => state.Global.contextData,
     }),
-    transName() {
+    conferencesData(): any[] {
+      return [
+        {
+          _id: 'example',
+          title: 'Example Conference',
+          start_date: new Date(Date.now()).toISOString(),
+          end_date: new Date(Date.now() + 9999).toISOString(),
+          rules: {
+            majority: '1/2 Delegates + 1',
+            dr_vote: '2/3 Delegates',
+            quorum: '2/3 Delegates',
+            rounding: 'Round Down',
+          },
+          chairman: [{
+            _id: 'john',
+            email: 'johndoe@example.com',
+          },
+          {
+            _id: 'admin',
+            email: 'admin@example.com',
+          }],
+          delegates: [
+            {
+              _id: 'indonesia',
+              country: 'Indonesia',
+              status: 'present',
+            },
+            {
+              _id: 'usa',
+              country: 'USA',
+              status: 'present & voting',
+            },
+          ],
+          // gsl: {
+          //   current: 0,
+          //   length: 0,
+          //   queue: []
+          // },
+        },
+        {
+          _id: 'future',
+          title: 'Future Conference',
+          start_date: new Date(Date.now() + 9999).toISOString(),
+          end_date: new Date(Date.now() + 999999).toISOString(),
+          rules: {
+            majority: '1/2 Delegates + 1',
+            dr_vote: '2/3 Delegates',
+            quorum: '2/3 Delegates',
+            rounding: 'Round Down',
+          },
+          chairman: [{
+            _id: 'john',
+            email: 'johndoe@example.com',
+          },
+          {
+            _id: 'admin',
+            email: 'admin@example.com',
+          }],
+          delegates: [
+            {
+              _id: 'indonesia',
+              country: 'Indonesia',
+              status: 'present',
+            },
+            {
+              _id: 'usa',
+              country: 'USA',
+              status: 'present & voting',
+            },
+          ],
+          // gsl: {
+          //   current: 0,
+          //   length: 0,
+          //   queue: []
+          // },
+        },
+      ] as conferenceType.getAllConferences[];
+    },
+    transName(): string {
       if (this.width > 960) return 'fade';
       if (this.sel === null) return 'slide-right';
       return 'slide-left';
