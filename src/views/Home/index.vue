@@ -179,13 +179,13 @@ export default Vue.extend({
     },
   },
   computed: {
-    conferencesData(): any[] {
+    conferences(): any[] {
       return [
         {
           _id: 'example',
           title: 'Example Conference',
           start_date: new Date(Date.now()).toISOString(),
-          end_date: new Date(Date.now() + 9999).toISOString(),
+          end_date: new Date(Date.now() + (3600 * 1001 * 24)).toISOString(),
           rules: {
             majority: '1/2 Delegates + 1',
             dr_vote: '2/3 Delegates',
@@ -208,7 +208,7 @@ export default Vue.extend({
             },
             {
               _id: 'usa',
-              country: 'USA',
+              country: 'United States of America',
               status: 'present & voting',
             },
           ],
@@ -221,8 +221,8 @@ export default Vue.extend({
         {
           _id: 'future',
           title: 'Future Conference',
-          start_date: new Date(Date.now() + 9999).toISOString(),
-          end_date: new Date(Date.now() + 999999).toISOString(),
+          start_date: new Date(Date.now() + (3600 * 1001 * 24)).toISOString(),
+          end_date: new Date(Date.now() + (3600 * 1001 * 24 * 2)).toISOString(),
           rules: {
             majority: '1/2 Delegates + 1',
             dr_vote: '2/3 Delegates',
@@ -245,7 +245,7 @@ export default Vue.extend({
             },
             {
               _id: 'usa',
-              country: 'USA',
+              country: 'United States of America',
               status: 'present & voting',
             },
           ],

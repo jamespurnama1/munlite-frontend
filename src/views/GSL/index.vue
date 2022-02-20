@@ -155,12 +155,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {
-  addTurnGSL, getGSL, delTurnGSL, yieldGSL, nextGSL, timeLeftGSL,
-} from '@/api/gsl';
+// import {
+//   addTurnGSL, getGSL, delTurnGSL, yieldGSL, nextGSL, timeLeftGSL,
+// } from '@/api/gsl';
 import { mapState } from 'vuex';
 import negara from '@/const/country.json';
-import { getAllDelegates } from '@/api/delegates';
+// import { getAllDelegates } from '@/api/delegates';
 import Autocomplete from '@/components/Autocomplete/index.vue';
 import CardStack from '@/components/CardStack/index.vue';
 import Timer from '@/components/Timer/index.vue';
@@ -228,7 +228,8 @@ export default Vue.extend({
     context(): void {
       switch (this.contextData.action) {
         case 'Remove From Queue':
-          this.deleteTurn(this.contextData.index);
+          // this.deleteTurn(this.contextData.index);
+          this.deleteTurn();
           break;
         case 'Clear Yield':
           this.changeYield(0);
@@ -286,54 +287,54 @@ export default Vue.extend({
     async changeYield(selected: 0 | 1 | 2 | 3): Promise<void> {
       try {
         let order: number = 0;
-        let data: gslType.yieldGSL = {
-          order,
-          yield: '',
-        };
+        // let data: gslType.yieldGSL = {
+        //   order,
+        //   yield: '',
+        // };
         if (this.gslCurrent !== null) order = this.gslCurrent + 1;
         // if (this.socket.order === order) {
-        switch (selected) {
-          case 0:
-            data = {
-              order,
-              yield: '',
-            };
-            break;
-          case 1:
-            data = {
-              order,
-              yield: 'Chair',
-            };
-            break;
-          case 2:
-            data = {
-              order,
-              yield: 'Questions',
-            };
-            break;
-          case 3:
-            data = {
-              order,
-              yield: this.yieldDelegate,
-              time_left: this.socket.time,
-            };
-            this.yieldCountry = '';
-            break;
-          default:
-        }
-        await yieldGSL(this.$route.params.id, data);
+        // switch (selected) {
+        //   case 0:
+        //     data = {
+        //       order,
+        //       yield: '',
+        //     };
+        //     break;
+        //   case 1:
+        //     data = {
+        //       order,
+        //       yield: 'Chair',
+        //     };
+        //     break;
+        //   case 2:
+        //     data = {
+        //       order,
+        //       yield: 'Questions',
+        //     };
+        //     break;
+        //   case 3:
+        //     data = {
+        //       order,
+        //       yield: this.yieldDelegate,
+        //       time_left: this.socket.time,
+        //     };
+        //     this.yieldCountry = '';
+        //     break;
+        //   default:
+        // }
+        // await yieldGSL(this.$route.params.id, data);
         if (selected === 1) {
           this.$socket.send(JSON.stringify({
             session: 'gsl',
             command: 'stop',
             order,
           }));
-          await timeLeftGSL(this.$route.params.id, {
-            order,
-            time_left: this.socket.time,
-          });
+          // await timeLeftGSL(this.$route.params.id, {
+          //   order,
+          //   time_left: this.socket.time,
+          // });
           if (this.gslCurrent as number < this.gslList.length - 1) {
-            await nextGSL(this.$route.params.id);
+            // await nextGSL(this.$route.params.id);
           }
         }
         if (selected === 2) {
@@ -358,11 +359,11 @@ export default Vue.extend({
         };
         this.$socket.send(JSON.stringify(next));
         if (this.gslCurrent !== null) {
-          await timeLeftGSL(this.$route.params.id, {
-            order: this.gslCurrent + 1,
-            time_left: this.socket.time,
-          });
-          if (this.gslCurrent < this.gslList.length - 1) await nextGSL(this.$route.params.id);
+          // await timeLeftGSL(this.$route.params.id, {
+          //   order: this.gslCurrent + 1,
+          //   time_left: this.socket.time,
+          // });
+          // if (this.gslCurrent < this.gslList.length - 1) await nextGSL(this.$route.params.id);
           this.updateGSL();
         }
       } catch (err) {
@@ -388,46 +389,82 @@ export default Vue.extend({
         }
       }, 500);
     },
-    async deleteTurn(index: number): Promise<void> {
+    // async deleteTurn(index: number): Promise<void> {
+    deleteTurn(): void {
       try {
-        await delTurnGSL(this.$route.params.id, index + 1);
+        // await delTurnGSL(this.$route.params.id, index + 1);
         this.updateGSL();
       } catch (err) {
         console.error(err);
       }
     },
-    async addQueue([country, time]: [string, number]): Promise<void> {
-      try {
-        const [id] = this.delegatesData.filter((obj) => obj.country === country);
-        const data = {
-          delegate_id: id._id,
-          time_start: time,
-          time_left: time,
-          yield: '',
-        };
-        if (id) {
-          await addTurnGSL(this.$route.params.id, data);
-          this.updateGSL();
-        }
-        this.showQueue = false;
-      } catch (err) {
-        console.error(err);
+    // async addQueue([country, time]: [string, number]): void {
+    addQueue([country]: [string, number]): void {
+      // try {
+      const [id] = this.delegatesData.filter((obj) => obj.country === country);
+      // const data = {
+      //   delegate_id: id._id,
+      //   time_start: time,
+      //   time_left: time,
+      //   yield: '',
+      // };
+      if (id) {
+        // await addTurnGSL(this.$route.params.id, data);
+        this.updateGSL();
       }
+      this.showQueue = false;
+      // } catch (err) {
+      //   console.error(err);
+      // }
     },
-    async updateGSL(): Promise<void> {
-      try {
-        const list = await getGSL(this.$route.params.id);
-        if (list.data.data !== null) {
-          this.gslData = list.data.data;
-          this.newGSLList(list.data.data);
-        }
-        if (this.gslData && this.gslCurrent !== this.gslData.current) {
-          this.currentCountry = this.gslData.current;
-          this.gslCurrent = this.gslData.current;
-        }
-      } catch (err) {
-        console.error(err);
+    updateGSL(): void {
+      // try {
+      // const list = await getGSL(this.$route.params.id);
+      const list = {
+        current: 0,
+        length: 4,
+        queue: [
+          {
+            order: 1,
+            delegate_id: 'usa',
+            time_start: 90,
+            time_left: 90,
+            yield: 'chair',
+          },
+          {
+            order: 2,
+            delegate_id: 'indonesia',
+            time_start: 90,
+            time_left: 90,
+            yield: 'chair',
+          },
+          {
+            order: 3,
+            delegate_id: 'canada',
+            time_start: 90,
+            time_left: 90,
+            yield: 'indonesia',
+          },
+          {
+            order: 4,
+            delegate_id: 'bulgaria',
+            time_start: 90,
+            time_left: 90,
+            yield: 'chair',
+          },
+        ],
+      };
+      if (list !== null) {
+        this.gslData = list;
+        this.newGSLList(list);
       }
+      if (this.gslData && this.gslCurrent !== this.gslData.current) {
+        this.currentCountry = this.gslData.current;
+        this.gslCurrent = this.gslData.current;
+      }
+      // } catch (err) {
+      //   console.error(err);
+      // }
     },
     toggleActive(): void {
       const data: websocketType.send = {
@@ -487,15 +524,16 @@ export default Vue.extend({
       return items;
     },
     async updateDelegatesData(): Promise<void> {
-      try {
-        const delegates = await getAllDelegates(this.$route.params.id);
-        if (delegates.data.data !== null) {
-          this.delegatesData = this.sortCountry(delegates.data.data);
-          this.newCountryList();
-        }
-      } catch (err) {
-        console.error(err.response);
+      // try {
+      // const delegates = await getAllDelegates(this.$route.params.id);
+      const delegates = this.delStore;
+      if (delegates !== null) {
+        this.delegatesData = this.sortCountry(delegates);
+        this.newCountryList();
       }
+      // } catch (err) {
+      //   console.error(err.response);
+      // }
     },
   },
   async created() {
@@ -514,6 +552,7 @@ export default Vue.extend({
       gslList: (state: any) => state.Delegates.gslList,
       widthWindow: (state: any) => state.Global.widthWindow,
       contextData: (state: any) => state.Global.contextData,
+      delStore: (state: any) => state.Delegates.delegates as delegatesType.getAllDelegates[],
     }),
   },
   beforeCreate() {

@@ -1,15 +1,15 @@
 export interface getGSL {
   current: number;
   length: number;
-  queue: [
-    {
-      order: number;
-      delegate_id: string;
-      time_start: number;
-      time_left: number;
-      yield?: 'string';
-    }
-  ]
+  queue: queue[];
+}
+
+interface queue {
+  order: number;
+  delegate_id: string;
+  time_start: number;
+  time_left: number;
+  yield?: string;
 }
 
 export interface addTurn {

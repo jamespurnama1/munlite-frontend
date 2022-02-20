@@ -49,7 +49,7 @@
 <script lang="ts">
 // eslint-disable-next-line no-unused-vars
 import Vue, { PropType } from 'vue';
-import { editDelegates, getAllDelegates } from '@/api/delegates';
+// import { editDelegates, getAllDelegates } from '@/api/delegates';
 import CardStack from '@/components/CardStack/index.vue';
 // eslint-disable-next-line no-unused-vars
 import { delegatesType } from '@/types/api';
@@ -69,22 +69,23 @@ export default Vue.extend({
     delegatesData: Array as PropType<delegatesType.getAllDelegates[]>,
   },
   methods: {
-    async presence(j: string): Promise<void> {
-      try {
-        const data = {
-          country: this.delegatesData[this.currentCountry].country,
-          status: j,
-        };
-        await editDelegates(
-          this.$route.params.id,
-          this.delegatesData[this.currentCountry]._id,
-          data,
-        );
-        this.$emit('update');
-        this.getVoteCount();
-      } catch (err) {
-        console.error(err);
-      }
+    // async presence(j: string): Promise<void> {
+    async presence(): Promise<void> {
+      // try {
+      //   const data = {
+      //     country: this.delegatesData[this.currentCountry].country,
+      //     status: j,
+      //   };
+      //   await editDelegates(
+      //     this.$route.params.id,
+      //     this.delegatesData[this.currentCountry]._id,
+      //     data,
+      //   );
+      //   this.$emit('update');
+      //   this.getVoteCount();
+      // } catch (err) {
+      //   console.error(err);
+      // }
       this.move(this.currentCountry + 1);
     },
     move(index: number): void {
@@ -93,8 +94,8 @@ export default Vue.extend({
       this.currentCountry = j;
     },
     async getVoteCount(): Promise<void> {
-      const vote = await getAllDelegates(this.$route.params.id);
-      this.voteCount = (vote.data.data.filter((obj: delegatesType.getAllDelegates) => obj.status !== 'N/A')).length;
+      // const vote = await getAllDelegates(this.$route.params.id);
+      this.voteCount = (this.delegatesData.filter((obj: delegatesType.getAllDelegates) => obj.status !== 'N/A')).length;
     },
     decoder(str: string): string { // Vue workaround for &nbsp;
       const textArea = document.createElement('textarea');

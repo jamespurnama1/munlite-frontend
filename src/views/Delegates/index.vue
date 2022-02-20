@@ -108,22 +108,22 @@
       </div>
     </transition>
     <transition-group name="fade">
-    <Confirmation
-      :content="`Are you sure you want to delete ${delegatesData[showConfirm].country}?`"
-      :action="deleteDelegatesData"
-      :id="delegatesData[showConfirm]._id"
-      :negative="true"
-      button="Delete"
-      :key="`del ${showConfirm}`"
-      v-if="typeof showConfirm === 'number'"
-      v-click-outside="config"
-      @exit="exit"
-    />
-    <div
-      class="overlay"
-      v-if="showOverlay || showInput || typeof showConfirm === 'number'"
-      key="overlay"
-    />
+      <Confirmation
+        :content="`Are you sure you want to delete ${delegatesData[showConfirm].country}?`"
+        :action="deleteDelegatesData"
+        :id="delegatesData[showConfirm]._id"
+        :negative="true"
+        button="Delete"
+        :key="`del ${showConfirm}`"
+        v-if="typeof showConfirm === 'number'"
+        v-click-outside="config"
+        @exit="exit"
+      />
+      <div
+        class="overlay"
+        v-if="showOverlay || showInput || typeof showConfirm === 'number'"
+        key="overlay"
+      />
     </transition-group>
   </div>
 </template>
@@ -132,8 +132,8 @@
 import Vue from 'vue';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { getAllDelegates, deleteDelegates } from '@/api/delegates';
-import { getConference } from '@/api/conference';
+// import { getAllDelegates, deleteDelegates } from '@/api/delegates';
+// import { getConference } from '@/api/conference';
 import negara from '@/const/country.json';
 import Confirmation from '@/components/Confirmation/index.vue';
 import { mapState } from 'vuex';
@@ -166,7 +166,7 @@ export default Vue.extend({
       stage: 0 as number,
       delegatesData: [] as delegatesType.getAllDelegates[],
       dr_vote: 0 as number,
-      rulesData: [] as string[],
+      rulesData: [] as any,
       showConfirm: false as boolean | string,
       config: {
         // @ts-ignore
@@ -374,28 +374,34 @@ export default Vue.extend({
       return items;
     },
     async updateDelegatesData(): Promise<void> {
-      try {
-        const delegates = await getAllDelegates(this.$route.params.id);
-        this.$store.commit('delList', delegates.data.data);
-        if (this.delStore) {
-          this.delegatesData = this.sortCountry(this.delStore);
-        }
-      } catch (err) {
-        console.error(err);
+    //   try {
+    //     const delegates = await getAllDelegates(this.$route.params.id);
+      // this.$store.commit('delList', this.delegatesData);
+      if (this.delStore) {
+        this.delegatesData = this.sortCountry(this.delStore);
       }
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
     },
-    async deleteDelegatesData(country: string): Promise<void> {
-      try {
-        const responses = new Promise((resolve) => {
-          resolve(deleteDelegates(this.$route.params.id, country));
-        });
-        responses.then(() => {
-          this.exit();
-          this.updateDelegatesData();
-        });
-      } catch (err) {
-        console.error(err);
-      }
+    async deleteDelegatesData(ctry: string): Promise<void> {
+    //   try {
+    //     const responses = new Promise((resolve) => {
+    //       resolve(deleteDelegates(this.$route.params.id, country));
+    //     });
+    //     responses.then(() => {
+      const delTemp = [...this.delStore];
+      delTemp.splice(
+        this.delStore.findIndex(({ country }) => country.toLowerCase() === ctry), 1,
+      );
+      console.log(delTemp);
+      this.$store.commit('delList', delTemp);
+      this.exit();
+      this.updateDelegatesData();
+    //     });
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
     },
     exit(): void {
       this.showInput = false;
@@ -419,9 +425,14 @@ export default Vue.extend({
     this.updateDelegatesData();
     this.key += 1;
     try {
-      const conference = await getConference(this.$route.params.id);
-      this.rulesData = conference.data.data.rules;
-      const [parse] = (conference.data.data.rules.dr_vote).split(' ');
+      // const conference = await getConference(this.$route.params.id);
+      this.rulesData = {
+        majority: '1/2 Delegates + 1',
+        dr_vote: '2/3 Delegates',
+        quorum: '2/3 Delegates',
+        rounding: 'Round Up',
+      };
+      const [parse] = (this.rulesData.dr_vote).split(' ');
       const num = parse.split('/');
       this.dr_vote = parseFloat((num[0] / num[1]).toFixed(2));
     } catch (err) {

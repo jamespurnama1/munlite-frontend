@@ -200,14 +200,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapState } from 'vuex';
-import {
-  createConference,
-  updateConference,
-  addChairman,
-  delChairman,
-} from '@/api/conference';
+// import {
+//   createConference,
+//   updateConference,
+//   addChairman,
+//   delChairman,
+// } from '@/api/conference';
 import Confirmation from '@/components/Confirmation/index.vue';
-import { checkUser } from '@/api/profile';
+// import { checkUser } from '@/api/profile';
 import { evaluate } from 'mathjs';
 // eslint-disable-next-line no-unused-vars
 import { conferenceType, profileType } from '@/types/api';
@@ -325,39 +325,40 @@ export default Vue.extend({
       this.showConfirm = false;
     },
     addChair(): void {
-      const validateEmail = (email) => {
-        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-      };
-      const duplicate = this.newConf.chairman
-        .filter((f) => f === this.email);
-      this.check(this.email)
-        .then((res: any) => {
-          if (validateEmail(this.email)
-            && duplicate.length === 0
-            && res.found
-            && this.email
-            && this.email !== this.me.email) {
-              this.newConf!.chairman.push(this.email);
-              const resUpperCase = {
-                first_name: res.user_name.first_name.charAt(0).toUpperCase()
-              + res.user_name.first_name.slice(1),
-                last_name: res.user_name.last_name.charAt(0).toUpperCase()
-              + res.user_name.last_name.slice(1),
-              };
-              this.chairman.push(resUpperCase);
-              this.$forceUpdate();
-              this.email = '';
-              // this.$set(this.newConf.chairman, this.newConf.chairman.length, this.email);
-          } else if (!validateEmail(this.email)) {
-            this.warn.email = 'Please enter a valid e-mail address';
-          } else if (!res.found) {
-            this.warn.email = 'E-mail is not registered at MUNLite';
-          } else if (this.email === this.me.email || duplicate.length >= 0) {
-            this.warn.email = 'Chair already added.';
-          }
-        })
-        .catch((err) => console.error(err));
+      // const validateEmail = (email) => {
+      // eslint-disable-next-line max-len
+      //   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      //   return re.test(String(email).toLowerCase());
+      // };
+      // const duplicate = this.newConf.chairman
+      //   .filter((f) => f === this.email);
+      // this.check(this.email)
+      //   .then((res: any) => {
+      //     if (validateEmail(this.email)
+      //       && duplicate.length === 0
+      //       && res.found
+      //       && this.email
+      //       && this.email !== this.me.email) {
+      //         this.newConf!.chairman.push(this.email);
+      //         const resUpperCase = {
+      //           first_name: res.user_name.first_name.charAt(0).toUpperCase()
+      //         + res.user_name.first_name.slice(1),
+      //           last_name: res.user_name.last_name.charAt(0).toUpperCase()
+      //         + res.user_name.last_name.slice(1),
+      //         };
+      //         this.chairman.push(resUpperCase);
+      //         this.$forceUpdate();
+      //         this.email = '';
+      //         // this.$set(this.newConf.chairman, this.newConf.chairman.length, this.email);
+      //     } else if (!validateEmail(this.email)) {
+      //       this.warn.email = 'Please enter a valid e-mail address';
+      //     } else if (!res.found) {
+      //       this.warn.email = 'E-mail is not registered at MUNLite';
+      //     } else if (this.email === this.me.email || duplicate.length >= 0) {
+      //       this.warn.email = 'Chair already added.';
+      //     }
+      //   })
+      //   .catch((err) => console.error(err));
     },
     editConf(): void {
       const difference = this.newConf.chairman
@@ -365,10 +366,10 @@ export default Vue.extend({
       if (difference.length > 0) {
         try {
           for (let i = 0; i < difference.length; i += 1) {
-            const data = {
-              email: difference[i],
-            };
-            addChairman(this.conf._id, data);
+            // const data = {
+            //   email: difference[i],
+            // };
+            // addChairman(this.conf._id, data);
           }
         } catch (err) {
           if (err.response.status === 422) {
@@ -385,10 +386,10 @@ export default Vue.extend({
       if (diff.length > 0) {
         try {
           for (let i = 0; i < diff.length; i += 1) {
-            const data = {
-              email: diff[i].email,
-            };
-            delChairman(this.conf._id, data);
+            // const data = {
+            //   email: diff[i].email,
+            // };
+            // delChairman(this.conf._id, data);
           }
         } catch (err) {
           if (err.response.status === 422) {
@@ -403,11 +404,11 @@ export default Vue.extend({
       const warnings: {[key: string]: boolean | string } = { ...this.warn };
       delete warnings.email;
       if (Object.values(warnings).every((bool) => bool === false || bool === '')) {
-        updateConference(this.conf._id, data)
-          .then(() => {
-            this.$emit('update');
-            this.$emit('exitSafe');
-          });
+        // updateConference(this.conf._id, data)
+        //   .then(() => {
+        this.$emit('update');
+        this.$emit('exitSafe');
+        //   });
       }
     },
     addNewConf(): void {
@@ -415,23 +416,23 @@ export default Vue.extend({
       const warnings: {[key: string]: boolean | string } = { ...this.warn };
       delete warnings.email;
       if (Object.values(warnings).every((bool) => bool === false)) {
-        createConference(this.newConf)
-          .then(() => {
-            this.$emit('update');
-            this.newConf = {
-              title: '',
-              start_date: '',
-              end_date: '',
-              majority: '',
-              dr_vote: '',
-              quorum: '',
-              rounding: 'Round Down',
-              chairman: [],
-            };
-            this.$emit('exitSafe');
-          }).catch((err) => {
-            console.error(err);
-          });
+        // createConference(this.newConf)
+        //   .then(() => {
+        this.$emit('update');
+        this.newConf = {
+          title: '',
+          start_date: '',
+          end_date: '',
+          majority: '',
+          dr_vote: '',
+          quorum: '',
+          rounding: 'Round Down',
+          chairman: [],
+        };
+        this.$emit('exitSafe');
+        //   }).catch((err) => {
+        //     console.error(err);
+        //   });
       }
     },
     checkForm(data: any): void {
@@ -461,13 +462,13 @@ export default Vue.extend({
         }
       });
     },
-    async check(user: string): Promise<profileType.checkUser> {
-      const data = {
-        email: user,
-      };
-      const u = await checkUser(data);
-      return u.data.data;
-    },
+    // async check(user: string): Promise<profileType.checkUser> {
+    //   const data = {
+    //     email: user,
+    //   };
+    //   const u = await checkUser(data);
+    //   return u.data.data;
+    // },
     dateFormat(d): string {
       const sDate = new Date(d);
       const ye = (y) => new Intl.DateTimeFormat('en', { year: 'numeric' }).format(y);
@@ -486,15 +487,20 @@ export default Vue.extend({
       for (let i = 0; i < c.length; i += 1) {
         if (c[i].email !== this.me.email) {
           arr.push(c[i].email);
-          this.check(c[i].email).then((response) => {
-            const res = {
-              first_name: response.user_name.first_name.charAt(0).toUpperCase()
-            + response.user_name.first_name.slice(1),
-              last_name: response.user_name.last_name.charAt(0).toUpperCase()
-            + response.user_name.last_name.slice(1),
-            };
-            this.chairman.push(res);
-          });
+          // this.check(c[i].email).then((response) => {
+          //   const res = {
+          //     first_name: response.user_name.first_name.charAt(0).toUpperCase()
+          //   + response.user_name.first_name.slice(1),
+          //     last_name: response.user_name.last_name.charAt(0).toUpperCase()
+          //   + response.user_name.last_name.slice(1),
+          //   };
+          //   this.chairman.push(res);
+          // });
+          const res = {
+            first_name: 'user',
+            last_name: '001',
+          };
+          this.chairman.push(res);
         }
       }
       if (this.conf.rules.rounding === 'Round Up') this.round = true;

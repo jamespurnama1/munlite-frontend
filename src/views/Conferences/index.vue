@@ -145,11 +145,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapState } from 'vuex';
-import {
-  getAllConferences,
-  delConference,
-  updateConference,
-} from '@/api/conference';
+// import {
+//   getAllConferences,
+//   delConference,
+//   updateConference,
+// } from '@/api/conference';
 import Search from '@/components/Search/index.vue';
 import Confirmation from '@/components/Confirmation/index.vue';
 import AddConference from '@/components/AddConference/index.vue';
@@ -196,6 +196,83 @@ export default Vue.extend({
       motions: null,
       error: null,
       delegates: null,
+      conferencesData:
+        [
+          {
+            _id: 'example',
+            title: 'Example Conference',
+            start_date: new Date(Date.now()).toISOString(),
+            end_date: new Date(Date.now() + (3600 * 1001 * 24)).toISOString(),
+            rules: {
+              majority: '1/2 Delegates + 1',
+              dr_vote: '2/3 Delegates',
+              quorum: '2/3 Delegates',
+              rounding: 'Round Down',
+            },
+            chairman: [{
+              _id: 'john',
+              email: 'johndoe@example.com',
+            },
+            {
+              _id: 'admin',
+              email: 'admin@example.com',
+            }],
+            delegates: [
+              {
+                _id: 'indonesia',
+                country: 'Indonesia',
+                status: 'present',
+              },
+              {
+                _id: 'usa',
+                country: 'United States of America',
+                status: 'present & voting',
+              },
+            ],
+          // gsl: {
+          //   current: 0,
+          //   length: 0,
+          //   queue: []
+          // },
+          },
+          {
+            _id: 'future',
+            title: 'Future Conference',
+            start_date: new Date(Date.now() + (3600 * 1001 * 24)).toISOString(),
+            end_date: new Date(Date.now() + (3600 * 1001 * 24 * 2)).toISOString(),
+            rules: {
+              majority: '1/2 Delegates + 1',
+              dr_vote: '2/3 Delegates',
+              quorum: '2/3 Delegates',
+              rounding: 'Round Down',
+            },
+            chairman: [{
+              _id: 'john',
+              email: 'johndoe@example.com',
+            },
+            {
+              _id: 'admin',
+              email: 'admin@example.com',
+            }],
+            delegates: [
+              {
+                _id: 'indonesia',
+                country: 'Indonesia',
+                status: 'present',
+              },
+              {
+                _id: 'usa',
+                country: 'United States of America',
+                status: 'present & voting',
+              },
+            ],
+          // gsl: {
+          //   current: 0,
+          //   length: 0,
+          //   queue: []
+          // },
+          },
+        ] as conferenceType.getAllConferences[],
     };
   },
   methods: {
@@ -355,51 +432,129 @@ export default Vue.extend({
       }
       this.showInput = true;
     },
-    async updateConferencesData(): Promise<void> {
-      try {
-        const conferences = await getAllConferences();
-        if (conferences.data.data !== null) {
-          this.conferencesData = conferences.data.data;
-          this.key += 1;
-        }
-      } catch (err) {
-        this.error = err;
-        console.error(err);
+    updateConferencesData(): void {
+      // try {
+      //  const conferences = await getAllConferences();
+      const conferences = [
+        {
+          _id: 'example',
+          title: 'Example Conference',
+          start_date: new Date(Date.now()).toISOString(),
+          end_date: new Date(Date.now() + (3600 * 1001 * 24)).toISOString(),
+          rules: {
+            majority: '1/2 Delegates + 1',
+            dr_vote: '2/3 Delegates',
+            quorum: '2/3 Delegates',
+            rounding: 'Round Down',
+          },
+          chairman: [{
+            _id: 'john',
+            email: 'johndoe@example.com',
+          },
+          {
+            _id: 'admin',
+            email: 'admin@example.com',
+          }],
+          delegates: [
+            {
+              _id: 'indonesia',
+              country: 'Indonesia',
+              status: 'present',
+            },
+            {
+              _id: 'usa',
+              country: 'United States of America',
+              status: 'present & voting',
+            },
+          ],
+          // gsl: {
+          //   current: 0,
+          //   length: 0,
+          //   queue: []
+          // },
+        },
+        {
+          _id: 'future',
+          title: 'Future Conference',
+          start_date: new Date(Date.now() + (3600 * 1001 * 24)).toISOString(),
+          end_date: new Date(Date.now() + (3600 * 1001 * 24 * 2)).toISOString(),
+          rules: {
+            majority: '1/2 Delegates + 1',
+            dr_vote: '2/3 Delegates',
+            quorum: '2/3 Delegates',
+            rounding: 'Round Down',
+          },
+          chairman: [{
+            _id: 'john',
+            email: 'johndoe@example.com',
+          },
+          {
+            _id: 'admin',
+            email: 'admin@example.com',
+          }],
+          delegates: [
+            {
+              _id: 'indonesia',
+              country: 'Indonesia',
+              status: 'present',
+            },
+            {
+              _id: 'usa',
+              country: 'United States of America',
+              status: 'present & voting',
+            },
+          ],
+          // gsl: {
+          //   current: 0,
+          //   length: 0,
+          //   queue: []
+          // },
+        },
+      ] as conferenceType.getAllConferences[];
+      if (conferences !== null) {
+        this.conferencesData = conferences;
+        this.key += 1;
+      //   }
+      // } catch (err) {
+      //   this.error = err;
+      //   console.error(err);
       }
     },
-    async deleteConferenceData(conf: string): Promise<void> {
-      delConference(conf)
-        .then(() => {
-          this.sel = null;
-          this.updateConferencesData();
-        })
-        .catch((err) => {
-          if (err.response.status === 422) {
-            this.$store.commit('noAuth', true);
-          } else {
-            this.$store.commit('error', true);
-          }
-          console.error(err);
-        });
+    // async deleteConferenceData(conf: string): Promise<void> {
+    async deleteConferenceData(): Promise<void> {
+      // delConference(conf)
+      //   .then(() => {
+      this.sel = null;
+      this.updateConferencesData();
+      // })
+      // .catch((err) => {
+      //   if (err.response.status === 422) {
+      //     this.$store.commit('noAuth', true);
+      //   } else {
+      //     this.$store.commit('error', true);
+      //   }
+      //   console.error(err);
+      // });
       this.exit();
     },
     exit(): void {
       this.showConfirm = false;
     },
-    async patchConferences(
-      conf: conferenceType.getConference,
-      data: conferenceType.updateConference,
-    ): Promise<void> {
-      try {
-        const responses = new Promise((resolve) => {
-          resolve(updateConference(conf._id, data));
-        });
-        responses.then(() => {
-          this.updateConferencesData();
-        });
-      } catch (err) {
-        console.error(err);
-      }
+    // async patchConferences(
+    //   conf: conferenceType.getConference,
+    //   data: conferenceType.updateConference,
+    // ): Promise<void> {
+    patchConferences(): void {
+      // try {
+      //   const responses = new Promise((resolve) => {
+      //     resolve(updateConference(conf._id, data));
+      //   });
+      //   responses.then(() => {
+      this.updateConferencesData();
+      //   });
+      // } catch (err) {
+      //   console.error(err);
+      // }
     },
     readable(d: string, e: string): string {
       const sDate = new Date(d);
@@ -433,84 +588,6 @@ export default Vue.extend({
       me: (state: any) => state.Global.me,
       contextData: (state: any) => state.Global.contextData,
     }),
-    conferencesData(): any[] {
-      return [
-        {
-          _id: 'example',
-          title: 'Example Conference',
-          start_date: new Date(Date.now()).toISOString(),
-          end_date: new Date(Date.now() + 9999).toISOString(),
-          rules: {
-            majority: '1/2 Delegates + 1',
-            dr_vote: '2/3 Delegates',
-            quorum: '2/3 Delegates',
-            rounding: 'Round Down',
-          },
-          chairman: [{
-            _id: 'john',
-            email: 'johndoe@example.com',
-          },
-          {
-            _id: 'admin',
-            email: 'admin@example.com',
-          }],
-          delegates: [
-            {
-              _id: 'indonesia',
-              country: 'Indonesia',
-              status: 'present',
-            },
-            {
-              _id: 'usa',
-              country: 'USA',
-              status: 'present & voting',
-            },
-          ],
-          // gsl: {
-          //   current: 0,
-          //   length: 0,
-          //   queue: []
-          // },
-        },
-        {
-          _id: 'future',
-          title: 'Future Conference',
-          start_date: new Date(Date.now() + 9999).toISOString(),
-          end_date: new Date(Date.now() + 999999).toISOString(),
-          rules: {
-            majority: '1/2 Delegates + 1',
-            dr_vote: '2/3 Delegates',
-            quorum: '2/3 Delegates',
-            rounding: 'Round Down',
-          },
-          chairman: [{
-            _id: 'john',
-            email: 'johndoe@example.com',
-          },
-          {
-            _id: 'admin',
-            email: 'admin@example.com',
-          }],
-          delegates: [
-            {
-              _id: 'indonesia',
-              country: 'Indonesia',
-              status: 'present',
-            },
-            {
-              _id: 'usa',
-              country: 'USA',
-              status: 'present & voting',
-            },
-          ],
-          // gsl: {
-          //   current: 0,
-          //   length: 0,
-          //   queue: []
-          // },
-        },
-      ] as conferenceType.getAllConferences[];
-    },
     transName(): string {
       if (this.width > 960) return 'fade';
       if (this.sel === null) return 'slide-right';

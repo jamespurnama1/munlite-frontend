@@ -128,7 +128,8 @@
             <div>
               <h3>Activity Log</h3>
               <span>
-                <h4>{{ confData.motions.batches.length + confData.caucus.list.length }}&nbsp;</h4>
+                <!-- <h4>{{ confData.motions.batches.length + confData.caucus.list.length }}&nbsp;
+                  </h4> -->
                 <p>recorded<br>activities</p>
               </span>
               <button>View All<font-awesome-icon :icon="['fas', 'chevron-right']" /></button>
@@ -149,7 +150,7 @@ import { saveAs } from 'file-saver';
 import XLSX from 'xlsx';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { mapState } from 'vuex';
-import { checkUser } from '@/api/profile';
+// import { checkUser } from '@/api/profile';
 // eslint-disable-next-line no-unused-vars
 import { conferenceType, motionsType, profileType } from '@/types/api';
 
@@ -179,27 +180,32 @@ export default Vue.extend({
         this.motionsData.push(...motion.batch_motions);
       });
     }
-    this.confData.chairman.forEach((chair) => {
-      this.check(chair.email).then((response) => {
-        const res: {first_name: string, last_name: string} = {
-          first_name: response.user_name.first_name.charAt(0).toUpperCase()
-        + response.user_name.first_name.slice(1),
-          last_name: response.user_name.last_name.charAt(0).toUpperCase()
-        + response.user_name.last_name.slice(1),
-        };
-        this.chairman.push(res);
-      });
+    this.confData.chairman.forEach(() => {
+      const response = this.check();
+      const res: {first_name: string, last_name: string} = {
+        first_name: response.user_name.first_name.charAt(0).toUpperCase()
+      + response.user_name.first_name.slice(1),
+        last_name: response.user_name.last_name.charAt(0).toUpperCase()
+      + response.user_name.last_name.slice(1),
+      };
+      this.chairman.push(res);
     });
   },
   beforeUpdate() {
   },
   methods: {
-    async check(user: string): Promise<profileType.checkUser> {
+    // async check(user: string): Promise<profileType.checkUser> {
+    check(): profileType.checkUser {
       const data = {
-        email: user,
+        email: 'johndoe@example.com',
+        found: true,
+        user_name: {
+          first_name: 'John',
+          last_name: 'Doe',
+        },
       };
-      const u = await checkUser(data);
-      return u.data.data;
+      // const u = await checkUser(data);
+      return data;
     },
     buildExcel(): void {
       const wb = XLSX.utils.book_new();

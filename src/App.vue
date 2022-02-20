@@ -112,7 +112,7 @@
 <script lang="ts">
 import { Vue, Watch, Component } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import { logout } from '@/api/user';
+// import { logout } from '@/api/user';
 import Context from '@/components/Context/index.vue';
 import GlobalTimer from '@/components/Global Timer/index.vue';
 
@@ -263,7 +263,7 @@ export default class App extends Vue {
   async logout(): Promise<void> {
     this.open = false;
     try {
-      await logout();
+      // await logout();
       this.$store.dispatch('logout');
       window.localStorage.setItem('logout', Date.now().toString());
       this.$router.push('/login');

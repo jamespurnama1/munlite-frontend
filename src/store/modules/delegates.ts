@@ -1,6 +1,52 @@
 const delegates = {
   state: {
-    delegates: [],
+    delegates: [
+      {
+        _id: 'indonesia',
+        country: 'Indonesia',
+        status: 'present',
+      },
+      {
+        _id: 'usa',
+        country: 'United States of America',
+        status: 'present & voting',
+      },
+      {
+        _id: 'germany',
+        country: 'Germany',
+        status: 'present',
+      },
+      {
+        _id: 'canada',
+        country: 'Canada',
+        status: 'present & voting',
+      },
+      {
+        _id: 'bulgaria',
+        country: 'Bulgaria',
+        status: 'not present',
+      },
+      {
+        _id: 'cambodia',
+        country: 'Cambodia',
+        status: 'present & voting',
+      },
+      {
+        _id: 'thailand',
+        country: 'Thailand',
+        status: 'present & voting',
+      },
+      {
+        _id: 'china',
+        country: 'China',
+        status: 'present',
+      },
+      {
+        _id: 'chile',
+        country: 'Chile',
+        status: 'not present',
+      },
+    ],
     countryList: [],
     gslList: [],
     caucusList: [],
